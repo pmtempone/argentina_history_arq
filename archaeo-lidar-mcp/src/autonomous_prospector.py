@@ -20,6 +20,8 @@ from src.core.anomaly_detector import detect_anomalies
 from src.core.data_fetcher import TARGET_ZONES, fetch_elevation_tile
 from src.core.highres_hunter import HighResLidarHunter
 from src.core.literature_checker import check_academic_papers
+from src.core.looting_monitor import evaluate_looting_alert
+from src.core.ml_calibrator import load_calibrator, score_candidate
 from src.core.relief_models import compute_slrm, compute_slope
 from src.core.report_generator import generate_inapl_dossier
 from src.core.spatial_validator import validate_anomaly_async
@@ -114,10 +116,10 @@ def _deduplicate_candidates_metric(
     if len(candidates) <= 1:
         return candidates
 
-    # Ordenar de mayor a menor score compuesto (confianza * mean_elevation_m)
+    # Ordenar de mayor a menor score compuesto (confianza * |desviación SLRM|)
     sorted_cands = sorted(
         candidates,
-        key=lambda f: float(f["properties"]["confidence"]) * float(f["properties"]["mean_elevation_m"]),
+        key=lambda f: float(f["properties"]["confidence"]) * abs(float(f["properties"]["mean_elevation_m"])),
         reverse=True,
     )
 
@@ -152,6 +154,7 @@ async def run_autonomous_prospector(
     min_confidence: float = 0.70,
     min_elevation_m: float = 0.20,
     max_candidates_to_validate: int = 12,
+    ml_mode: str = "advisory",
     cache_dir: Optional[Union[str, Path]] = None,
     processed_dir: Optional[Union[str, Path]] = None,
     reports_dir: Optional[Union[str, Path]] = None,
@@ -307,9 +310,15 @@ async def run_autonomous_prospector(
 
     print(f"   ⚙️  Parámetros Adaptativos de Bioma [{zone_meta.get('biome', 'estándar')}]:")
     print(f"       • Radio SLRM: {slrm_radius_m:.1f} m | Área: [{det_min_area:.0f}, {det_max_area:.0f}] m²")
-    print(f"       • dZ mín: +{zone_min_dz:.2f} m | Pendiente máx: {zone_max_slope:.0f}°")
+    print(f"       • dZ mín (abs): {zone_min_dz:.2f} m | Pendiente máx: {zone_max_slope:.0f}°")
     if zone_meta.get("archaeo_context"):
         print(f"       • Contexto: {zone_meta['archaeo_context']}")
+
+    # Margen de borde para el detector: la tendencia SLRM está sesgada cerca del borde del
+    # raster (modo 'nearest' del filtro gaussiano), así que los contornos que tocan el borde
+    # del tile se descartan; el overlap del tiling garantiza la cobertura de esa franja.
+    slrm_radius_px = max(2.0, slrm_radius_m / res_m) if res_m > 0 else 2.0
+    border_margin_px = min(12, max(2, int(np.ceil(slrm_radius_px))))
 
     # Generar SLRM y Slope maestros para inspección visual continua sin costuras
     master_slrm_path = Path(
@@ -332,6 +341,14 @@ async def run_autonomous_prospector(
 
     tiles_dir = proc_dir / "tiles" / zone_key.lower()
     tiles_dir.mkdir(parents=True, exist_ok=True)
+
+    # Calibrador ML supervisado (probabilidad calibrada); modo degradado a score heurístico si
+    # no existe el modelo entrenado (`data/processed/ml_calibrator.joblib`).
+    calibrator = load_calibrator()
+    if calibrator:
+        print("   🤖 Calibrador ML cargado: puntuando candidatos con probabilidad calibrada (ML).")
+    else:
+        print("   🤖 Calibrador ML no entrenado: usando score heurístico morfológico.")
 
     # 3. Pipeline de Detección Celda por Celda
     print("\n[FASE 3/5] Escaneando celdas microtopográficas (SLRM + Slope + OpenCV)...")
@@ -358,6 +375,7 @@ async def run_autonomous_prospector(
             max_area=det_max_area,
             min_dz=zone_min_dz,
             max_slope_deg=zone_max_slope,
+            border_margin_px=border_margin_px,
         )
 
         cell_feats = cell_fc.get("features", [])
@@ -366,7 +384,24 @@ async def run_autonomous_prospector(
             props = feat["properties"]
             conf = float(props["confidence"])
             mean_dz = float(props["mean_elevation_m"])
-            if conf >= min_confidence and mean_dz >= zone_min_dz:
+            # Probabilidad calibrada del modelo supervisado cuando está disponible.
+            # - ml_mode="filter": reemplaza al score heurístico como umbral (modo estricto).
+            # - ml_mode="advisory": se registra en props para priorización y contexto del
+            #   Juez VLM, pero el filtro de entrada mantiene el score heurístico. Default:
+            #   el calibrador actual presenta sesgo de resolución (ver ML_BENCHMARK_METRICS)
+            #   y en modo filter anula todo candidato satelital (GLO-30) de zonas nuevas.
+            if calibrator:
+                ml_prob = score_candidate(
+                    props,
+                    slrm_path=master_slrm_path,
+                    slope_path=master_slope_path,
+                    model=calibrator,
+                )
+                if ml_prob is not None:
+                    props["ml_probability"] = ml_prob
+                    if ml_mode == "filter":
+                        conf = ml_prob
+            if conf >= min_confidence and abs(mean_dz) >= zone_min_dz:
                 props["source_cell"] = cell_tag
                 passed_cell.append(feat)
 
@@ -388,6 +423,8 @@ async def run_autonomous_prospector(
         "recinto_ortogonal": [],
         "estructura_circular": [],
         "terraza_lineal": [],
+        "estructura_hundida": [],
+        "zanja_lineal": [],
     }
     for f in dedup_features:
         t = f["properties"].get("anomaly_type", "recinto_ortogonal")
@@ -395,7 +432,7 @@ async def run_autonomous_prospector(
 
     selected_features: List[Dict[str, Any]] = []
     quota = max(1, max_candidates_to_validate // 3)
-    for t_key in ("recinto_ortogonal", "estructura_circular", "terraza_lineal"):
+    for t_key in ("recinto_ortogonal", "estructura_circular", "terraza_lineal", "estructura_hundida", "zanja_lineal"):
         selected_features.extend(by_type.get(t_key, [])[:quota])
     for f in dedup_features:
         if len(selected_features) >= max_candidates_to_validate:
@@ -464,6 +501,7 @@ async def run_autonomous_prospector(
                 "ZONA_26_STROBEL": "STR",
                 "ZONA_27_PIEDRA_PARADA": "PPA",
                 "ZONA_28_PAYUNIA": "PYU",
+                "ZONA_29_SIERRA_DE_MANCHAO": "MAN",
             }
             zone_short = zone_short_map.get(zone_key, zone_key.split("_")[-1][:3].upper())
             cand_id = f"ARQ-{zone_short}-{seq_idx:04d}"
@@ -485,8 +523,26 @@ async def run_autonomous_prospector(
         props["osm_matches_count"] = len(val_res.osm_matches)
         props["academic_references_count"] = len(zone_papers)
 
+        # Vigilancia patrimonial: patrón compatible con pozo de huaquero cerca de un sitio registrado
+        looting_alert = evaluate_looting_alert(
+            props,
+            osm_matches=val_res.osm_matches,
+            ign_matches=val_res.ign_matches,
+        )
+        if looting_alert:
+            props["patrimonial_priority"] = looting_alert["alert"]
+            props["nearest_known_site"] = looting_alert["nearest_known_site"]
+            props["diameter_m"] = looting_alert["diameter_m"]
+            props["looting_osm_context"] = looting_alert["osm_historic_context"]
+            props["looting_ign_context"] = looting_alert["ign_settlement_context"]
+            site_name = (looting_alert["nearest_known_site"] or {}).get("name", "contexto IGN/OSM")
+            print(
+                f"      🚨 {looting_alert['alert']} (diam. {looting_alert['diameter_m']} m, "
+                f"sitio: {site_name}) — vía de denuncia Ley 25.743"
+            )
+
         print(
-            f"   -> {cand_id} ({props['anomaly_type']}, {props['area_m2']} m², dZ=+{props['mean_elevation_m']} m) "
+            f"   -> {cand_id} ({props['anomaly_type']}, {props['area_m2']} m², dZ={props['mean_elevation_m']:+.2f} m) "
             f"=> Clasificación: {val_res.classification}"
         )
 
@@ -720,6 +776,16 @@ def _parse_cli_args() -> argparse.Namespace:
         action="store_true",
         help="Re-evalúa únicamente las láminas existentes con el Juez Pericial VLM sin re-escanear celdas.",
     )
+    parser.add_argument(
+        "--ml-mode",
+        type=str,
+        default="advisory",
+        choices=["advisory", "filter"],
+        help=(
+            "Uso del calibrador ML: 'advisory' (default) registra ml_probability pero filtra con "
+            "el score heurístico; 'filter' usa la probabilidad ML como umbral de entrada (estricto)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -744,6 +810,7 @@ def main() -> None:
                 window_size_m=args.window_size,
                 overlap_ratio=args.overlap,
                 max_candidates_to_validate=args.max_candidates,
+                ml_mode=args.ml_mode,
                 hunt_highres=bool(args.hunt_highres or args.highres_id),
                 highres_id=args.highres_id,
             )
@@ -762,7 +829,7 @@ def main() -> None:
                 v = d["vlm_verdict"]
                 print(
                     f"{cid:<10} | {v['verdict']:<12} | {v['certainty_pct']:>5}%   | "
-                    f"{d['area_m2']:<10.2f} | +{d['mean_elevation_m']:<7.3f} | "
+                    f"{d['area_m2']:<10.2f} | {d['mean_elevation_m']:<+8.3f} | "
                     f"{v['functional_interpretation'][:58]}"
                 )
             print("-" * 118)
@@ -778,7 +845,7 @@ def main() -> None:
         for c in surviving_candidates:
             print(
                 f"{c['id']:<10} | {c['source_cell']:<10} | {c['anomaly_type']:<22} | "
-                f"{c.get('vlm_verdict', 'N/A'):<18} | {c['area_m2']:<10.2f} | +{c['mean_elevation_m']:<7.3f} | "
+                f"{c.get('vlm_verdict', 'N/A'):<18} | {c['area_m2']:<10.2f} | {c['mean_elevation_m']:<+8.3f} | "
                 f"{c['composite_image_path']}"
             )
     print("-" * 118)

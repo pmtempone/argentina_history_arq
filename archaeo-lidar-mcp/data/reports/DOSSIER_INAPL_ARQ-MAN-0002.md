@@ -1,0 +1,68 @@
+# DOSSIER TÉCNICO DE PROSPECCIÓN ARQUEOLÓGICA REMOTA (LiDAR)
+**Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
+**Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
+**Código de Candidato:** `ARQ-MAN-0002`
+**Fecha de Generación (UTC):** `2026-11-12T03:59:36Z`
+
+---
+
+> **AVISO DE CONFIDENCIALIDAD GEODÉSICA (LEY 25.743):**
+> Con el objeto de prevenir acciones de saqueo (*guaqueo*) o destrucción intencional, las coordenadas
+> puntuales WGS84 y POSGAR 2007 han sido omitidas de este documento principal y resguardadas en el
+> archivo cifrado/aislado `ANEXO_CONFIDENCIAL_COORDENADAS.json`.
+
+---
+
+## 1. Síntesis de Detección y Clasificación Patrimonial
+
+| Parámetro | Valor Registrado |
+| :--- | :--- |
+| **ID de Anomalía** | `ARQ-MAN-0002` |
+| **Clasificación Preliminar** | **CANDIDATO_INEDITO** |
+| **Tipología Morfológica** | `estructura_circular` |
+| **Índice de Confianza Algorítmica** | `0.978` |
+| **Faja Métrica de Cálculo** | `EPSG:5344` (POSGAR 2007) |
+| **Bioma / Entorno** | `sierras_centrales` |
+| **Contexto Arqueológico Esperado** | `Casas-pozo comechingonas semi-enterradas (relieve negativo), corrales pircados, morteros y aleros en las laderas occidentales.` |
+
+---
+
+## 2. Métricas Morfométricas y Microtopográficas (SLRM)
+
+- **Área Estimada en Planta:** `654.91 m²`
+- **Índice de Rectangularidad:** `0.7858`
+- **Índice de Circularidad Isoperimétrica:** `0.9958`
+- **Sobre-elevación Local Media (SLRM):** `0.296 m`
+- **Distancia al Curso de Agua más Próximo (IGN):** `No determinado (sin datos IGN)`
+
+---
+
+## 3. Verificación de Nube de Puntos Cruda e Inspección Multimodal
+
+- **Densidad de Retornos de Suelo (ASPRS Clase 2):** `N/D pts/m²`
+- **Puntaje de Integridad del Perfil Transversal:** `N/D`
+- **Lámina Compuesta (Hillshade 1.5x + SLRM + Perfil + 3D):** `data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0002_composite.png`
+- **Modelo 3D Isométrico Térmico/Infrarrojo (Blender EEVEE):** `N/D`
+- **Gráfico de Corte Transversal (Cross-Section):** `N/D`
+
+---
+
+## 4. Anexo Reservado de Coordenadas
+
+Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
+direcciones provinciales de patrimonio se encuentran en:
+- Archivo: `data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json`
+
+---
+
+## 5. Juicio Pericial de Inteligencia Artificial Multimodal
+
+| Campo | Dictamen |
+| :--- | :--- |
+| **Veredicto final** | **NATURAL** |
+| **Nivel de certeza** | `88%` |
+| **Interpretación funcional** | Lomada convexa de ladera (~55 m de base, resalte 0.41 m), sin geometría anular. |
+| **¿Inspección terrestre / dron?** | **NO** |
+| **Backend evaluador** | `agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)` |
+
+**Justificación geomorfológica:** Panel 1: gradiente suave NW-SE sin sombras de muro perimetral ni traza anular. Panel 2: positivo difuso y continuo (0.2-0.4 m) sin anillo deprimido entre muros. Panel 3: campana lisa de 0.41 m sobre 55 m sin piso interior ni bordes de corral. Panel 4: domo sin paredes. Un corral de pirca de 650 m2 presentaría un anillo de sobreelevación discontinuo de 0.3-0.5 m y trazas lineales en hillshade; ambas ausentes. Morfología de loma coluvial granítica.

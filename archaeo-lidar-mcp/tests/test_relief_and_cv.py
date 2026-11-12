@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 import rasterio
+from rasterio.transform import from_origin
 
 from src.core.anomaly_detector import detect_anomalies
 from src.core.crs_manager import ensure_metric_crs, get_posgar_faja, reproject_geometry
@@ -85,6 +86,192 @@ def test_slrm_slope_and_cv_anomaly_detection(synthetic_posgar_dtm: Path, tmp_pat
         # Como están a ~74 m (< 80 m), ambos deben haberse agrupado en un complejo arquitectónico
         assert props["is_architectural_complex"] is True
         assert props["complex_group_type"] == "complejo_agrupado"
+
+
+def test_negative_relief_detection(synthetic_posgar_dtm_with_pit: Path, tmp_path: Path) -> None:
+    """Verifica que el detector encuentre el hundimiento plantado (casa-pozo) además de las positivas.
+
+    El DTM sintético tiene una pirca (+0.6 m), un chenque circular (+0.6 m) y un pozo de
+    12 m de diámetro excavado a -0.6 m. El pase de relieve negativo debe recuperar el pozo
+    con `estructura_hundida`, valor SLRM con signo negativo y fuera del complejo (< 80 m).
+    """
+    slrm_path = compute_slrm(synthetic_posgar_dtm_with_pit, tmp_path / "slrm_neg.tif", radius_m=15.0)
+    slope_path = compute_slope(synthetic_posgar_dtm_with_pit, tmp_path / "slope_neg.tif")
+
+    fc = detect_anomalies(slrm_path, slope_path, min_area=12.0, max_area=6000.0)
+    features = fc["features"]
+    types_found = {f["properties"]["anomaly_type"] for f in features}
+
+    assert "estructura_hundida" in types_found
+    # Las estructuras positivas siguen detectándose
+    assert "recinto_ortogonal" in types_found
+    assert "estructura_circular" in types_found
+
+    pits = [f for f in features if f["properties"]["anomaly_type"] == "estructura_hundida"]
+    assert len(pits) == 1
+
+    pit = pits[0]
+    props = pit["properties"]
+    # El hundimiento debe reportar desviación SLRM negativa
+    assert props["mean_elevation_m"] < 0.0
+    assert props["relief_sign"] == "negativo"
+    # Área teórica del pozo: pi * 6^2 ≈ 113.10 m² (tolerancia 15%)
+    expected_area = math.pi * (6.0**2)
+    rel_err = abs(float(props["area_m2"]) - expected_area) / expected_area
+    assert rel_err < 0.15, f"Error de área en pozo ({props['area_m2']} vs {expected_area}): {rel_err:.2%}"
+    # A más de 80 m de la pirca/chenque: no debe agruparse en el complejo
+    assert props["is_architectural_complex"] is False
+    # Geometría en WGS84 válida (Argentina)
+    lon, lat = props["centroid_wgs84"]
+    assert -75.0 <= lon <= -53.0
+    assert -56.0 <= lat <= -21.0
+
+
+def test_min_area_physical_floor_by_resolution(tmp_path: Path) -> None:
+    """Verifica el piso físico de área: `min_area` no puede quedar por debajo de 2 píxeles del raster.
+
+    Con un raster de 10 m/px (píxel = 100 m²), un `min_area` solicitado de 12 m² es
+    físicamente irrecuperable; el detector debe elevarlo a 200 m² y registrar la
+    aplicación del piso en los metadatos.
+    """
+    width = height = 40
+    res = 10.0
+    transform = from_origin(2500000.0, 7000200.0, res, res)
+    data = np.full((height, width), 2000.0, dtype=np.float32)
+
+    coarse_dtm = tmp_path / "coarse_dtm.tif"
+    profile = {
+        "driver": "GTiff",
+        "height": height,
+        "width": width,
+        "count": 1,
+        "dtype": "float32",
+        "crs": rasterio.crs.CRS.from_epsg(5344),
+        "transform": transform,
+        "nodata": -9999.0,
+    }
+    with rasterio.open(coarse_dtm, "w", **profile) as dst:
+        dst.write(data, 1)
+
+    slrm_path = compute_slrm(coarse_dtm, tmp_path / "coarse_slrm.tif", radius_m=25.0)
+    slope_path = compute_slope(coarse_dtm, tmp_path / "coarse_slope.tif")
+
+    fc = detect_anomalies(slrm_path, slope_path, min_area=12.0, max_area=6000.0)
+    meta = fc["metadata"]
+
+    assert meta["pixel_area_m2"] == pytest.approx(100.0)
+    assert meta["min_area_requested_m2"] == pytest.approx(12.0)
+    assert meta["min_area_effective_m2"] == pytest.approx(200.0)
+    assert meta["min_area_floor_applied"] is True
+    # Terreno plano sin estructuras: sin detecciones
+    assert len(fc["features"]) == 0
+
+
+def test_detection_recall_at_satellite_resolution(tmp_path: Path) -> None:
+    """Mide el recall del detector a resolución satelital (30 m/px, Copernicus GLO-30).
+
+    Planta estructuras del tamaño mínimo realista detectable a 30 m/px (≈ 2+ píxeles:
+    una plaza/kancha de 150x90 m y un corral circular de radio 105 m) y verifica que
+    ambas se detecten con tipología y ubicación correctas. A esta resolución el área
+    se sobreestima por la corrección de medio píxel, así que la tolerancia es amplia.
+    """
+    width = height = 64
+    res = 30.0
+    transform = from_origin(2500000.0, 7000200.0, res, res)
+
+    cols = (np.arange(width, dtype=np.float64) + 0.5) * res
+    rows = (np.arange(height, dtype=np.float64) + 0.5) * res
+    xx, yy = np.meshgrid(cols, rows)
+
+    # Terreno base suave de larga longitudelada: amplitud baja para que el residual SLRM
+    # propio del terreno (~6% de la amplitud tras el filtro gaussiano) quede muy por debajo
+    # del umbral min_dz de 0.15 m y no compita con las estructuras plantadas.
+    z = 2000.0 + 1.0 * np.sin(xx / 300.0) + 1.0 * np.cos(yy / 300.0)
+
+    # 1. Plaza / kancha rectangular 150x90 m (+0.6 m) centrada en (720, 720) m locales
+    rect_mask = (np.abs(xx - 720.0) <= 75.0) & (np.abs(yy - 720.0) <= 45.0)
+    z[rect_mask] += 0.60
+
+    # 2. Corral circular radio 105 m (3.5 px) (+0.6 m) centrado en (1200, 840) m locales.
+    #    A 30 m/px un círculo de radio < ~3 px rasteriza como un cuadrado perfecto
+    #    (rectangularidad ~0.94) y es indistinguible de un recinto ortogonal. La separación
+    #    con el rectángulo es de 10 px: la clausura morfológica 3x3 cierra huecos de hasta 2 px.
+    z[np.hypot(xx - 1200.0, yy - 840.0) <= 105.0] += 0.60
+
+    coarse_dtm = tmp_path / "glo30_planted_dtm.tif"
+    profile = {
+        "driver": "GTiff",
+        "height": height,
+        "width": width,
+        "count": 1,
+        "dtype": "float32",
+        "crs": rasterio.crs.CRS.from_epsg(5344),
+        "transform": transform,
+        "nodata": -9999.0,
+    }
+    with rasterio.open(coarse_dtm, "w", **profile) as dst:
+        dst.write(z.astype(np.float32), 1)
+
+    # Radio de tendencia SLRM > tamaño de la estructura en píxeles: a 30 m/px, 240 m = 8 px,
+    # suficiente para que el interior de la estructura (2.5-5 px) quede elevado respecto a la
+    # tendencia. Con radios ~1 px el SLRM solo marca los bordes y la detección colapsa.
+    slrm_path = compute_slrm(coarse_dtm, tmp_path / "glo30_slrm.tif", radius_m=240.0)
+    slope_path = compute_slope(coarse_dtm, tmp_path / "glo30_slope.tif")
+
+    # Margen de borde: la tendencia SLRM está sesgada cerca del borde del raster (modo 'nearest'
+    # del filtro gaussiano genera residual espurio de hasta ±0.25 m en terreno colinar) y los
+    # tiles satelitales son chicos en píxeles (500 m = ~16 px a 30 m/px). El overlap del tiling
+    # garantiza que una estructura cerca de un borde se detecte desde la celda vecina.
+    fc = detect_anomalies(
+        slrm_path,
+        slope_path,
+        min_area=12.0,
+        max_area=60000.0,
+        border_margin_px=12,
+    )
+    features = fc["features"]
+    types_found = {f["properties"]["anomaly_type"] for f in features}
+
+    # Recall: las dos estructuras plantadas deben detectarse
+    assert len(features) == 2, f"Se esperaban 2 detecciones, hubo {len(features)}: {types_found}"
+    assert "recinto_ortogonal" in types_found
+    assert "estructura_circular" in types_found
+
+    # Piso físico de área aplicado: 2 px x (30 m)^2 = 1800 m²
+    meta = fc["metadata"]
+    assert meta["min_area_floor_applied"] is True
+    assert meta["min_area_effective_m2"] == pytest.approx(1800.0)
+
+    # Centroides dentro de la estructura plantada (±90 m) y en WGS84 válido
+    # Local: x hacia el Este desde west=2500000; y hacia el Sur desde north=7000200.
+    expected_centroids = {
+        "recinto_ortogonal": (2500000.0 + 720.0, 7000200.0 - 720.0),
+        "estructura_circular": (2500000.0 + 1200.0, 7000200.0 - 840.0),
+    }
+    for feat in features:
+        props = feat["properties"]
+        exp = expected_centroids[props["anomaly_type"]]
+        lon, lat = props["centroid_wgs84"]
+        assert -75.0 <= lon <= -53.0
+        assert -56.0 <= lat <= -21.0
+        # Distancia métrica centroide detectado vs plantado (reproyectando a la faja)
+        from pyproj import CRS, Transformer
+
+        to_metric = Transformer.from_crs(CRS.from_epsg(4326), CRS.from_epsg(5344), always_xy=True)
+        cx, cy = to_metric.transform(lon, lat)
+        dist_planted = math.hypot(cx - exp[0], cy - exp[1])
+        assert dist_planted < 90.0, (
+            f"Centroide lejos de la estructura plantada: {props['anomaly_type']} "
+            f"({cx:.0f}, {cy:.0f}) vs ({exp[0]:.0f}, {exp[1]:.0f})"
+        )
+
+    # Área sobreestimada a resolución gruesa (corrección de medio píxel) pero del orden correcto
+    for feat in features:
+        area_m2 = float(feat["properties"]["area_m2"])
+        if feat["properties"]["anomaly_type"] == "recinto_ortogonal":
+            assert 12000.0 <= area_m2 <= 25000.0, f"Área recinto fuera de rango: {area_m2}"
+        else:
+            assert 25000.0 <= area_m2 <= 50000.0, f"Área círculo fuera de rango: {area_m2}"
 
 
 def test_visual_inspector_and_dossier(synthetic_posgar_dtm: Path, tmp_path: Path) -> None:

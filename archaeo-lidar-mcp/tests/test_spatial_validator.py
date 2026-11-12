@@ -160,3 +160,46 @@ async def test_validate_sitio_registrado_from_local_gpkg_and_literature(tmp_path
     assert len(papers) == 1
     assert "Pucará de Tilcara" in papers[0]["title"]
     assert papers[0]["publication_year"] == 2021
+
+
+def test_known_sites_catalog_from_csv(tmp_path: Path) -> None:
+    """Verifica el catálogo de sitios publicados (CSV -> GPKG) y su integración con la validación.
+
+    - El builder genera un GeoPackage puntual WGS84 con las coordenadas redondeadas a 3 decimales.
+    - Un candidato a < 200 m de un sitio publicado (El Shincal) debe clasificar SITIO_REGISTRADO.
+    - Un candidato lejos de todo sitio registrado no debe tener matches del catálogo.
+    """
+    from src.core.known_sites import DEFAULT_CSV_PATH, build_known_sites_gpkg
+    from src.core.spatial_validator import _check_local_gpkg
+
+    assert DEFAULT_CSV_PATH.exists()
+
+    gpkg_path = build_known_sites_gpkg(out_gpkg_path=tmp_path / "known_sites.gpkg")
+    assert gpkg_path.exists()
+
+    gdf = gpd.read_file(gpkg_path)
+    assert len(gdf) >= 8
+    assert set(gdf.columns) >= {"name", "zone_id", "site_type", "era", "source", "sensitivity_note"}
+
+    # Candidato a ~55 m del centroide registrado de El Shincal de Quimivil (Catamarca)
+    shincal_matches = _check_local_gpkg(
+        lat=-27.6871,
+        lon=-67.1752,
+        known_gpkg_path=gpkg_path,
+    )
+    assert len(shincal_matches) == 1
+    assert shincal_matches[0]["name"] == "El Shincal de Quimivil"
+    assert shincal_matches[0]["distance_m"] < 200.0
+
+    # Candidato a ~5 km de todo sitio registrado del catálogo
+    far_matches = _check_local_gpkg(
+        lat=-27.6400,
+        lon=-67.1200,
+        known_gpkg_path=gpkg_path,
+    )
+    assert far_matches == []
+
+    # Verificar redondeo a 3 decimales (anti-guaqueo): ninguna coordenada con más precisión
+    for _, row in gdf.iterrows():
+        assert row.geometry.x == round(row.geometry.x, 3)
+        assert row.geometry.y == round(row.geometry.y, 3)

@@ -8,6 +8,8 @@ AnomalyTypeLiteral = Literal[
     "recinto_ortogonal",
     "estructura_circular",
     "terraza_lineal",
+    "estructura_hundida",
+    "zanja_lineal",
     "complejo_agrupado",
 ]
 
@@ -55,7 +57,7 @@ class AnomalyFeature(BaseModel):
     id: str = Field(..., description="Identificador único del candidato arqueológico.")
     anomaly_type: AnomalyTypeLiteral = Field(
         ...,
-        description="Tipología morfológica detectada (recinto_ortogonal, estructura_circular, terraza_lineal, complejo_agrupado).",
+        description="Tipología morfológica detectada (recinto_ortogonal, estructura_circular, terraza_lineal, estructura_hundida, zanja_lineal, complejo_agrupado).",
     )
     confidence: float = Field(
         ..., ge=0.0, le=1.0, description="Nivel de confianza geométrica y topográfica [0.0 - 1.0]."
@@ -68,7 +70,8 @@ class AnomalyFeature(BaseModel):
         ..., ge=0.0, le=1.5, description="Índice de circularidad isoperimétrica (4 * pi * A / P^2)."
     )
     mean_elevation_m: float = Field(
-        ..., description=" Promedio de sobre-elevación local en metros respecto a la tendencia (SLRM)."
+        ...,
+        description="Desviación local media (SLRM) en metros respecto a la tendencia: positivo para sobre-elevaciones, negativo para hundimientos.",
     )
     centroid_wgs84: Tuple[float, float] = Field(
         ..., description="Coordenadas del centroide reproyectadas a WGS84 (lon, lat)."

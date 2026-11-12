@@ -192,6 +192,18 @@ EXPANDED_TARGET_ZONES = {
         "max_slope_deg": 25.0,
         "archaeo_context": "Casas-pozo semi-enterradas, corrales pircados y aleros rocosos."
     },
+    "ZONA_29_SIERRA_DE_MANCHAO": {
+        "name": "Sierra de Manchao / Pocho (Córdoba)",
+        "bbox": [-66.435, -28.335, -66.365, -28.265],
+        "epsg": 5345,
+        "biome": "sierras_centrales",
+        "slrm_radius_m": 10.0,
+        "min_area_m2": 12.0,
+        "max_area_m2": 800.0,
+        "min_dz_m": 0.20,
+        "max_slope_deg": 25.0,
+        "archaeo_context": "Casas-pozo comechingonas semi-enterradas (relieve negativo), corrales pircados, morteros y aleros en las laderas occidentales."
+    },
 
     # FRENTE 2: YUNGAS Y SELVA SUBTROPICAL
     "ZONA_20_VALLE_GRANDE": {

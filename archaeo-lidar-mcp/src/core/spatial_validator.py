@@ -185,7 +185,9 @@ def _classify_validation_outcome(
     for ign in ign_matches:
         if ign.get("layer") != "ign:linea_de_agua":
             dist = ign.get("distance_m")
-            if dist is None or dist <= 150.0:
+            # Solo se considera falso positivo moderno si la feature del IGN tiene geometría
+            # medible y se encuentra efectivamente cerca; `dist=None` (sin geometría) no prueba proximidad.
+            if dist is not None and dist <= 150.0:
                 return "FALSO_POSITIVO_MODERNO"
 
     # 3. Sin infraestructura moderna ni registro previo -> Candidato inédito

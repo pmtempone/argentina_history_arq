@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.config import settings
+from src.core.geoform_inventory import append_geoform_inventory
 from src.core.report_generator import generate_inapl_dossier
 
 VerdictLiteral = Literal["ANTROPICA", "NATURAL", "ARTEFACTO", "PENDIENTE_REVISION"]
@@ -34,6 +35,10 @@ Respondé en formato estructurado:
 - Interpretación funcional: ¿Qué parece ser? (ej. Pucará, andenería, kancha, corral).
 - Justificación geomorfológica: Explicá qué observás en el perfil 2D y en los bordes del Hillshade.
 - Decisión: ¿Vale la pena una inspección terrestre o vuelo de dron? (SÍ / NO)
+
+SI el candidato figura con `patrimonial_priority: ALERTA_SAQUEO`, priorizá el análisis de
+evidencia de excavación ilegal (bordes netos, escombro perimetral, fondo irregular) y
+recomendá siempre la notificación al INAPL en la interpretación funcional.
 """
 
 
@@ -60,6 +65,7 @@ def build_judge_prompt(candidate_id: str, metrics: Dict[str, Any]) -> str:
         "area_m2",
         "mean_elevation_m",
         "confidence",
+        "ml_probability",
         "rectangularity",
         "circularity",
         "slope_mean_deg",
@@ -67,6 +73,9 @@ def build_judge_prompt(candidate_id: str, metrics: Dict[str, Any]) -> str:
         "dem_source",
         "dem_native_resolution_m",
         "dem_processing_resolution_m",
+        "patrimonial_priority",
+        "nearest_known_site",
+        "diameter_m",
     ):
         if key in metrics:
             lines.append(f"- {key}: {metrics[key]}")
@@ -265,6 +274,9 @@ def record_vlm_verdict(
             "vlm_verdict": verdict.model_dump(),
         }
         disc_path.write_text(json.dumps(disc, indent=2, ensure_ascii=False), encoding="utf-8")
+
+        # Los descartes NATURAL alimentan el inventario geomorfológico secundario
+        append_geoform_inventory(candidate_id, props, verdict.model_dump(), reports_dir=rep_dir)
 
     return {
         "candidate_id": candidate_id,
