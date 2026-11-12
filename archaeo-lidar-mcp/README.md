@@ -130,6 +130,10 @@ A diferencia de modelos homogéneos, el pipeline calibra dinámicamente sus umbr
 
 ## 🚀 Guía Rápida de Uso (CLI)
 
+> 📖 **Si no sos developer, empezá por el [Manual de Uso](../MANUAL_DE_USO.md)** (raíz del repo):
+> recetas por escenario ("quiero prospectar una zona nueva", "cómo audito un candidato",
+> "qué hago si aparece una alerta de saqueo"), diccionario de archivos de resultado y glosario.
+
 ### 1. Requisitos Previos e Instalación
 ```bash
 cd /Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp

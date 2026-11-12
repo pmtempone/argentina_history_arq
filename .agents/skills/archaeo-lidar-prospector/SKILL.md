@@ -14,6 +14,10 @@ description: >-
 
 Este skill guía la ejecución autónoma y supervisada del sistema **ArchaeoLiDAR-AR-MCP** para la prospección, detección y juicio pericial de sitios arqueológicos en todo el territorio de la República Argentina, bajo el marco de la **Ley Nacional N° 25.743** (Protección del Patrimonio Arqueológico y Paleontológico - INAPL).
 
+> 📖 **Para usuarios no técnicos:** existe un manual por escenarios en el raíz del repositorio
+> (`MANUAL_DE_USO.md`): qué le pide la persona, qué hace el sistema y dónde mira el resultado.
+> Cuando el usuario pregunte "cómo hago X" sin vocabulario técnico, guiarlo con ese manual.
+
 ---
 
 ## 1. Entorno de Ejecución y Dependencias

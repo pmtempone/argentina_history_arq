@@ -34,4 +34,10 @@ python -m src.autonomous_prospector --target ZONA_23_DELTA_PARANA --max-candidat
 python -m src.autonomous_prospector --highres-id ZENODO:3383227 --max-candidates 4
 ```
 
+## 🚀 Empezá por acá
+
+👉 **[Manual de Uso (para cualquier persona)](MANUAL_DE_USO.md)** — qué hace el sistema,
+qué le pedís, dónde mirás el resultado, por escenarios ("quiero prospectar una zona
+nueva", "quiero detectar saqueo", "cómo audito un candidato").
+
 Para documentación técnica detallada, consulta el [**README de ArchaeoLiDAR-AR-MCP**](archaeo-lidar-mcp/README.md) y el skill en [`.agents/skills/archaeo-lidar-prospector/SKILL.md`](.agents/skills/archaeo-lidar-prospector/SKILL.md).
