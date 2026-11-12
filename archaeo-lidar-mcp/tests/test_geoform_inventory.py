@@ -60,6 +60,7 @@ def test_record_natural_verdict_populates_inventory(tmp_path: Path) -> None:
         candidate_id="ARQ-GEO-0001",
         verdict_data=verdict_natural,
         reports_dir=reports,
+        cache_dir=tmp_path / "vlm_cache",
     )
     assert res["discarded"] is True
 
@@ -88,6 +89,7 @@ def test_antropica_verdict_not_in_inventory(tmp_path: Path) -> None:
         candidate_id="ARQ-GEO-0001",
         verdict_data=verdict_anthropica,
         reports_dir=reports,
+        cache_dir=tmp_path / "vlm_cache",
     )
     assert not (reports / "INVENTARIO_GEOMORFOLOGICO.geojson").exists()
 

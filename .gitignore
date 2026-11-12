@@ -45,16 +45,17 @@ Thumbs.db
 *.sublime-workspace
 
 # Large geospatial datasets & raw downloads (LiDAR clouds, DEM GeoTIFFs > 50MB)
-data/raw/*
-!data/raw/.gitkeep
+/data/
 archaeo-lidar-mcp/data/raw/*
 !archaeo-lidar-mcp/data/raw/.gitkeep
 
-# Intermediate raster tiles & outputs
-data/processed/*
-!data/processed/.gitkeep
+# Intermediate raster tiles & outputs (allow sample composite PNGs for Dossier rendering)
 archaeo-lidar-mcp/data/processed/*
 !archaeo-lidar-mcp/data/processed/.gitkeep
+!archaeo-lidar-mcp/data/processed/zona_20_valle_grande_*_composite.png
+!archaeo-lidar-mcp/data/processed/zona_21_ciudacita_*_composite.png
+!archaeo-lidar-mcp/data/processed/zona_29_sierra_de_manchao_*_composite.png
+!archaeo-lidar-mcp/data/processed/synthetic_posgar_faja2_dtm_ARQ-*_composite.png
 
 # Sensitive geodetic coordinates under Ley 25.743 (INAPL anti-looting)
 *ANEXO_CONFIDENCIAL_COORDENADAS.json

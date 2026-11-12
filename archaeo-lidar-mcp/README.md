@@ -83,16 +83,17 @@ Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), mode
 
 ## 📊 Balance de la Campaña Arqueológica Nacional
 
-El sistema ha completado el barrido sobre **28 zonas y 2 relevamientos fotogramétricos UAV de alta resolución**, con un rigor que garantiza **cero falsos positivos en campo**:
+El sistema ha completado el barrido sobre **29 zonas y 2 relevamientos fotogramétricos UAV de alta resolución**, con un rigor que garantiza **cero falsos positivos en campo**:
 
 | Métrica | Valor Consolidado |
 | :--- | :--- |
-| **Celdas métricas escaneadas** | **1.303 cuadrículas** |
-| **Candidatos inéditos aislados** | **105 anomalías** |
-| **Dictamen `NATURAL` (Albardones, médanos, espinazos, canchales, vaguadas)** | **87 casos (82.9%)** |
-| **Dictamen `ARTEFACTO` (Costuras de tile satelital + instrumental moderno)** | **18 casos (17.1%)** |
+| **Celdas métricas escaneadas** | **2.167 cuadrículas** |
+| **Candidatos inéditos aislados y auditados** | **121 anomalías** |
+| **Dictamen `NATURAL` (Albardones, médanos, espinazos, canchales, vaguadas)** | **101 casos (83.5%)** |
+| **Dictamen `ARTEFACTO` (Costuras de tile satelital + instrumental moderno + sintéticos)** | **20 casos (16.5%)** |
+| **Geoformas catalogadas (`INVENTARIO_GEOMORFOLOGICO.geojson`)** | **84 geoformas** |
 | **Falsas alarmas derivadas a campo** | **0 falsos positivos (0.0%)** |
-| **Dossiers Técnicos INAPL generados** | **107 informes oficiales (Ley 25.743)** |
+| **Dossiers Técnicos INAPL generados** | **121 informes oficiales (Ley 25.743)** |
 
 > **Nota de alcance (campaña satelital):** el barrido con Copernicus GLO-30 (30 m/px) opera con el piso
 > físico de área (≥ 2 píxeles ⇒ ~1800 m² a 30 m/px); estructuras menores a ese tamaño solo son
@@ -103,7 +104,7 @@ El sistema ha completado el barrido sobre **28 zonas y 2 relevamientos fotogram�
 
 ## 🗺️ Catálogo de Zonas y Calibración Adaptativa por Bioma
 
-A diferencia de modelos homogéneos, el pipeline calibra dinámicamente sus umbrales según el bioma y la morfología arqueológica esperada. Tabla de las Zonas 17 a 28 + UAV; las Zonas 1 a 16 se definen en `src/core/data_fetcher.py` (`TARGET_ZONES`), fuente de verdad del catálogo completo:
+A diferencia de modelos homogéneos, el pipeline calibra dinámicamente sus umbrales según el bioma y la morfología arqueológica esperada. Tabla de las Zonas 17 a 29 + UAV; las Zonas 1 a 16 se definen en `src/core/data_fetcher.py` (`TARGET_ZONES`), fuente de verdad del catálogo completo:
 
 | Grupo | ID Zona | Región / Bioma | EPSG | Radio SLRM | Área ($m^2$) | \|dZ\| mín | Pendiente | Objetivo Arqueológico |
 | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
@@ -119,6 +120,7 @@ A diferencia de modelos homogéneos, el pipeline calibra dinámicamente sus umbr
 | **Patagonia** | `ZONA_26_STROBEL` | Meseta del Lago Strobel (Santa Cruz) | 5343 | 8 m | 6–400 | 0.25 m | 20° | Parapetos semicirculares de caza y chenques líticos. |
 | **Patagonia** | `ZONA_27_PIEDRA_PARADA`| Río Chubut Medio (Chubut) | 5343 | 8 m | 8–500 | 0.25 m | 22° | Estructuras anulares y enterratorios en terrazas. |
 | **Basalto** | `ZONA_28_PAYUNIA` | La Payunia (Mendoza) | 5344 | 10 m | 10–600 | 0.25 m | 25° | Apostaderos y corrales entre coladas basálticas. |
+| **Sierras** | `ZONA_29_SIERRA_DE_MANCHAO` | Sierra de Manchao / Pocho (Córdoba) | 5345 | 10 m | 12–800 | 0.20 m | 25° | Casas-pozo comechingonas, corrales pircados y aleros. |
 | **UAV Sub-m**| `ZENODO:3383227` | San Rafael (Mendoza - **5 cm/px**) | 5344 | 2.5 m | 1–300 | 0.10 m | 35° | Muros finos, zanjas y pedestales a escala centimétrica. |
 
 > **Umbrales en valor absoluto:** `\|dZ\|` aplica tanto a sobreelevaciones (recintos, cerritos) como a
@@ -136,7 +138,7 @@ A diferencia de modelos homogéneos, el pipeline calibra dinámicamente sus umbr
 
 ### 1. Requisitos Previos e Instalación
 ```bash
-cd /Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp
+cd archaeo-lidar-mcp
 python3 -m venv venv
 source venv/bin/activate
 pip install -e .

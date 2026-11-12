@@ -29,6 +29,7 @@ POSGAR_2007_LON_BOUNDS: Dict[int, Tuple[float, float]] = {
 }
 
 WGS84_EPSG: int = 4326
+PROJECT_ROOT: Path = Path(__file__).resolve().parent.parent
 
 
 class Settings(BaseSettings):
@@ -41,17 +42,17 @@ class Settings(BaseSettings):
     )
 
     data_dir: Path = Field(
-        default=Path("./data/raw"),
+        default=PROJECT_ROOT / "data" / "raw",
         alias="DATA_DIR",
         description="Directorio de entrada para nubes LiDAR (.las/.laz) y rasters crudos.",
     )
     processed_dir: Path = Field(
-        default=Path("./data/processed"),
+        default=PROJECT_ROOT / "data" / "processed",
         alias="PROCESSED_DIR",
         description="Directorio de salida para DTMs, modelos SLRM, Slope y láminas PNG.",
     )
     reports_dir: Path = Field(
-        default=Path("./data/reports"),
+        default=PROJECT_ROOT / "data" / "reports",
         alias="REPORTS_DIR",
         description="Directorio de salida para dossiers técnicos INAPL y anexos confidenciales.",
     )
@@ -81,7 +82,7 @@ class Settings(BaseSettings):
         description="Endpoint de búsqueda académica Semantic Scholar API.",
     )
     known_sites_gpkg_path: Path = Field(
-        default=Path("./data/known_sites.gpkg"),
+        default=PROJECT_ROOT / "data" / "known_sites.gpkg",
         alias="KNOWN_SITES_GPKG_PATH",
         description="Ruta opcional a un archivo GeoPackage local con sitios arqueológicos registrados.",
     )

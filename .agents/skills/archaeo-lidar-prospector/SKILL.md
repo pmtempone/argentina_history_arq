@@ -2,7 +2,7 @@
 name: archaeo-lidar-prospector
 description: >-
   Prospección arqueológica autónoma sobre datos LiDAR, fotogrametría UAV y DEMs en Argentina.
-  Usar para ejecutar prospecciones en las Zonas 1 a 28, cazar datasets LiDAR/UAV de alta resolución (< 1m),
+  Usar para ejecutar prospecciones en las Zonas 1 a 29, cazar datasets LiDAR/UAV de alta resolución (< 1m),
   generar modelos de relieve local (SLRM/Pendiente) con detección de relieve positivo Y negativo
   (recintos, chenques, terrazas, casas-pozo, zanjas), validar contra el catálogo de sitios publicados,
   renderizar modelos 3D isométricos térmicos en Blender 4.2 LTS, auditar candidatos con el Juez Pericial

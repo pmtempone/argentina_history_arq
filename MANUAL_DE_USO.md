@@ -35,8 +35,8 @@ legal (dossier) de cada candidato para el INAPL, bajo la Ley 25.743.
 
 ### 3.1 "Quiero buscar en una zona que YA está en el catálogo"
 
-El catálogo tiene 28 zonas (Tastil, Yocavil, Tolombón, Tilcara, Aconquija, Delta del
-Paraná, Iberá, etc.). Cada una ya viene calibrada para su bioma.
+El catálogo tiene 29 zonas (Tastil, Yocavil, Tolombón, Tilcara, Aconquija, Valle Grande,
+Sierra de Manchao, Delta del Paraná, Iberá, etc.). Cada una ya viene calibrada para su bioma.
 
 **Qué le pedís al asistente:**
 > "Prospectá la zona ZONA_23_DELTA_PARANA con 4 candidatos"
@@ -276,6 +276,5 @@ Con el skill `archaeo-lidar-prospector` cargado, frases que funcionan:
 
 ---
 
-*Manual correspondiente a la rama `feat/relieve-negativo-y-validacion`. Referencias
-científicas por técnica: ver la sección "📚 Referencias Metodológicas" del
+*Referencias científicas por técnica: ver la sección "📚 Referencias Metodológicas" del
 [README del subproyecto](archaeo-lidar-mcp/README.md).*

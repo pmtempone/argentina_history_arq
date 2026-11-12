@@ -403,9 +403,17 @@ def test_reproject_geographic_raster_to_posgar(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_unified_full_pipeline(synthetic_posgar_dtm: Path) -> None:
+async def test_unified_full_pipeline(
+    synthetic_posgar_dtm: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Verifica la ejecución de la herramienta unificada tool_run_full_pipeline."""
+    from src.config import settings
     from src.server import tool_run_full_pipeline
+
+    monkeypatch.setattr(settings, "processed_dir", tmp_path / "processed")
+    monkeypatch.setattr(settings, "reports_dir", tmp_path / "reports")
 
     res = await tool_run_full_pipeline(
         input_path=str(synthetic_posgar_dtm),
