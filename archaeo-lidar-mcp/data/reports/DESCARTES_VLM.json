@@ -1739,7 +1739,82 @@
         "field_inspection_recommended": false,
         "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
       }
+    },
+    "ARQ-VGR-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 478.77,
+      "mean_elevation_m": 1.734,
+      "composite_image_path": "data/processed/zona_20_valle_grande_ARQ-VGR-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-VGR-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 88,
+        "functional_interpretation": "Lomada/espolón suave en ladera yungueña (~50 m de base, resalte 2.42 m).",
+        "geomorphological_justification": "Panel 1: gradiente de ladera sin trazas lineales de muro, sin esquinas ni quiebres ortogonales. Panel 2: plateau positivo blocoso (escalones de 15x15 px del supermuestreo GLO-30 30m->2m) sin bordes rectos ni estructura interna. Panel 3: bombeo simétrico continuo de 2.42 m sobre 50 m, sin piso plano ni resaltes perimetrales de pirca. Panel 4: domo liso. La clasificación 'recinto' deriva del contorno del umbral sobre la convexidad, no de arquitectura. Escala del resalte compatible con espolón coluvial.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-VGR-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 147.46,
+      "mean_elevation_m": 1.568,
+      "composite_image_path": "data/processed/zona_20_valle_grande_ARQ-VGR-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-VGR-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 88,
+        "functional_interpretation": "Loma convexa en ladera (~42 m de base, resalte 1.75 m), sin geometría anular.",
+        "geomorphological_justification": "Panel 1: gradiente suave sin sombras de muro perimetral ni anillo. Panel 2: plateau positivo difuso con escalones de bloque de píxel nativo en el borde NE/SE (artefacto de remuestreo). Panel 3: campana asimétrica continua de 1.75 m sin piso interior ni muros de corral. Panel 4: domo sin paredes. Un corral circular de 147 m2 (d~14 m) mostraría anillo discontinuo de 0.3-0.5 m y traza lineal en hillshade; ambas ausentes.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-VGR-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 131.46,
+      "mean_elevation_m": 1.3,
+      "composite_image_path": "data/processed/zona_20_valle_grande_ARQ-VGR-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-VGR-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 85,
+        "functional_interpretation": "Hombro/dorso de ladera de una forma mayor (ventana saturada: toda la celda SLRM > 1.0 m).",
+        "geomorphological_justification": "Panel 1: gradiente plano sin andenes transversales, muros de contención ni escalones de plataforma (rasgos definitorios de andenería). Panel 2: SLRM integralmente saturado en amarillo (>1.0 m): la ventana de 35 m cae dentro de una forma mayor y no captura su contexto; el candidato es el flanco de una loma, no una terraza delimitada. Panel 3: lomo desdibujado de 1.7 a 0.8 m sobre 70 m, sin quiebres de andén. Panel 4: ladera continua. Un andén agrícola prehispánico tiene 2-4 m de ancho de banqueta y muro frontal: debajo de la resolución nativa de GLO-30; este rasgo es el hombro natural de la ladera.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-VGR-0004": {
+      "anomaly_type": "estructura_hundida",
+      "area_m2": 153.8,
+      "mean_elevation_m": -1.806,
+      "composite_image_path": "data/processed/zona_20_valle_grande_ARQ-VGR-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-VGR-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 87,
+        "functional_interpretation": "Flanco de vaguada/cauce mayor (ventana íntegramente en SLRM profundo negativo, perfil monotónico).",
+        "geomorphological_justification": "Panel 1: ladera continua sin paredes de excavación, sin anillo de escombro. Panel 2: ventana casi toda en SLRM << -0.4 m (saturada en violeta) con borde oriental positivo: la celda cae dentro de una concavidad de drenaje grande, no hay pozo delimitado. Panel 3: perfil monotónico de -3.3 a +0.5 m sobre 40 m (flanco de vaguada), sin fondo plano, sin bordes elevados de pozo construido. Panel 4: cuenca de drenaje suave. Una casa-pozo o huaquero mostraría paredes netas y fondo definido a escala 5-8 m; el rasgo es un flanco de quebrada.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-VGR-0005": {
+      "anomaly_type": "zanja_lineal",
+      "area_m2": 2956.71,
+      "mean_elevation_m": -1.445,
+      "composite_image_path": "data/processed/zona_20_valle_grande_ARQ-VGR-0005_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-VGR-0005.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 90,
+        "functional_interpretation": "Cauce de quebrada natural E-W de ~180 m de longitud, ~1.95 m de profundidad, fondo ondulado.",
+        "geomorphological_justification": "Panel 1: valle encajonado con piso brillante (fondo de cauce) y taludes oscuros: drenaje natural, sin revestimiento, sin bermas ni alineaciones de muro. Panel 2: franja de SLRM profundo negativo continua E-W con halos positivos en los taludes; ventana saturada (la zanja es el piso del valle entero). Panel 3: perfil en U de -1.95 m con fondo ondulado de 150 m y ramplas laterales, sin piso plano construido. Panel 4: canal fluvial. Morfología de quebrada de yungas de alta pendiente, no de zanja o canal excavado.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
     }
   },
-  "updated_at_utc": "2026-11-12T10:26:38Z"
+  "updated_at_utc": "2026-11-12T10:41:37Z"
 }
