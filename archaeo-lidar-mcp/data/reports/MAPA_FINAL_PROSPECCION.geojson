@@ -2,9 +2,9 @@
   "type": "FeatureCollection",
   "metadata": {
     "project": "ArchaeoLiDAR-AR-MCP Autonomous Prospector",
-    "last_scanned_zone": "HIGHRES_ZENODO_3383227",
-    "region_name": "High-Resolution UAV Photogrammetric Digital Surface Model - San Rafael, Mendoza, Argentina (San Rafael, Mendoza (Cuyo, Argentina))",
-    "generated_at_utc": "2026-11-12T00:10:43Z",
+    "last_scanned_zone": "ZONA_21_CIUDACITA",
+    "region_name": "Faldeo Oriental del Aconquija / Pueblo Viejo (Tucumán)",
+    "generated_at_utc": "2026-11-12T03:02:30Z",
     "output_crs": "EPSG:4326",
     "confirmed_inedito_count": 0
   },
