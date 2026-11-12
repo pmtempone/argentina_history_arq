@@ -199,29 +199,17 @@ def render_candidate_composite(
     buffer_m: float = 15.0,
     candidate_id: Optional[str] = None,
     include_3d_render: Optional[bool] = None,
+    optical_context: Optional[Dict[str, Any]] = None,
+    candidate_polygon_posgar: Optional[Sequence[Tuple[float, float]]] = None,
 ) -> str:
-    """Genera una lámina compuesta (3 o 4 paneles) para inspección visual multimodal por LLM/Arqueólogo.
+    """Genera una lámina compuesta (3, 4 o 6 paneles) para inspección visual multimodal por LLM/Arqueólogo.
 
     Panel 1: Hillshade multidireccional con exageración vertical 1.5x y traza que cruza el centroide.
     Panel 2: Modelo de Relieve Local (SLRM) con mapa de color de alto contraste (`viridis`).
-    Panel 3: Perfil topográfico 2D (sobreelevación SLRM) atravesando dinámicamente el centroide
-             del candidato hacia los extremos del bounding box extendido en 15 metros.
+    Panel 3: Perfil topográfico 2D (sobreelevación SLRM) atravesando dinámicamente el centroide.
     Panel 4 (si Blender 3D está activo): Render 3D isométrico volumétrico en falso color térmico/infrarrojo.
-
-    Args:
-        dtm_path: Ruta al archivo GeoTIFF del DTM en POSGAR 2007.
-        slrm_path: Ruta al archivo GeoTIFF del SLRM en POSGAR 2007.
-        bbox_posgar: Secuencia `[minx, miny, maxx, maxy]` en coordenadas métricas POSGAR 2007.
-        out_png_path: Ruta de salida para la imagen PNG compuesta.
-        centroid_posgar: Tupla o lista opcional `[cx, cy]` en POSGAR 2007 del candidato arqueológico.
-                         Si no se provee, se calcula como el centroide geométrico de `bbox_posgar`.
-        buffer_m: Margen de extensión métrica del bounding box en metros (por defecto 15.0 m).
-        candidate_id: Identificador opcional del candidato para nombrar el render 3D térmico.
-        include_3d_render: Si es `True`, genera e incrusta el 4to panel 3D con Blender. Si es `None`,
-                           se activa automáticamente fuera de corridas de tests unitarios rápidos.
-
-    Returns:
-        Ruta como string a la imagen PNG generada.
+    Panel 5 (si hay `optical_context`): Imagen satelital/aérea RGB real con contorno del candidato.
+    Panel 6 (si hay `optical_context`): Mapa micro-espectral NDVI/NDWI (*cropmarks*).
     """
     if len(bbox_posgar) != 4:
         raise ValueError("bbox_posgar debe contener exactamente 4 valores: [minx, miny, maxx, maxy].")
@@ -306,18 +294,36 @@ def render_candidate_composite(
             exaggeration=1.8,
         )
 
-    if thermal_3d_png_path and Path(thermal_3d_png_path).exists():
+    has_optical = bool(
+        optical_context
+        and (optical_context.get("rgb_image") is not None or optical_context.get("ndvi_array") is not None)
+    )
+    has_3d = bool(thermal_3d_png_path and Path(thermal_3d_png_path).exists())
+
+    if has_optical:
+        fig, axes_grid = plt.subplots(2, 3, figsize=(20, 11), dpi=150)
+        ax0 = axes_grid[0, 0]
+        ax1 = axes_grid[0, 1]
+        ax2 = axes_grid[0, 2]
+        ax3 = axes_grid[1, 0]
+        ax4 = axes_grid[1, 1]
+        ax5 = axes_grid[1, 2]
+    elif has_3d:
         fig, axes_grid = plt.subplots(2, 2, figsize=(15, 11), dpi=150)
         ax0 = axes_grid[0, 0]
         ax1 = axes_grid[0, 1]
         ax2 = axes_grid[1, 0]
         ax3 = axes_grid[1, 1]
+        ax4 = None
+        ax5 = None
     else:
         fig, axes_row = plt.subplots(1, 3, figsize=(16, 5), dpi=150)
         ax0 = axes_row[0]
         ax1 = axes_row[1]
         ax2 = axes_row[2]
         ax3 = None
+        ax4 = None
+        ax5 = None
 
     # Panel 1: Hillshade 1.5x con traza y centroide
     im0 = ax0.imshow(hillshade, cmap="gray", extent=bounds_ext, origin="upper")
@@ -379,12 +385,65 @@ def render_candidate_composite(
     ax2.grid(True, linestyle="--", alpha=0.4)
     ax2.legend(loc="upper right", fontsize=8)
 
-    # Panel 4: Render 3D Volumétrico Isométrico Estilo Infrarrojo (Blender)
-    if ax3 is not None and thermal_3d_png_path is not None:
-        img_3d = mpimg.imread(thermal_3d_png_path)
-        ax3.imshow(img_3d)
-        ax3.set_title("4. Modelo 3D Isométrico Infrarrojo (Blender EEVEE - Exag. 1.8x)")
-        ax3.axis("off")
+    # Panel 4: Render 3D Volumétrico Isométrico Estilo Infrarrojo (Blender) o Respaldo Topográfico
+    if ax3 is not None:
+        if has_3d and thermal_3d_png_path is not None:
+            img_3d = mpimg.imread(thermal_3d_png_path)
+            ax3.imshow(img_3d)
+            ax3.set_title("4. Modelo 3D Isométrico Infrarrojo (Blender EEVEE - Exag. 1.8x)")
+            ax3.axis("off")
+        else:
+            ax3.imshow(dtm_crop, cmap="terrain", extent=bounds_ext, origin="upper")
+            ax3.plot(cx, cy, marker="o", color="red", markersize=6)
+            ax3.set_title("4. Elevación Absoluta DTM (m s.n.m.)")
+            ax3.set_xlabel("Este POSGAR (m)")
+            ax3.set_ylabel("Norte POSGAR (m)")
+
+    # Paneles 5 y 6: Contexto Óptico RGB y Mapa Micro-Espectral NDVI/NDWI (cuando está disponible)
+    if has_optical and optical_context is not None:
+        patch_ext = optical_context.get("patch_extent_posgar", bounds_ext)
+        poly_xs: Optional[List[float]] = None
+        poly_ys: Optional[List[float]] = None
+        if candidate_polygon_posgar:
+            poly_xs = [float(p[0]) for p in candidate_polygon_posgar]
+            poly_ys = [float(p[1]) for p in candidate_polygon_posgar]
+        else:
+            poly_xs = [minx, maxx, maxx, minx, minx]
+            poly_ys = [miny, miny, maxy, maxy, miny]
+
+        if ax4 is not None:
+            rgb_img = optical_context.get("rgb_image")
+            if rgb_img is not None:
+                ax4.imshow(rgb_img, extent=patch_ext, origin="upper")
+                ax4.plot(poly_xs, poly_ys, color="cyan", linestyle="--", linewidth=1.8, label="Contorno Candidato")
+                ax4.plot(cx, cy, marker="+", color="yellow", markersize=8)
+                prov_lbl = optical_context.get("optical_provider_used", "RGB")
+                ax4.set_title(f"5. Imagen Óptica RGB ({prov_lbl})")
+                ax4.set_xlabel("Este POSGAR (m)")
+                ax4.set_ylabel("Norte POSGAR (m)")
+                ax4.legend(loc="lower right", fontsize=8)
+            else:
+                ax4.text(0.5, 0.5, "Sin chip RGB disponible", ha="center", va="center", transform=ax4.transAxes)
+                ax4.set_title("5. Imagen Óptica RGB (N/D)")
+                ax4.axis("off")
+
+        if ax5 is not None:
+            ndvi_arr = optical_context.get("ndvi_array")
+            if ndvi_arr is not None:
+                im5 = ax5.imshow(ndvi_arr, cmap="RdYlGn", vmin=-0.2, vmax=0.8, extent=patch_ext, origin="upper")
+                ax5.plot(poly_xs, poly_ys, color="cyan", linestyle="--", linewidth=1.8)
+                delta_ndvi = optical_context.get("ndvi_anomaly_delta")
+                ndvi_m = optical_context.get("ndvi_mean")
+                ndwi_m = optical_context.get("ndwi_mean")
+                subtitle = f"NDVI={ndvi_m} | ΔNDVI={delta_ndvi} | NDWI={ndwi_m}"
+                ax5.set_title(f"6. Mapa Espectral NDVI (Cropmarks)\n{subtitle}", fontsize=10)
+                ax5.set_xlabel("Este POSGAR (m)")
+                ax5.set_ylabel("Norte POSGAR (m)")
+                plt.colorbar(im5, ax=ax5, fraction=0.046, pad=0.04, label="NDVI")
+            else:
+                ax5.text(0.5, 0.5, "Sin bandas Sentinel-2 L2A", ha="center", va="center", transform=ax5.transAxes)
+                ax5.set_title("6. Mapa Espectral NDVI (N/D)")
+                ax5.axis("off")
 
     fig.tight_layout()
     fig.savefig(dst_png, bbox_inches="tight")

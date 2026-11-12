@@ -1814,7 +1814,82 @@
         "field_inspection_recommended": false,
         "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
       }
+    },
+    "ARQ-VAL-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 1201.4,
+      "mean_elevation_m": 0.978,
+      "composite_image_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/processed/zona_32_tafi_del_valle_ARQ-VAL-0001_composite.png",
+      "dossier_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/reports/DOSSIER_INAPL_ARQ-VAL-0001.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 95,
+        "functional_interpretation": "Infraestructura rural/urbana moderna (manzana de viviendas y traza vial) detectada en el recorte óptico Sentinel-2 RGB.",
+        "geomorphological_justification": "Aunque el SLRM y el perfil 2D exhiben un resalte alargado (+0.98 m, ~1201 m²), el Panel 5 (Sentinel-2 RGB) muestra claramente hileras de viviendas modernas y calle adyacente cruzando el contorno (NDVI=0.2582, dNDVI=+0.0478). Se descarta como no arqueológico.",
+        "field_inspection_recommended": false,
+        "backend": "antigravity_vlm_6panel"
+      }
+    },
+    "ARQ-VAL-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 342.63,
+      "mean_elevation_m": 1.307,
+      "composite_image_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/processed/zona_32_tafi_del_valle_ARQ-VAL-0002_composite.png",
+      "dossier_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/reports/DOSSIER_INAPL_ARQ-VAL-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Espolón / filo natural erosionado entre cárcavas de ladera en Tafí del Valle.",
+        "geomorphological_justification": "Perfil 2D convexo-asimétrico de ~40 m de base (+1.31 m) sin esquinas ortogonales ni recinto cerrado; Panel 5 (RGB) y Panel 6 (NDVI=0.2685, NDWI=-0.3689) confirman geoforma erosiva natural entre dos quebradas paralelas.",
+        "field_inspection_recommended": false,
+        "backend": "antigravity_vlm_6panel"
+      }
+    },
+    "ARQ-VAL-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 932.57,
+      "mean_elevation_m": 1.416,
+      "composite_image_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/processed/zona_32_tafi_del_valle_ARQ-VAL-0003_composite.png",
+      "dossier_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/reports/DOSSIER_INAPL_ARQ-VAL-0003.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 96,
+        "functional_interpretation": "Artefacto de borde del raster maestro (E=3532308) sobre filo de ladera natural.",
+        "geomorphological_justification": "Los Paneles 1 y 2 muestran truncamiento abrupto contra el límite este del mosaico (franja sin datos) y el Panel 5 (RGB) confirma un filo montañoso natural vegetado (NDVI=0.3845).",
+        "field_inspection_recommended": false,
+        "backend": "antigravity_vlm_6panel"
+      }
+    },
+    "ARQ-VAL-0004": {
+      "anomaly_type": "estructura_hundida",
+      "area_m2": 411.6,
+      "mean_elevation_m": -1.316,
+      "composite_image_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/processed/zona_32_tafi_del_valle_ARQ-VAL-0004_composite.png",
+      "dossier_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/reports/DOSSIER_INAPL_ARQ-VAL-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Confluencia natural de dos quebradas / vaguadas de escorrentía en ladera.",
+        "geomorphological_justification": "Depresión en V abierta (-1.32 m) en perfil 2D y Panel 4 3D; el Panel 5 (RGB) evidencia dos cauces tributarios convergiendo en el contorno sin muros ni bordes construidos (NDVI=0.2954, dNDVI=-0.0045).",
+        "field_inspection_recommended": false,
+        "backend": "antigravity_vlm_6panel"
+      }
+    },
+    "ARQ-VAL-0005": {
+      "anomaly_type": "zanja_lineal",
+      "area_m2": 134.49,
+      "mean_elevation_m": -1.937,
+      "composite_image_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/processed/zona_32_tafi_del_valle_ARQ-VAL-0005_composite.png",
+      "dossier_path": "/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/reports/DOSSIER_INAPL_ARQ-VAL-0005.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 95,
+        "functional_interpretation": "Artefacto de borde de raster (E=3532308) sobre quebrada sombreada en ladera.",
+        "geomorphological_justification": "Paneles 1 y 2 muestran franja sin datos inmediatamente al este del centroide; el Panel 5 (RGB) muestra una quebrada sombreada de fuerte pendiente sin evidencia de zanja antrópica.",
+        "field_inspection_recommended": false,
+        "backend": "antigravity_vlm_6panel"
+      }
     }
   },
-  "updated_at_utc": "2026-11-12T10:41:37Z"
+  "updated_at_utc": "2026-11-12T23:30:06Z"
 }

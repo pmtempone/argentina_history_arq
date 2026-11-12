@@ -2016,10 +2016,58 @@
         "recorded_at_utc": "2026-11-12T10:41:37Z",
         "note": "Inventario geomorfológico derivado de descartes del Juez Pericial VLM (geoformas naturales, no patrimoniales)."
       }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-VAL-0002",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -65.727721,
+          -26.881147
+        ]
+      },
+      "properties": {
+        "id": "ARQ-VAL-0002",
+        "geomorph_subtype": "paleocauce",
+        "anomaly_type": "estructura_circular",
+        "area_m2": 342.63,
+        "mean_elevation_m": 1.307,
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Espolón / filo natural erosionado entre cárcavas de ladera en Tafí del Valle.",
+        "backend": "antigravity_vlm_6panel",
+        "recorded_at_utc": "2026-11-12T23:30:06Z",
+        "note": "Inventario geomorfológico derivado de descartes del Juez Pericial VLM (geoformas naturales, no patrimoniales)."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-VAL-0004",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -65.677293,
+          -26.846698
+        ]
+      },
+      "properties": {
+        "id": "ARQ-VAL-0004",
+        "geomorph_subtype": "paleocauce",
+        "anomaly_type": "estructura_hundida",
+        "area_m2": 411.6,
+        "mean_elevation_m": -1.316,
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Confluencia natural de dos quebradas / vaguadas de escorrentía en ladera.",
+        "backend": "antigravity_vlm_6panel",
+        "recorded_at_utc": "2026-11-12T23:30:06Z",
+        "note": "Inventario geomorfológico derivado de descartes del Juez Pericial VLM (geoformas naturales, no patrimoniales)."
+      }
     }
   ],
   "metadata": {
-    "last_updated_utc": "2026-11-12T10:41:37Z",
-    "feature_count": 84
+    "last_updated_utc": "2026-11-12T23:30:06Z",
+    "feature_count": 86
   }
 }

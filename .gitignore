@@ -59,6 +59,8 @@ archaeo-lidar-mcp/data/processed/*
 
 # Sensitive geodetic coordinates under Ley 25.743 (INAPL anti-looting)
 *ANEXO_CONFIDENCIAL_COORDENADAS.json
+*MAPA_PROSPECCION_*.geojson
+*MAPA_FINAL_PROSPECCION.geojson
 
 # Temporary / scratch files
 scratch/

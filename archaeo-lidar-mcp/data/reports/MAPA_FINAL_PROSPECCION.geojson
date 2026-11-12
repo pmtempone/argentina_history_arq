@@ -2,9 +2,9 @@
   "type": "FeatureCollection",
   "metadata": {
     "project": "ArchaeoLiDAR-AR-MCP Autonomous Prospector",
-    "last_scanned_zone": "ZONA_20_VALLE_GRANDE",
-    "region_name": "Yungas de Valle Grande / Santa Ana (Jujuy)",
-    "generated_at_utc": "2026-11-12T10:39:58Z",
+    "last_scanned_zone": "ZONA_32_TAFI_DEL_VALLE",
+    "region_name": "Tafí del Valle / El Mollar (Tucumán)",
+    "generated_at_utc": "2026-11-12T23:25:45Z",
     "output_crs": "EPSG:4326",
     "confirmed_inedito_count": 0
   },

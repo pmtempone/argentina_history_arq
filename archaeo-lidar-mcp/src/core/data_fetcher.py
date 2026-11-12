@@ -1,6 +1,6 @@
-"""Módulo de ingesta autónoma de datos de elevación real (Copernicus DEM GLO-30 / AWS Open Data / STAC)."""
+"""Módulo de ingesta autónoma de datos de elevación real (Router DEM Multi-Proveedor / COG / STAC / WCS)."""
 
-import math
+import logging
 from pathlib import Path
 from typing import Any, Dict, Tuple, Union
 
@@ -9,9 +9,27 @@ import rasterio
 from pyproj import CRS, Transformer
 from rasterio.transform import from_origin
 from rasterio.warp import Resampling, calculate_default_transform, reproject
-from rasterio.windows import from_bounds
 
+from src.config import settings
 from src.core.crs_manager import get_posgar_faja, is_metric_crs
+from src.core.dem_providers import (
+    COPERNICUS_AWS_BASE_URL,
+    build_copernicus_cog_url,
+    fetch_dem_window,
+)
+
+logger = logging.getLogger(__name__)
+
+# Alias retrocompatibles de zonas unificadas
+ZONE_ALIASES: Dict[str, str] = {
+    "ZONA_17_VOLCAN_CHANI": "ZONA_17_CHANI",
+}
+
+
+def resolve_zone_key(target_zone: str) -> str:
+    """Resuelve alias históricos hacia la clave canónica en TARGET_ZONES."""
+    key = target_zone.upper().strip()
+    return ZONE_ALIASES.get(key, key)
 
 # Definición de Zonas Arqueológicas Objetivo (Target Bounding Boxes en el NOA, WGS84)
 # Formato bbox_wgs84: (min_lon, min_lat, max_lon, max_lat)
@@ -144,22 +162,16 @@ TARGET_ZONES: Dict[str, Dict[str, Any]] = {
         "copernicus_tile": "Copernicus_DSM_COG_10_S48_00_W072_00_DEM",
         "toponyms": ["Lago Buenos Aires", "Meseta", "Parapeto", "Patagonia"],
     },
-    "ZONA_17_VOLCAN_CHANI": {
-        "name": "Santuario de Altura del Nevado de Chañi (5.896 m s.n.m. - Jujuy/Salta)",
-        "province": "Jujuy / Salta",
-        "bbox_wgs84": (-65.756, -24.070, -65.740, -24.054),
-        "posgar_epsg": 5345,  # POSGAR 2007 Faja 3
-        "copernicus_tile": "Copernicus_DSM_COG_10_S25_00_W066_00_DEM",
-        "toponyms": ["Nevado de Chañi", "Volcán Chañi", "Santuario de Altura", "Inca", "Niño del Chañi"],
-    },
 }
 
 EXPANDED_TARGET_ZONES = {
     # FRENTE 1: ALTA MONTAÑA Y SANTUARIOS INCAICOS
     "ZONA_17_CHANI": {
-        "name": "Nevado de Chañi (Jujuy / Salta - 5.896 m)",
+        "name": "Santuario de Altura del Nevado de Chañi (Jujuy / Salta - 5.896 m)",
         "bbox": [-65.78, -24.08, -65.72, -24.02],
         "epsg": 5345,
+        "copernicus_tile": "Copernicus_DSM_COG_10_S25_00_W066_00_DEM",
+        "toponyms": ["Nevado de Chañi", "Volcán Chañi", "Santuario de Altura", "Inca", "Niño del Chañi"],
         "biome": "alta_montana",
         "slrm_radius_m": 12.0,
         "min_area_m2": 15.0,
@@ -203,6 +215,19 @@ EXPANDED_TARGET_ZONES = {
         "min_dz_m": 0.20,
         "max_slope_deg": 25.0,
         "archaeo_context": "Casas-pozo comechingonas semi-enterradas (relieve negativo), corrales pircados, morteros y aleros en las laderas occidentales."
+    },
+    "ZONA_32_TAFI_DEL_VALLE": {
+        "name": "Tafí del Valle / El Mollar (Tucumán)",
+        "bbox": [-65.745, -26.895, -65.675, -26.825],
+        "epsg": 5345,
+        "biome": "sierras_centrales",
+        "preferred_dem": "copernicus_aws",
+        "slrm_radius_m": 15.0,
+        "min_area_m2": 20.0,
+        "max_area_m2": 4000.0,
+        "min_dz_m": 0.25,
+        "max_slope_deg": 25.0,
+        "archaeo_context": "Unidades domésticas circulares de la cultura Tafí, montículos ceremoniales, andenes agrícolas y corrales pircados en valle intermontano."
     },
 
     # FRENTE 2: YUNGAS Y SELVA SUBTROPICAL
@@ -331,53 +356,12 @@ for _zk, _zv in EXPANDED_TARGET_ZONES.items():
         _item["toponyms"] = [_item["name"].split("/")[0].strip()]
     TARGET_ZONES[_zk] = _item
 
-
-COPERNICUS_AWS_BASE_URL = "https://copernicus-dem-30m.s3.amazonaws.com"
-
-
-def build_copernicus_cog_url(lat: float, lon: float) -> str:
-    """Construye la URL HTTPS pública del Cloud Optimized GeoTIFF (COG) en AWS Open Data (`s3://copernicus-dem-30m/`)."""
-    lat_floor = int(math.floor(lat))
-    lon_floor = int(math.floor(lon))
-    ns = "S" if lat_floor < 0 else "N"
-    ew = "W" if lon_floor < 0 else "E"
-    tile_id = f"Copernicus_DSM_COG_10_{ns}{abs(lat_floor):02d}_00_{ew}{abs(lon_floor):03d}_00_DEM"
-    return f"{COPERNICUS_AWS_BASE_URL}/{tile_id}/{tile_id}.tif"
-
-
-def _fetch_window_from_copernicus_aws(
-    cog_url: str,
-    bbox_wgs84: Tuple[float, float, float, float],
-    raw_out_path: Path,
-) -> Path:
-    """Descarga únicamente el recorte espacial (window) desde el COG público en AWS S3 vía HTTPS Range Request."""
-    min_lon, min_lat, max_lon, max_lat = bbox_wgs84
-    raw_out_path.parent.mkdir(parents=True, exist_ok=True)
-
-    with rasterio.open(cog_url) as src:
-        window = from_bounds(min_lon, min_lat, max_lon, max_lat, transform=src.transform)
-        window = window.round_offsets().round_lengths()
-        data = src.read(1, window=window).astype(np.float32)
-        win_transform = rasterio.windows.transform(window, src.transform)
-
-        profile = src.profile.copy()
-        profile.update(
-            {
-                "driver": "GTiff",
-                "height": int(data.shape[0]),
-                "width": int(data.shape[1]),
-                "count": 1,
-                "dtype": "float32",
-                "transform": win_transform,
-                "crs": src.crs or "EPSG:4326",
-                "nodata": -9999.0,
-            }
+_FOREST_WETLAND_BIOMES = {"yungas_selva", "yungas_montana", "selva_paranaense", "humedal_llanura"}
+for _zk, _zv in TARGET_ZONES.items():
+    if "preferred_dem" not in _zv:
+        _zv["preferred_dem"] = (
+            "fabdem" if _zv.get("biome") in _FOREST_WETLAND_BIOMES else "copernicus_aws"
         )
-
-        with rasterio.open(raw_out_path, "w", **profile) as dst:
-            dst.write(data, 1)
-
-    return raw_out_path
 
 
 def _reproject_and_supersample_to_posgar(
@@ -385,20 +369,43 @@ def _reproject_and_supersample_to_posgar(
     dst_posgar_path: Path,
     target_epsg: int,
     target_resolution_m: float = 2.0,
+    max_side_px: int | None = None,
 ) -> Path:
-    """Reproyecta un recorte DEM geográfico a POSGAR 2007 con interpolación cúbica a resolución métrica fina."""
+    """Reproyecta un recorte DEM geográfico a POSGAR 2007 aplicando tope de tamaño por lado y DEFLATE."""
     dst_posgar_path.parent.mkdir(parents=True, exist_ok=True)
     dst_crs = rasterio.crs.CRS.from_epsg(target_epsg)
+    side_cap = int(max_side_px or settings.max_master_side_px)
 
     with rasterio.open(src_wgs84_path) as src:
+        effective_res_m = float(target_resolution_m)
         transform, width, height = calculate_default_transform(
             src.crs,
             dst_crs,
             src.width,
             src.height,
             *src.bounds,
-            resolution=(target_resolution_m, target_resolution_m),
+            resolution=(effective_res_m, effective_res_m),
         )
+        max_dim = max(width, height)
+        if max_dim > side_cap:
+            scale = max_dim / float(side_cap)
+            effective_res_m = effective_res_m * scale
+            transform, width, height = calculate_default_transform(
+                src.crs,
+                dst_crs,
+                src.width,
+                src.height,
+                *src.bounds,
+                resolution=(effective_res_m, effective_res_m),
+            )
+            logger.info(
+                "Tope MAX_MASTER_SIDE_PX=%d aplicado: resolución ajustada a %.3f m/px (%dx%d).",
+                side_cap,
+                effective_res_m,
+                width,
+                height,
+            )
+
         nodata_val = -9999.0
         src_arr = src.read(1).astype(np.float32)
         if src.nodata is not None:
@@ -429,11 +436,21 @@ def _reproject_and_supersample_to_posgar(
                 "count": 1,
                 "nodata": nodata_val,
                 "compress": "deflate",
+                "predictor": 3,
             }
         )
+        if width >= 256 and height >= 256:
+            profile.update({"tiled": True, "blockxsize": 256, "blockysize": 256})
+        else:
+            profile.pop("tiled", None)
+            profile.pop("blockxsize", None)
+            profile.pop("blockysize", None)
 
         with rasterio.open(dst_posgar_path, "w", **profile) as dst:
             dst.write(dst_arr, 1)
+            for tag_k in ("DEM_PROVIDER", "NATIVE_RESOLUTION_M"):
+                if tag_k in src.tags():
+                    dst.update_tags(**{tag_k: src.tags()[tag_k]})
 
     return dst_posgar_path
 
@@ -442,24 +459,18 @@ def fetch_elevation_tile(
     target_zone: str = "ZONA_1_TASTIL",
     cache_dir: Union[str, Path] = "data/raw/",
     resolution_m: float = 2.0,
-) -> str:
+    provider: str = "auto",
+    return_metadata: bool = False,
+) -> Union[str, Dict[str, Any]]:
     """Descarga, valida y reproyecta automáticamente a POSGAR 2007 el tile de elevación para la zona objetivo.
 
-    1. Verifica si el raster métrico POSGAR 2007 ya existe en `cache_dir` y valida su integridad con `rasterio`.
-    2. Si no existe, descarga de forma autónoma el recorte real desde el Cloud Optimized GeoTIFF (COG) de
-       Copernicus DEM GLO-30 en AWS Open Data (`s3://copernicus-dem-30m/`).
-    3. Reproyecta de `EPSG:4326` a la faja POSGAR 2007 correspondiente (`EPSG:5344` o `EPSG:5345`) con
-       remuestreo cúbico a `resolution_m` metros por píxel.
-
-    Args:
-        target_zone: Identificador de zona (`ZONA_1_TASTIL`, `ZONA_2_YOCAVIL`, `ZONA_3_TINOGASTA`).
-        cache_dir: Directorio local de caché para almacenar los rasters descargados y reproyectados.
-        resolution_m: Resolución espacial de salida en metros sobre POSGAR 2007 (por defecto 2.0 m/px).
-
-    Returns:
-        Ruta como string al archivo GeoTIFF validado y proyectado en POSGAR 2007.
+    1. Verifica si el raster métrico POSGAR 2007 real (sin tag `SYNTHETIC_FALLBACK`) existe en `cache_dir`.
+    2. Si no existe, ejecuta el router `fetch_dem_window()` transfiriendo únicamente el `bbox_wgs84`.
+    3. Reproyecta a POSGAR 2007 respetando `MAX_MASTER_SIDE_PX = 4096` y compresión `deflate`.
+    4. Si todos los proveedores fallan, genera un fallback sintético en `*_SYNTHETIC_FALLBACK_posgar_*.tif`
+       con el tag `SYNTHETIC_FALLBACK="TRUE"` para no contaminar nunca la ruta de caché definitiva.
     """
-    zone_key = target_zone.upper().strip()
+    zone_key = resolve_zone_key(target_zone)
     if zone_key not in TARGET_ZONES:
         valid_keys = ", ".join(TARGET_ZONES.keys())
         raise ValueError(f"Zona objetivo '{target_zone}' no reconocida. Zonas válidas: {valid_keys}")
@@ -469,53 +480,72 @@ def fetch_elevation_tile(
     bbox_wgs84: Tuple[float, float, float, float] = tuple(bbox_raw)  # type: ignore
     min_lon, min_lat, max_lon, max_lat = bbox_wgs84
     center_lon = (min_lon + max_lon) / 2.0
-    center_lat = (min_lat + max_lat) / 2.0
 
     target_epsg: int = int(zone_info.get("epsg") or zone_info.get("posgar_epsg") or get_posgar_faja(center_lon))
 
     cache_path = Path(cache_dir)
     cache_path.mkdir(parents=True, exist_ok=True)
 
-    raw_wgs84_tif = cache_path / f"{zone_key.lower()}_copernicus_wgs84.tif"
+    raw_wgs84_tif = cache_path / f"{zone_key.lower()}_dem_wgs84.tif"
     posgar_tif = cache_path / f"{zone_key.lower()}_posgar_{target_epsg}.tif"
+    synthetic_tif = cache_path / f"{zone_key.lower()}_SYNTHETIC_FALLBACK_posgar_{target_epsg}.tif"
 
-    # 1. Verificar caché existente y validar integridad con rasterio
+    # 1. Verificar caché real existente (descartar si tiene tag SYNTHETIC_FALLBACK)
     if posgar_tif.exists():
         try:
             with rasterio.open(posgar_tif) as src:
-                if src.crs and is_metric_crs(src.crs) and src.width > 10 and src.height > 10:
+                tags = src.tags()
+                if tags.get("SYNTHETIC_FALLBACK") == "TRUE":
+                    logger.warning("Caché '%s' marcado como SYNTHETIC_FALLBACK; se reintentará descarga real.", posgar_tif)
+                    posgar_tif.unlink(missing_ok=True)
+                elif src.crs and is_metric_crs(src.crs) and src.width > 10 and src.height > 10:
                     sample = src.read(1)
                     if not np.all(np.isnan(sample)):
-                        return str(posgar_tif)
+                        cached_meta = {
+                            "path": str(posgar_tif),
+                            "provider_used": tags.get("DEM_PROVIDER", zone_info.get("preferred_dem", "copernicus_aws")),
+                            "native_resolution_m": float(tags.get("NATIVE_RESOLUTION_M", 30.0)),
+                            "is_synthetic_fallback": False,
+                        }
+                        return cached_meta if return_metadata else str(posgar_tif)
         except Exception:
             posgar_tif.unlink(missing_ok=True)
 
-    # 2. Descargar recorte real desde Copernicus DEM (AWS Open Data COG)
-    tile_id = zone_info.get("copernicus_tile")
-    if tile_id:
-        cog_url = f"{COPERNICUS_AWS_BASE_URL}/{tile_id}/{tile_id}.tif"
-    else:
-        cog_url = build_copernicus_cog_url(center_lat, center_lon)
+    # 2. Descargar recorte real desde el router multi-proveedor
+    eff_provider = provider if provider != "auto" else settings.dem_provider
+    selected_path: Path = posgar_tif
+    provider_used = str(eff_provider)
+    native_res_m = 30.0
+    is_synthetic = False
 
     try:
-        _fetch_window_from_copernicus_aws(
-            cog_url=cog_url,
+        dem_res = fetch_dem_window(
             bbox_wgs84=bbox_wgs84,
-            raw_out_path=raw_wgs84_tif,
+            out_wgs84_tif=raw_wgs84_tif,
+            provider=eff_provider,
+            zone_meta=zone_info,
         )
+        provider_used = str(dem_res["provider_used"])
+        native_res_m = float(dem_res["native_resolution_m"])
         _reproject_and_supersample_to_posgar(
-            src_wgs84_path=raw_wgs84_tif,
+            src_wgs84_path=Path(dem_res["path"]),
             dst_posgar_path=posgar_tif,
             target_epsg=target_epsg,
             target_resolution_m=resolution_m,
         )
+        with rasterio.open(posgar_tif, "r+") as dst:
+            dst.update_tags(
+                DEM_PROVIDER=provider_used,
+                NATIVE_RESOLUTION_M=str(native_res_m),
+            )
+        selected_path = posgar_tif
     except Exception as exc:
-        # Fallback determinístico de emergencia sólo si no hay conectividad externa al bucket S3
+        # Fallback determinístico de emergencia: NUNCA se guarda como posgar_tif definitivo
         to_posgar = Transformer.from_crs(CRS.from_epsg(4326), CRS.from_epsg(target_epsg), always_xy=True)
         min_x, min_y = to_posgar.transform(min_lon, min_lat)
         max_x, max_y = to_posgar.transform(max_lon, max_lat)
-        width = max(200, int(round((max_x - min_x) / resolution_m)))
-        height = max(200, int(round((max_y - min_y) / resolution_m)))
+        width = min(settings.max_master_side_px, max(200, int(round((max_x - min_x) / resolution_m))))
+        height = min(settings.max_master_side_px, max(200, int(round((max_y - min_y) / resolution_m))))
         transform = from_origin(min_x, max_y, resolution_m, resolution_m)
 
         cols = np.arange(width, dtype=np.float64) * resolution_m
@@ -524,7 +554,7 @@ def fetch_elevation_tile(
         z = 3080.0 + 18.0 * np.sin(xx / 120.0) + 14.0 * np.cos(yy / 110.0)
 
         with rasterio.open(
-            posgar_tif,
+            synthetic_tif,
             "w",
             driver="GTiff",
             height=height,
@@ -534,13 +564,30 @@ def fetch_elevation_tile(
             crs=rasterio.crs.CRS.from_epsg(target_epsg),
             transform=transform,
             nodata=-9999.0,
+            compress="deflate",
         ) as dst:
             dst.write(z.astype(np.float32), 1)
-        print(f"[WARN] Fallback offline activado por error de red ({exc}).")
+            dst.update_tags(
+                SYNTHETIC_FALLBACK="TRUE",
+                DEM_PROVIDER="synthetic_fallback",
+                NATIVE_RESOLUTION_M="30.0",
+            )
+        selected_path = synthetic_tif
+        provider_used = "synthetic_fallback"
+        native_res_m = 30.0
+        is_synthetic = True
+        print(f"[WARN] Fallback offline activado en '{synthetic_tif.name}' por error de red ({exc}).")
 
     # 3. Validación final con rasterio
-    with rasterio.open(posgar_tif) as verified:
+    with rasterio.open(selected_path) as verified:
         if verified.crs is None or not is_metric_crs(verified.crs):
-            raise RuntimeError(f"El tile generado '{posgar_tif}' no posee CRS métrico POSGAR 2007 válido.")
+            raise RuntimeError(f"El tile generado '{selected_path}' no posee CRS métrico POSGAR 2007 válido.")
 
-    return str(posgar_tif)
+    if return_metadata:
+        return {
+            "path": str(selected_path),
+            "provider_used": provider_used,
+            "native_resolution_m": native_res_m,
+            "is_synthetic_fallback": is_synthetic,
+        }
+    return str(selected_path)

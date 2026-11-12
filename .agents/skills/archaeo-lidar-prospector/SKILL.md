@@ -35,11 +35,11 @@ Este skill guía la ejecución autónoma y supervisada del sistema **ArchaeoLiDA
 ```bash
 cd /Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp
 
-# Prospectar una zona individual (ej. Humedal del Delta del Paraná)
+# Prospectar una zona individual (routing automático DEM + Sentinel-2 L2A en Fase 4)
 ./venv/bin/python -m src.autonomous_prospector --target ZONA_23_DELTA_PARANA --max-candidates 4
 
-# Prospectar Santuario Incaico de Alta Montaña (Volcán Chañi)
-./venv/bin/python -m src.autonomous_prospector --target ZONA_17_CHANI --max-candidates 4
+# Prospectar Santuario Incaico de Alta Montaña (Volcán Chañi) con proveedores explícitos
+./venv/bin/python -m src.autonomous_prospector --target ZONA_17_CHANI --dem-provider planetary_stac --optical-provider sentinel2_stac --max-candidates 4
 
 # Correr sobre todas las zonas nuevas (ZONA_4 a ZONA_28)
 ./venv/bin/python -m src.autonomous_prospector --new-zones-only --max-candidates 5
@@ -108,8 +108,8 @@ El servidor expone herramientas nativas para invocar desde agentes o clientes MC
 * `tool_autonomous_prospect`: Ejecuta el barrido autónomo por celdas con overlap del 15% sobre cualquier zona (relieve positivo y negativo, puntuación ML calibrada, validación IGN/OSM + catálogo de sitios registrados).
 * `tool_hunt_highres_lidar_argentina`: Consulta en tiempo real las APIs de OpenTopography, Zenodo y el IGN.
 * `tool_vlm_judge_candidate`: Construye el prompt pericial estructurado con las métricas cuantitativas y la lámina compuesta.
-* `tool_record_vlm_verdict`: Registra el veredicto oficial, archiva descartes en `DESCARTES_VLM.json` + `INVENTARIO_GEOMORFOLOGICO.geojson` y regenera el dossier INAPL.
-* `tool_inspect_candidate`: Genera la lámina compuesta de 4 paneles (2x2) con el modelo 3D de Blender.
+* `tool_record_vlm_verdict`: Registra el veredicto oficial, purga el candidato descartado de `MAPA_FINAL_PROSPECCION.geojson` y `MAPA_PROSPECCION_*.geojson`, archiva descartes en `DESCARTES_VLM.json` + `INVENTARIO_GEOMORFOLOGICO.geojson` y regenera el dossier INAPL.
+* `tool_inspect_candidate`: Genera la lámina compuesta de 4 paneles (2x2) o 6 paneles (2x3 con RGB Satelital + NDVI) con el modelo 3D de Blender.
 * `tool_process_lidar_dtm`: Filtra la nube de puntos con SMRF (ASPRS Clase 2) y proyecta a GeoTIFF POSGAR 2007.
 
 ---

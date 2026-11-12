@@ -48,12 +48,24 @@ cd archaeo-lidar-mcp
 ```
 
 **Qué va a pasar (5 fases, automático):**
-1. Descarga el mapa de elevación real (Copernicus GLO-30) del área de la zona.
+1. Descarga por bloques (sin bajar escenas completas) el mapa de elevación real del área de la zona (**FABDEM** sin árboles en selvas/humedales, **Copernicus GLO-30** o **Planetary STAC** en zonas áridas).
 2. Lo divide en cuadrículas de 500 m con 15% de solapamiento (puede ser 1-15 min).
 3. En cada cuadrícula busca formas del terreno sospechosas (positivas Y negativas).
 4. Valida cada candidato contra mapas oficiales (IGN, OpenStreetMap), literatura
    académica y el catálogo de sitios conocidos.
-5. Genera la "lámina" (foto técnica de 4 paneles) y el dossier de cada candidato.
+5. Para los candidatos inéditos (`CANDIDATO_INEDITO`), descarga un recorte óptico puntual (±150 m) de **Sentinel-2 L2A** (RGB + NDVI/NDWI) o mosaico **XYZ**, genera la "lámina" (foto técnica de hasta 6 paneles) y arma el dossier de cada uno.
+
+**¿Querés elegir manualmente el satélite?** Podés forzar los proveedores desde la línea de comandos o pedírselo al asistente:
+```bash
+# Ejemplo: usar Planetary Computer STAC para elevación + tiles RGB XYZ (Esri/IGN) para el recorte óptico
+./venv/bin/python -m src.autonomous_prospector \
+  --target ZONA_17_CHANI \
+  --dem-provider planetary_stac \
+  --optical-provider xyz_tiles \
+  --max-candidates 4
+```
+*Opciones de `--dem-provider`:* `auto` (recomendado), `fabdem`, `copernicus_aws`, `planetary_stac`, `alos_aw3d30`, `ign_wcs`.  
+*Opciones de `--optical-provider`:* `sentinel2_stac` (recomendado, incluye NDVI), `xyz_tiles`, `gee`, `none`.
 
 **Dónde mirás el resultado:**
 - La pantalla te muestra la tabla final de candidatos.
@@ -127,14 +139,22 @@ pipeline completo (SLRM → detección → validación → dossier).
 
 ### 3.5 "El sistema me muestra candidatos — ¿cómo los AUDITO (hago de juez)?"
 
-Cada candidato tiene una lámina de 4 paneles (`..._composite.png`). Mirala en este orden:
+Cada candidato tiene una lámina de 4 o 6 paneles (`..._composite.png`). Mirala en este orden:
 
 | Panel | Qué mirás | Qué te dice |
 | :---: | :--- | :--- |
 | 1. Hillshade | ¿Hay líneas rectas, esquinas, muros? | La arquitectura ES geométrica: líneas rectas, círculos perfectos |
 | 2. SLRM | ¿La forma es un solo bulto liso o tiene estructura interna? | Bulto liso simétrico = natural casi siempre |
 | 3. Perfil 2D | ¿El "bordado"? Recinto = piso plano + bordes altos; lomada = media pelota | Media pelota lisa = natural |
-| 4. Render 3D | Verificación visual final | — |
+| 4. Render 3D / DTM | Verificación visual en relieve (o mapa de altura si no hay 3D) | Ayuda a ver si es una loma natural o una plataforma plana |
+| 5. RGB Satelital *(si hay óptico)* | ¿Se ve una huella, sombra o estructura moderna/rural? | Descarta galpones, rutas o corrales modernos a simple vista |
+| 6. NDVI *(si hay Sentinel-2)* | ¿Cambia el vigor vegetal justo sobre el contorno? | Los muros enterrados estresan la vegetación (*cropmarks*) |
+
+#### Ejemplo visual: Lámina de 4 paneles + Render 3D Blender (`ZONA_29_SIERRA_DE_MANCHAO`)
+![Ejemplo lámina 4 paneles Sierra de Manchao](docs/images/fig1_lamina_4_paneles_manchao.png)
+
+#### Ejemplo visual: Lámina multisatélite de 6 paneles (Topografía + Sentinel-2 RGB + NDVI)
+![Ejemplo lámina 6 paneles multisensor](docs/images/fig4_lamina_6_paneles_multisensor.png)
 
 **Veredictos posibles:**
 - `ANTROPICA` → es estructura humana → queda en el mapa final.
@@ -226,7 +246,7 @@ Todo lo que el juez descarta como `NATURAL` queda guardado como dato útil:
 | `data/reports/INVENTARIO_GEOMORFOLOGICO.geojson` | Las geoformas naturales con subtipo | Geomorfología / hidro |
 | `data/reports/MAPA_PROSPECCION_ZONA_*.geojson` | Mapa por zona con todos los candidatos | Trabajo interno |
 | `data/reports/ML_BENCHMARK_METRICS.md` | Métricas del modelo de puntuación | Transparencia |
-| `data/processed/*_composite.png` | La "foto técnica" de 4 paneles de cada candidato | El juez (vos o el agente) |
+| `data/processed/*_composite.png` | La "foto técnica" de 4 o 6 paneles de cada candidato | El juez (vos o el agente) |
 | `data/known_sites_published.csv` | Catálogo de sitios públicos conocidos | Para actualizar (±100 m) |
 
 ---

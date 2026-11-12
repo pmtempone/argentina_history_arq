@@ -19,13 +19,14 @@ Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), mode
                                          │
         ┌────────────────────────────────┼────────────────────────────────┐
         │                                │                                │
-  Nube Cruda (.laz)              Vuelos UAV Científicos             Copernicus GLO-30
-  (SMRF / Clase 2)               (Zenodo / OpenTopo / IGN)          (AWS Open Data)
+  Nube Cruda (.laz)              Vuelos UAV Científicos         Router DEM Multisatélite
+  (SMRF / Clase 2)               (Zenodo / OpenTopo / IGN)      (Copernicus / FABDEM /
+                                                                 Planetary STAC / IGN WCS)
         │                                │                                │
         └────────────────────────────────┼────────────────────────────────┘
                                          ▼
                  [ 1. Reproyección Geodésica POSGAR 2007 ]
-                   (Fajas 1 a 7: EPSG:5343 a EPSG:5349)
+                   (Fajas 1 a 7: EPSG:5343 a EPSG:5349; tope 4096x4096 px)
                                          │
                                          ▼
                  [ 2. Subdivisión en Celdas (Tiling) ]
@@ -53,11 +54,15 @@ Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), mode
                    • Literatura científica (OpenAlex / Semantic Scholar)
                                          │
                                          ▼
-                 [ 6. Inspección Visual y Render 3D Blender 4.2 ]
+                 [ 6. Ingesta Óptica Selectiva + Inspección Visual 6 Paneles ]
+                   • Ingesta óptica solo para CANDIDATO_INEDITO (±150 m, tope 512x512 px):
+                     Sentinel-2 L2A STAC (RGB + NDVI/NDWI), XYZ/IGN Argenmap o GEE
                    • Panel 1: Hillshade multidireccional 1.5x con traza
                    • Panel 2: SLRM viridis con sobre-elevación local
                    • Panel 3: Perfil topográfico 2D sobre centroide
-                   • Panel 4: Render 3D isométrico térmico (Blender EEVEE)
+                   • Panel 4: Render 3D isométrico térmico (Blender EEVEE) / Detalle
+                   • Panel 5: Ortoimagen Satelital True Color RGB (con polígono)
+                   • Panel 6: Mapa de Vigor Vegetal NDVI (marca fitolitos / cropmarks)
                                          │
                                          ▼
                  [ 7. Juez Pericial VLM Senior (CONICET/NOA) + Calibrador ML ]
@@ -78,6 +83,12 @@ Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), mode
                    • Dossiers técnicos individuales (DOSSIER_INAPL_ARQ-XXXX.md)
                    • ANEXO_CONFIDENCIAL_COORDENADAS.json (Anti-saqueo / guaqueo)
 ```
+
+### Galería de Salida Visual
+
+| Lámina 4 Paneles (`ZONA_29_SIERRA_DE_MANCHAO`) | Lámina 6 Paneles (DEM + Sentinel-2 RGB + NDVI) |
+| :---: | :---: |
+| ![Lámina 4 paneles](../docs/images/fig1_lamina_4_paneles_manchao.png) | ![Lámina 6 paneles](../docs/images/fig4_lamina_6_paneles_multisensor.png) |
 
 ---
 
@@ -149,11 +160,11 @@ pip install -e .
 ### 2. Comandos de Prospección
 
 ```bash
-# Prospectar una zona individual (ej. Delta del Paraná)
+# Prospectar una zona individual (ej. Delta del Paraná, router auto DEM + Sentinel-2 L2A)
 python -m src.autonomous_prospector --target ZONA_23_DELTA_PARANA --max-candidates 4
 
-# Prospectar una cumbre incaica de alta montaña
-python -m src.autonomous_prospector --target ZONA_17_CHANI --max-candidates 4
+# Prospectar una cumbre incaica eligiendo proveedores explícitos
+python -m src.autonomous_prospector --target ZONA_17_CHANI --dem-provider planetary_stac --optical-provider xyz_tiles --max-candidates 4
 
 # Correr cazador autónomo de LiDAR/UAV de alta resolución en Argentina
 python -m src.autonomous_prospector --hunt-highres --max-candidates 4
@@ -178,7 +189,7 @@ El servidor expone herramientas para agentes de IA y clientes MCP:
 2. **`tool_hunt_highres_lidar_argentina`**: Consulta en vivo las APIs de OpenTopography, Zenodo y el IGN buscando vuelos científicos en Argentina.
 3. **`tool_vlm_judge_candidate`**: Construye el contexto técnico y prepara la auditoría multimodal para el modelo VLM.
 4. **`tool_record_vlm_verdict`**: Asienta el dictamen pericial, actualiza `DESCARTES_VLM.json` y regenera el dossier INAPL.
-5. **`tool_inspect_candidate`**: Genera la lámina compuesta de 4 paneles (2x2) y el modelo 3D volumétrico en Blender.
+5. **`tool_inspect_candidate`**: Genera la lámina compuesta (hasta 6 paneles 2x3 con contexto óptico/NDVI cuando está disponible, o 4 paneles 2x2) y el modelo 3D volumétrico en Blender.
 6. **`tool_process_lidar_dtm`**: Filtra nubes `.laz/.las` con SMRF y exporta el DTM en POSGAR 2007.
 7. **`tool_run_full_pipeline`**: Ejecuta el pipeline integral sobre una nube de puntos local.
 

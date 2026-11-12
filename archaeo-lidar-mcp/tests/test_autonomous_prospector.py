@@ -73,6 +73,7 @@ async def test_autonomous_prospector_end_to_end_synthetic(
             overlap_ratio=0.15,
             min_confidence=0.70,
             min_elevation_m=0.20,
+            optical_provider="none",
             cache_dir=raw_dir,
             processed_dir=proc_dir,
             reports_dir=rep_dir,

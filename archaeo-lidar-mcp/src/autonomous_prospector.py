@@ -17,11 +17,12 @@ from shapely.geometry import shape
 
 from src.config import settings
 from src.core.anomaly_detector import detect_anomalies
-from src.core.data_fetcher import TARGET_ZONES, fetch_elevation_tile
+from src.core.data_fetcher import TARGET_ZONES, fetch_elevation_tile, resolve_zone_key
 from src.core.highres_hunter import HighResLidarHunter
 from src.core.literature_checker import check_academic_papers
 from src.core.looting_monitor import evaluate_looting_alert
 from src.core.ml_calibrator import load_calibrator, score_candidate
+from src.core.optical_providers import fetch_candidate_optical_context
 from src.core.relief_models import compute_slrm, compute_slope
 from src.core.report_generator import generate_inapl_dossier
 from src.core.spatial_validator import validate_anomaly_async
@@ -155,6 +156,8 @@ async def run_autonomous_prospector(
     min_elevation_m: float = 0.20,
     max_candidates_to_validate: int = 12,
     ml_mode: str = "advisory",
+    dem_provider: str = "auto",
+    optical_provider: Optional[str] = None,
     cache_dir: Optional[Union[str, Path]] = None,
     processed_dir: Optional[Union[str, Path]] = None,
     reports_dir: Optional[Union[str, Path]] = None,
@@ -257,6 +260,7 @@ async def run_autonomous_prospector(
             "max_slope_deg": 35.0,
         }
         dem_source_label = f"{sel_ds['id']} - {sel_ds['title']} ({sel_ds['source']})"
+        dem_provider_used = str(sel_ds.get("source", "highres_hunter"))
         print(f"   ✔ Dataset seleccionado: {sel_ds['id']} ({sel_ds['title']})")
         print(f"   ✔ URL descargada: {sel_ds['download_url']}")
         print(
@@ -265,7 +269,7 @@ async def run_autonomous_prospector(
             f"(Ventana: {highres_download_info['window_shape_px'][1]}x{highres_download_info['window_shape_px'][0]} px)"
         )
     else:
-        zone_key = target_zone.upper().strip()
+        zone_key = resolve_zone_key(target_zone)
         zone_meta = TARGET_ZONES.get(
             zone_key,
             {
@@ -280,10 +284,26 @@ async def run_autonomous_prospector(
         print("=" * 78)
 
         # 1. Adquisición autónoma de datos de elevación reales y reproyección POSGAR 2007
-        print("\n[FASE 1/5] Adquiriendo tile de elevación real (Copernicus DEM GLO-30 / AWS Open Data)...")
-        master_dtm_path = Path(fetch_elevation_tile(target_zone=zone_key, cache_dir=raw_dir))
-        dem_source_label = "Copernicus DEM GLO-30 (AWS Open Data)"
-        dem_native_res_m = 30.0
+        print(f"\n[FASE 1/5] Adquiriendo tile de elevación real (proveedor DEM: {dem_provider})...")
+        try:
+            tile_res = fetch_elevation_tile(
+                target_zone=zone_key,
+                cache_dir=raw_dir,
+                provider=dem_provider,
+                return_metadata=True,
+            )
+        except TypeError:
+            # Compatibilidad con monkeypatches de tests que aceptan (target_zone, cache_dir)
+            tile_res = fetch_elevation_tile(target_zone=zone_key, cache_dir=raw_dir)
+        if isinstance(tile_res, dict):
+            master_dtm_path = Path(tile_res["path"])
+            dem_provider_used = str(tile_res.get("provider_used", "copernicus_aws"))
+            dem_native_res_m = float(tile_res.get("native_resolution_m", 30.0))
+        else:
+            master_dtm_path = Path(tile_res)
+            dem_provider_used = dem_provider if dem_provider != "auto" else "copernicus_aws"
+            dem_native_res_m = 30.0
+        dem_source_label = f"DEM Provider: {dem_provider_used} (nativo {dem_native_res_m:.1f} m/px)"
 
     with rasterio.open(master_dtm_path) as src:
         crs_epsg = int(src.crs.to_epsg() or 5345)
@@ -555,6 +575,27 @@ async def run_autonomous_prospector(
             cx_m, cy_m = to_metric.transform(lon_w, lat_w)
             bbox_posgar = [min(min_x, max_x), min(min_y, max_y), max(min_x, max_x), max(min_y, max_y)]
 
+            # Ingesta óptica/multiespectral acotada al parche del candidato inédito (~300x300 m)
+            optical_ctx = fetch_candidate_optical_context(
+                candidate_id=cand_id,
+                centroid_wgs84=[lon_w, lat_w],
+                bbox_posgar=bbox_posgar,
+                crs_epsg=crs_epsg,
+                out_dir=proc_dir,
+                provider=optical_provider,
+                geometry_wgs84=feat.get("geometry"),
+            )
+            poly_posgar: Optional[List[Tuple[float, float]]] = None
+            try:
+                ext_ring = (
+                    list(geom_obj.exterior.coords)
+                    if geom_obj.geom_type == "Polygon"
+                    else list(geom_obj.geoms[0].exterior.coords)
+                )
+                poly_posgar = [to_metric.transform(float(px), float(py)) for px, py in ext_ring]
+            except Exception:
+                poly_posgar = None
+
             composite_png_path = proc_dir / f"{zone_key.lower()}_{cand_id}_composite.png"
             render_candidate_composite(
                 dtm_path=master_dtm_path,
@@ -564,14 +605,23 @@ async def run_autonomous_prospector(
                 centroid_posgar=[cx_m, cy_m],
                 buffer_m=6.0 if res_m <= 0.15 else (10.0 if res_m <= 1.0 else 15.0),
                 candidate_id=cand_id,
+                optical_context=optical_ctx,
+                candidate_polygon_posgar=poly_posgar,
             )
 
             # Juicio pericial multimodal (Gemini si hay clave; si no, PENDIENTE_REVISION / caché del agente MCP)
             props["biome"] = zone_meta.get("biome", "general")
             props["archaeo_context"] = zone_meta.get("archaeo_context", "")
             props["dem_source"] = dem_source_label
+            props["dem_provider_used"] = dem_provider_used
             props["dem_native_resolution_m"] = dem_native_res_m
             props["dem_processing_resolution_m"] = res_m
+            if optical_ctx:
+                props["optical_provider_used"] = optical_ctx.get("optical_provider_used")
+                props["ndvi_mean"] = optical_ctx.get("ndvi_mean")
+                props["ndvi_std"] = optical_ctx.get("ndvi_std")
+                props["ndwi_mean"] = optical_ctx.get("ndwi_mean")
+                props["ndvi_anomaly_delta"] = optical_ctx.get("ndvi_anomaly_delta")
             props["composite_image_path"] = str(composite_png_path)
             vlm_verdict = evaluate_candidate_with_vlm(
                 cand_id,
@@ -786,6 +836,20 @@ def _parse_cli_args() -> argparse.Namespace:
             "el score heurístico; 'filter' usa la probabilidad ML como umbral de entrada (estricto)."
         ),
     )
+    parser.add_argument(
+        "--dem-provider",
+        type=str,
+        default="auto",
+        choices=["auto", "copernicus_aws", "planetary_stac", "fabdem", "alos_aw3d30", "ign_wcs"],
+        help="Proveedor DEM en Fase 1 ('auto' elige según bioma con fallback).",
+    )
+    parser.add_argument(
+        "--optical-provider",
+        type=str,
+        default=None,
+        choices=["none", "sentinel2_stac", "xyz_tiles", "gee"],
+        help="Proveedor óptico/multiespectral por candidato en Fase 4 (por defecto: configuración .env).",
+    )
     return parser.parse_args()
 
 
@@ -811,6 +875,8 @@ def main() -> None:
                 overlap_ratio=args.overlap,
                 max_candidates_to_validate=args.max_candidates,
                 ml_mode=args.ml_mode,
+                dem_provider=args.dem_provider,
+                optical_provider=args.optical_provider,
                 hunt_highres=bool(args.hunt_highres or args.highres_id),
                 highres_id=args.highres_id,
             )

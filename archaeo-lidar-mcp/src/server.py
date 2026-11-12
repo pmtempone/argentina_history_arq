@@ -253,8 +253,13 @@ async def tool_run_full_pipeline(
     """
     from pyproj import CRS, Transformer
     import rasterio
+    from src.core.looting_monitor import evaluate_looting_alert
+    from src.core.ml_calibrator import load_calibrator, score_candidate
+    from src.core.optical_providers import fetch_candidate_optical_context
+    from src.core.vlm_judge import evaluate_candidate_with_vlm
 
     settings.ensure_directories()
+    calibrator = load_calibrator()
     src_file = Path(input_path)
     if not src_file.exists():
         raise FileNotFoundError(f"No se encontró el archivo de entrada: {input_path}")
@@ -315,7 +320,44 @@ async def tool_run_full_pipeline(
 
         cand_cx, cand_cy = to_metric.transform(lon_w, lat_w)
 
-        # 4. Lámina compuesta con traza dinámica centrada en el candidato
+        # 4. Validación espacial cruzada IGN + OSM + GPKG y vigilancia de saqueo
+        val_res = await validate_anomaly_async(
+            lat=lat_w,
+            lon=lon_w,
+            known_gpkg_path=known_gpkg_path,
+            anomaly_id=cand_id,
+        )
+
+        # 5. Calibrador ML supervisado y alerta patrimonial ALERTA_SAQUEO
+        ml_prob = None
+        if calibrator:
+            ml_prob = score_candidate(
+                props,
+                slrm_path=relief_res.slrm_path,
+                slope_path=relief_res.slope_path,
+                model=calibrator,
+            )
+            if ml_prob is not None:
+                props["ml_probability"] = ml_prob
+
+        looting_alert = evaluate_looting_alert(
+            props,
+            osm_matches=val_res.osm_matches,
+            ign_matches=val_res.ign_matches,
+        )
+
+        # 6. Contexto óptico/multiespectral (solo para CANDIDATO_INEDITO) + lámina compuesta
+        optical_ctx = None
+        if val_res.classification == "CANDIDATO_INEDITO":
+            optical_ctx = fetch_candidate_optical_context(
+                candidate_id=cand_id,
+                centroid_wgs84=centroid_wgs,
+                bbox_posgar=[min_x, min_y, max_x, max_y],
+                crs_epsg=target_epsg,
+                out_dir=settings.processed_dir,
+                geometry_wgs84=feat.get("geometry"),
+            )
+
         composite_path = settings.processed_dir / f"{src_file.stem}_{cand_id}_composite.png"
         render_candidate_composite(
             dtm_path=dtm_path,
@@ -324,29 +366,43 @@ async def tool_run_full_pipeline(
             out_png_path=composite_path,
             centroid_posgar=[cand_cx, cand_cy],
             buffer_m=15.0,
+            candidate_id=cand_id,
+            optical_context=optical_ctx,
         )
 
-        # 5. Validación espacial cruzada IGN + OSM + GPKG
-        val_res = await validate_anomaly_async(
-            lat=lat_w,
-            lon=lon_w,
-            known_gpkg_path=known_gpkg_path,
-            anomaly_id=cand_id,
-        )
-
-        # 6. Búsqueda académica
+        # 7. Búsqueda académica y evaluación VLM
         papers = await check_academic_papers(
             lat=lat_w,
             lon=lon_w,
             toponyms=[cand_id],
         )
 
-        # 7. Generación de dossier técnico INAPL y resguardo de coordenadas
+        vlm_metrics: Dict[str, Any] = dict(props)
+        vlm_metrics["dem_processing_resolution_m"] = resolution
+        if optical_ctx:
+            vlm_metrics["optical_provider_used"] = optical_ctx.get("optical_provider_used")
+            vlm_metrics["ndvi_mean"] = optical_ctx.get("ndvi_mean")
+            vlm_metrics["ndvi_anomaly_delta"] = optical_ctx.get("ndvi_anomaly_delta")
+            vlm_metrics["ndwi_mean"] = optical_ctx.get("ndwi_mean")
+        if looting_alert:
+            vlm_metrics["patrimonial_priority"] = looting_alert["alert"]
+            vlm_metrics["nearest_known_site"] = looting_alert["nearest_known_site"]
+            vlm_metrics["diameter_m"] = looting_alert["diameter_m"]
+
+        vlm_verdict = evaluate_candidate_with_vlm(
+            cand_id,
+            composite_path,
+            vlm_metrics,
+            cache_dir=settings.processed_dir / "vlm_cache",
+        )
+
+        # 8. Generación de dossier técnico INAPL y resguardo de coordenadas
         report_payload = {
             "id": cand_id,
             "anomaly_type": props.get("anomaly_type"),
             "classification": val_res.classification,
             "confidence": props.get("confidence"),
+            "ml_probability": ml_prob,
             "area_m2": props.get("area_m2"),
             "rectangularity": props.get("rectangularity"),
             "circularity": props.get("circularity"),
@@ -355,7 +411,15 @@ async def tool_run_full_pipeline(
             "centroid_wgs84": centroid_wgs,
             "crs_epsg": f"EPSG:{target_epsg}",
             "composite_image_path": str(composite_path),
+            "vlm_verdict": vlm_verdict,
         }
+        if looting_alert:
+            report_payload["patrimonial_priority"] = looting_alert["alert"]
+            report_payload["nearest_known_site"] = looting_alert["nearest_known_site"]
+            report_payload["diameter_m"] = looting_alert["diameter_m"]
+            report_payload["looting_osm_context"] = looting_alert["osm_historic_context"]
+            report_payload["looting_ign_context"] = looting_alert["ign_settlement_context"]
+
         dossier_path = generate_inapl_dossier(report_payload, out_dir=settings.reports_dir)
 
         candidates_summary.append({
@@ -363,6 +427,9 @@ async def tool_run_full_pipeline(
             "type": props.get("anomaly_type"),
             "classification": val_res.classification,
             "confidence": props.get("confidence"),
+            "ml_probability": ml_prob,
+            "patrimonial_priority": looting_alert["alert"] if looting_alert else None,
+            "vlm_verdict": vlm_verdict.get("verdict"),
             "area_m2": props.get("area_m2"),
             "distance_to_water_m": val_res.distance_to_water_m,
             "composite_image": str(composite_path),
@@ -408,21 +475,20 @@ async def tool_autonomous_prospect(
     target_zone: str = "ZONA_1_TASTIL",
     window_size_m: float = 500.0,
     overlap_ratio: float = 0.15,
+    max_candidates_to_validate: int = 12,
+    ml_mode: str = "advisory",
+    dem_provider: str = "auto",
+    optical_provider: str | None = None,
+    hunt_highres: bool = False,
+    highres_id: str | None = None,
 ) -> dict:
     """Ejecuta el scanner de prospección arqueológica 100% autónomo (Zero Human-in-the-Loop).
 
-    Descarga datos reales de elevación, subdivide el terreno en celdas de 500x500 m (15% overlap),
-    detecta estructuras morfológicas (`confianza >= 0.70`, `dZ >= 0.20 m`), valida contra IGN y OSM,
-    genera láminas con traza sobre el centroide, redacta dossiers INAPL y compila
-    `MAPA_FINAL_PROSPECCION.geojson`.
-
-    Args:
-        target_zone: Zona arqueológica objetivo (`ZONA_1_TASTIL`, `ZONA_2_YOCAVIL`, `ZONA_3_TINOGASTA`).
-        window_size_m: Tamaño de la ventana deslizante en metros (por defecto 500.0 m).
-        overlap_ratio: Solapamiento entre celdas vecinas (por defecto 0.15).
-
-    Returns:
-        Diccionario con el resumen de candidatos inéditos, láminas generadas y ruta al GeoJSON final.
+    Descarga recortes reales DEM según proveedor/bioma (Copernicus AWS, FABDEM, Planetary STAC,
+    IGN WCS) o datasets UAV/LiDAR de alta resolución, subdivide en celdas de 500x500 m,
+    detecta relieve positivo y negativo, valida contra IGN/OSM/sitios conocidos, obtiene contexto
+    óptico/multiespectral (Sentinel-2 NDVI/NDWI + chip RGB) para candidatos inéditos, renderiza
+    láminas de 4 o 6 paneles y genera dossiers INAPL (Ley 25.743).
     """
     from src.autonomous_prospector import run_autonomous_prospector
 
@@ -430,6 +496,12 @@ async def tool_autonomous_prospect(
         target_zone=target_zone,
         window_size_m=window_size_m,
         overlap_ratio=overlap_ratio,
+        max_candidates_to_validate=max_candidates_to_validate,
+        ml_mode=ml_mode,
+        dem_provider=dem_provider,
+        optical_provider=optical_provider,
+        hunt_highres=hunt_highres,
+        highres_id=highres_id,
     )
 
 

@@ -23,11 +23,15 @@ VerdictLiteral = Literal["ANTROPICA", "NATURAL", "ARTEFACTO", "PENDIENTE_REVISIO
 DISCARD_VERDICTS = {"NATURAL", "ARTEFACTO"}
 
 ARCHAEO_SYSTEM_PROMPT = """Actuás como un Arqueólogo Espacial Senior del CONICET especialista en el Noroeste Argentino.
-Analizá los 4 paneles de la lámina adjunta (1: Hillshade 1.5x, 2: SLRM microtopográfico, 3: Perfil de corte 2D, 4: Render 3D isométrico; si la lámina es de una campaña previa puede tener 3 paneles sin render).
+Analizá los paneles de la lámina adjunta (1: Hillshade 1.5x, 2: SLRM microtopográfico, 3: Perfil de corte 2D, 4: Render 3D isométrico; y si la lámina es multisensorial 2x3: 5: Imagen Óptica RGB real con contorno cian, 6: Mapa Espectral NDVI/NDWI de cropmarks).
 Tu objetivo es determinar si la estructura es:
 a) ESTRUCTURA_ANTROPICA_PROBABLE (Muro pircado, recinto, andén, corral).
 b) FORMACION_GEOLOGICA_NATURAL (Filo rocoso, dique ígneo, escarpa de falla).
 c) ARTEFACTO_DIGITAL (Ruido de interpolación del DEM).
+
+Cuando estén disponibles los paneles 5 (RGB) y 6 (NDVI), contrastá la microtopografía SLRM/3D con la
+cobertura visible en RGB (descartá infraestructura moderna o corrales actuales en uso) y evaluá
+anomalías de vegetación (cropmarks) en el índice NDVI/ndvi_anomaly_delta.
 
 Respondé en formato estructurado:
 - Veredicto final: (ANTROPICA / NATURAL / ARTEFACTO)
@@ -71,8 +75,13 @@ def build_judge_prompt(candidate_id: str, metrics: Dict[str, Any]) -> str:
         "slope_mean_deg",
         "distance_to_water_m",
         "dem_source",
+        "dem_provider_used",
         "dem_native_resolution_m",
         "dem_processing_resolution_m",
+        "optical_provider_used",
+        "ndvi_mean",
+        "ndvi_anomaly_delta",
+        "ndwi_mean",
         "patrimonial_priority",
         "nearest_known_site",
         "diameter_m",
@@ -258,6 +267,24 @@ def record_vlm_verdict(
     fc["features"] = remaining
     fc.setdefault("metadata", {})["confirmed_inedito_count"] = len(remaining)
     map_path.write_text(json.dumps(fc, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Purga de seguridad geodésica (Ley 25.743): quitar también geometrías descartadas de MAPA_PROSPECCION_*.geojson
+    if discarded:
+        for z_map_path in sorted(rep_dir.glob("MAPA_PROSPECCION_*.geojson")):
+            try:
+                z_fc = json.loads(z_map_path.read_text(encoding="utf-8"))
+                z_feats = z_fc.get("features", [])
+                z_remaining = [
+                    zf
+                    for zf in z_feats
+                    if (zf.get("id") or zf.get("properties", {}).get("id")) != candidate_id
+                ]
+                if len(z_remaining) != len(z_feats):
+                    z_fc["features"] = z_remaining
+                    z_fc.setdefault("metadata", {})["confirmed_inedito_count"] = len(z_remaining)
+                    z_map_path.write_text(json.dumps(z_fc, indent=2, ensure_ascii=False), encoding="utf-8")
+            except Exception:
+                continue
 
     if discarded:
         disc_path = rep_dir / "DESCARTES_VLM.json"

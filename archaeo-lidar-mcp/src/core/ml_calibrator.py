@@ -48,6 +48,8 @@ FEATURE_NAMES: List[str] = [
     "dz_extreme_window",
     "slope_mean_deg",
     "slrm_std_window",
+    "dz_contrast_ratio",
+    "ndvi_anomaly_delta",
 ]
 WINDOW_RADIUS_M: float = 75.0
 
@@ -127,6 +129,7 @@ def extract_features(
     if aspect is None:
         aspect = {"terraza_lineal": 4.0, "zanja_lineal": 4.0}.get(anomaly_type, 1.4)
 
+    ndvi_delta = props.get("ndvi_anomaly_delta")
     feats: Dict[str, float] = {
         "area_m2": area_m2,
         "dz_mean": dz_mean,
@@ -137,6 +140,8 @@ def extract_features(
         "dz_extreme_window": np.nan,
         "slope_mean_deg": np.nan,
         "slrm_std_window": np.nan,
+        "dz_contrast_ratio": np.nan,
+        "ndvi_anomaly_delta": float(ndvi_delta) if ndvi_delta is not None else np.nan,
     }
 
     centroid = props.get("centroid_wgs84")
@@ -147,6 +152,7 @@ def extract_features(
             if stats:
                 feats["dz_extreme_window"] = stats["absmax"]
                 feats["slrm_std_window"] = stats["std"]
+                feats["dz_contrast_ratio"] = round(abs(dz_mean) / max(float(stats["std"]), 0.05), 4)
         if slope_path and Path(slope_path).exists():
             sstats = _sample_window_stats(slope_path, lon, lat, window_radius_m)
             if sstats:
@@ -154,8 +160,9 @@ def extract_features(
     return feats
 
 
-def _features_to_vector(feats: Dict[str, float]) -> List[float]:
-    return [float(feats.get(name, np.nan)) for name in FEATURE_NAMES]
+def _features_to_vector(feats: Dict[str, float], feature_names: Optional[List[str]] = None) -> List[float]:
+    names = feature_names or FEATURE_NAMES
+    return [float(feats.get(name, np.nan)) for name in names]
 
 
 # ---------------------------------------------------------------------------
@@ -209,15 +216,22 @@ def _load_negative_samples(
     meta: List[Dict[str, Any]] = []
     for cid, entry in desc.items():
         if cid in id_index:
-            props, _zone_key, masters = id_index[cid]
+            props, zone_key_item, masters = id_index[cid]
+            group_id = f"NEG_{zone_key_item}"
         else:
             prefix = cid.replace("ARQ-", "").split("-")[0]
             props = {k: entry.get(k) for k in ("area_m2", "mean_elevation_m", "anomaly_type")}
             masters = fallback_hr if prefix in {"HR", "HRM"} else fallback_masters
+            group_id = f"NEG_{prefix}"
         feats = extract_features(props, slrm_path=masters[0], slope_path=masters[1])
         feats["label"] = 0
         samples.append(feats)
-        meta.append({"id": cid, "source": "descarte_vlm_audited", "anomaly_type": entry.get("anomaly_type")})
+        meta.append({
+            "id": cid,
+            "source": "descarte_vlm_audited",
+            "anomaly_type": entry.get("anomaly_type"),
+            "group": group_id,
+        })
     return samples, meta
 
 
@@ -360,6 +374,7 @@ def _generate_synthetic_positive_samples(
                 "id": f"SYN-{ci}-{len(meta):03d}",
                 "source": "sintetico_plantado",
                 "anomaly_type": props.get("anomaly_type"),
+                "group": f"SYN_CFG_{ci}",
             })
     return samples, meta
 
@@ -424,16 +439,28 @@ def train_calibrator(
     (precision, recall, F1, feature importances) en `data/reports/ML_BENCHMARK_METRICS.md`.
     """
     from sklearn.metrics import precision_recall_fscore_support
-    from sklearn.model_selection import StratifiedKFold, cross_val_predict
+    from sklearn.model_selection import StratifiedGroupKFold, StratifiedKFold, cross_val_predict
 
     X, y, meta = build_dataset(reports_dir, positive_workdir=positive_workdir, seed=seed)
     if len(set(y.tolist())) < 2:
         raise ValueError("El dataset debe contener ambas clases para entrenar.")
 
+    groups = np.array([str(m.get("group") or m.get("id") or idx) for idx, m in enumerate(meta)])
+    neg_groups = len(set(groups[y == 0].tolist()))
+    pos_groups = len(set(groups[y == 1].tolist()))
+    min_groups = min(neg_groups, pos_groups)
+
     pipeline = _build_pipeline(seed=seed, min_class_count=int(np.bincount(y).min()))
     n_splits = max(2, min(5, int(np.bincount(y).min()) - 1))
-    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
-    y_pred_cv = cross_val_predict(pipeline, X, y, cv=skf, method="predict")
+    if min_groups >= 2:
+        n_group_splits = min(n_splits, min_groups)
+        sgkf = StratifiedGroupKFold(n_splits=n_group_splits, shuffle=True, random_state=seed)
+        y_pred_cv = cross_val_predict(pipeline, X, y, groups=groups, cv=sgkf, method="predict")
+        cv_label = f"validación cruzada espacial agrupada (StratifiedGroupKFold, {n_group_splits} folds)"
+    else:
+        skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
+        y_pred_cv = cross_val_predict(pipeline, X, y, cv=skf, method="predict")
+        cv_label = f"validación cruzada estratificada ({n_splits} folds)"
     prec, rec, f1, _ = precision_recall_fscore_support(y, y_pred_cv, labels=[0, 1], zero_division=0)
     macro = {"precision": float(prec.mean()), "recall": float(rec.mean()), "f1": float(f1.mean())}
 
@@ -476,8 +503,7 @@ def train_calibrator(
         "  verdad de campo conocida (recintos, círculos, terrazas, pozos, zanjas; 0.5 m/px y 30 m/px).",
         f"- **Vector de features ({len(FEATURE_NAMES)}):** " + ", ".join(f"`{f}`" for f in FEATURE_NAMES),
         "",
-        "## 2. Métricas (validación cruzada estratificada, "
-        f"{n_splits} folds, predicción out-of-fold)",
+        f"## 2. Métricas ({cv_label}, predicción out-of-fold)",
         "",
         "| Clase | Precision | Recall | F1 |",
         "| :--- | :---: | :---: | :---: |",
@@ -548,6 +574,7 @@ def score_candidate(
     if bundle is None:
         return None
     feats = extract_features(props, slrm_path=slrm_path, slope_path=slope_path)
-    X = np.array([_features_to_vector(feats)], dtype=np.float64)
+    expected_names = bundle.get("feature_names", FEATURE_NAMES)
+    X = np.array([_features_to_vector(feats, expected_names)], dtype=np.float64)
     prob = float(bundle["pipeline"].predict_proba(X)[0, 1])
     return round(prob, 4)
