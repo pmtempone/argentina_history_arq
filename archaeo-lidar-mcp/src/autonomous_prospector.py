@@ -20,6 +20,8 @@ from src.core.anomaly_detector import detect_anomalies
 from src.core.data_fetcher import TARGET_ZONES, fetch_elevation_tile
 from src.core.highres_hunter import HighResLidarHunter
 from src.core.literature_checker import check_academic_papers
+from src.core.looting_monitor import evaluate_looting_alert
+from src.core.ml_calibrator import load_calibrator, score_candidate
 from src.core.relief_models import compute_slrm, compute_slope
 from src.core.report_generator import generate_inapl_dossier
 from src.core.spatial_validator import validate_anomaly_async
@@ -339,6 +341,14 @@ async def run_autonomous_prospector(
     tiles_dir = proc_dir / "tiles" / zone_key.lower()
     tiles_dir.mkdir(parents=True, exist_ok=True)
 
+    # Calibrador ML supervisado (probabilidad calibrada); modo degradado a score heurístico si
+    # no existe el modelo entrenado (`data/processed/ml_calibrator.joblib`).
+    calibrator = load_calibrator()
+    if calibrator:
+        print("   🤖 Calibrador ML cargado: puntuando candidatos con probabilidad calibrada (ML).")
+    else:
+        print("   🤖 Calibrador ML no entrenado: usando score heurístico morfológico.")
+
     # 3. Pipeline de Detección Celda por Celda
     print("\n[FASE 3/5] Escaneando celdas microtopográficas (SLRM + Slope + OpenCV)...")
     raw_filtered_features: List[Dict[str, Any]] = []
@@ -373,6 +383,18 @@ async def run_autonomous_prospector(
             props = feat["properties"]
             conf = float(props["confidence"])
             mean_dz = float(props["mean_elevation_m"])
+            # Probabilidad calibrada del modelo supervisado cuando está disponible;
+            # reemplaza al score heurístico como umbral de entrada a la validación.
+            if calibrator:
+                ml_prob = score_candidate(
+                    props,
+                    slrm_path=master_slrm_path,
+                    slope_path=master_slope_path,
+                    model=calibrator,
+                )
+                if ml_prob is not None:
+                    props["ml_probability"] = ml_prob
+                    conf = ml_prob
             if conf >= min_confidence and abs(mean_dz) >= zone_min_dz:
                 props["source_cell"] = cell_tag
                 passed_cell.append(feat)
@@ -493,6 +515,24 @@ async def run_autonomous_prospector(
         props["ign_matches_count"] = len(val_res.ign_matches)
         props["osm_matches_count"] = len(val_res.osm_matches)
         props["academic_references_count"] = len(zone_papers)
+
+        # Vigilancia patrimonial: patrón compatible con pozo de huaquero cerca de un sitio registrado
+        looting_alert = evaluate_looting_alert(
+            props,
+            osm_matches=val_res.osm_matches,
+            ign_matches=val_res.ign_matches,
+        )
+        if looting_alert:
+            props["patrimonial_priority"] = looting_alert["alert"]
+            props["nearest_known_site"] = looting_alert["nearest_known_site"]
+            props["diameter_m"] = looting_alert["diameter_m"]
+            props["looting_osm_context"] = looting_alert["osm_historic_context"]
+            props["looting_ign_context"] = looting_alert["ign_settlement_context"]
+            site_name = (looting_alert["nearest_known_site"] or {}).get("name", "contexto IGN/OSM")
+            print(
+                f"      🚨 {looting_alert['alert']} (diam. {looting_alert['diameter_m']} m, "
+                f"sitio: {site_name}) — vía de denuncia Ley 25.743"
+            )
 
         print(
             f"   -> {cand_id} ({props['anomaly_type']}, {props['area_m2']} m², dZ={props['mean_elevation_m']:+.2f} m) "

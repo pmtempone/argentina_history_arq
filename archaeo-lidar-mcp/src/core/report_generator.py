@@ -176,6 +176,33 @@ direcciones provinciales de patrimonio se encuentran en:
 **Justificación geomorfológica:** {vlm.get('geomorphological_justification', 'N/D')}
 """
 
+    if candidate_data.get("patrimonial_priority") == "ALERTA_SAQUEO":
+        site_info = candidate_data.get("nearest_known_site") or {}
+        diameter = candidate_data.get("diameter_m", "N/D")
+        dossier_md += f"""
+---
+
+## ⚠️ ALERTA DE SAQUEO POTENCIAL (PRIORIDAD PATRIMONIAL — LEY 25.743)
+
+> **ESTE CANDIDATO PRESENTA UN PATRÓN MORFOLÓGICO COMPATIBLE CON POZO DE HUAQUERO**
+> en el entorno de un sitio arqueológico registrado. Su tratamiento NO es el de un
+> candidato de prospección ordinaria: corresponde a la vía de denuncia y protección urgente.
+
+| Campo | Valor Registrado |
+| :--- | :--- |
+| **Diámetro equivalente del hundimiento** | `{diameter} m` |
+| **Sitio registrado más cercano** | `{site_info.get('name', 'N/D')}` ({site_info.get('site_type', 'N/D')}) |
+| **Distancia al sitio** | `{site_info.get('distance_m', 'N/D')} m` |
+| **Contexto OSM `historic=*`** | `{'SÍ' if candidate_data.get('looting_osm_context') else 'NO'}` |
+| **Contexto IGN (asentamiento/infra.)** | `{'SÍ' if candidate_data.get('looting_ign_context') else 'NO'}` |
+
+**Acción requerida (Ley Nacional N° 25.743, art. 20 y 23):**
+1. Comunicar de inmediato a la Delegación regional del **INAPL** y a la dirección provincial
+   de patrimonio cultural correspondiente.
+2. Inspección terrestre prioritaria con personal autorizado (replanteo por `{annex_path.name}`).
+3. Evaluación de medidas de protección urgente del sitio afectado.
+"""
+
     dossier_path = target_dir / f"DOSSIER_INAPL_{candidate_id}.md"
     dossier_path.write_text(dossier_md, encoding="utf-8")
     return str(dossier_path)
