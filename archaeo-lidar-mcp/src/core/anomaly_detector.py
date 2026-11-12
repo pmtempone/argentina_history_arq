@@ -69,18 +69,28 @@ def _classify_contour_morphology(
         conf = min(0.95, 0.65 + 0.05 * min(aspect_ratio - 3.5, 5.0))
         return "terraza_lineal", round(float(conf), 3)
 
+    # 2a. Círculo a resolución gruesa: circularidad muy alta (>= 1.05) es inequívoca de un
+    #     contorno circular y domina sobre la rectangularidad, que en blobs de pocos píxeles
+    #     queda inflada por la corrección de medio píxel (un cuadrado rasterizado no supera ~1.0).
+    if circularity >= 1.05 and aspect_ratio <= 1.5:
+        conf = min(0.98, 0.60 + 0.38 * min(circularity, 1.2))
+        return "estructura_circular", round(float(conf), 3)
+
     # 2. Estructura circular (chenque, corral circular, torreón): alta circularidad y baja elongación
     if circularity >= 0.76 and aspect_ratio <= 1.45 and rectangularity < 0.86:
         conf = min(0.98, 0.60 + 0.38 * circularity)
         return "estructura_circular", round(float(conf), 3)
 
-    # 3. Recinto ortogonal (pirca cuadrangular/rectangular, cancha, kallanka): alta rectangularidad
-    if rectangularity >= 0.80 or (4 <= num_vertices <= 6 and rectangularity >= 0.72):
+    # 3. Recinto ortogonal (pirca cuadrangular/rectangular, cancha, kallanka): alta rectangularidad.
+    # El atajo por vértices exige además circularidad <= 0.85: un cuadrado rasterizado tiene
+    # circularidad ~0.785, mientras que un círculo a resolución gruesa se aproxima con 4-6
+    # vértices y circularidad > 0.9, y no debe clasificarse como recinto ortogonal.
+    if rectangularity >= 0.80 or (4 <= num_vertices <= 6 and rectangularity >= 0.72 and circularity <= 0.85):
         conf = min(0.98, 0.55 + 0.43 * rectangularity)
         return "recinto_ortogonal", round(float(conf), 3)
 
-    # Fallback basado en el descriptor dominante
-    if circularity > rectangularity and aspect_ratio < 1.5:
+    # Fallback basado en el descriptor dominante (tolerancia epsilon en el límite de aspect 1.5)
+    if circularity > rectangularity and aspect_ratio <= 1.5 + 1e-6:
         conf = max(0.50, min(0.90, 0.50 + 0.35 * circularity))
         return "estructura_circular", round(float(conf), 3)
 
@@ -175,12 +185,16 @@ def _extract_candidates_from_mask(
     max_area: float,
     sign: int,
     start_idx: int,
+    border_margin_px: int = 0,
 ) -> List[Dict[str, Any]]:
     """Extrae y clasifica contornos de una máscara binaria para un pase de signo.
 
     Args:
         sign: +1 para relieve positivo, -1 para relieve negativo.
         start_idx: Índice global inicial para numerar los candidatos sin colisiones entre pases.
+        border_margin_px: Margen de borde en píxeles; contornos que lo tocan se descartan porque
+            la tendencia SLRM está sesgada cerca del borde del raster (modo 'nearest' del
+            filtro gaussiano) y la cobertura real la garantiza el overlap del tiling.
 
     Returns:
         Lista de candidatos en crudo con geometría métrica y WGS84, tipología y confianza.
@@ -191,15 +205,16 @@ def _extract_candidates_from_mask(
     res_x = float(abs(transform.a))
     res_y = float(abs(transform.e))
 
-    # Margen de borde (en píxeles) para exigir que los hundimientos sean depresiones CERRADAS:
-    # un pozo o patio hundido queda completamente contenido en la celda, mientras que una
-    # vaguada, cauce o espinazo natural que atraviesa el tile toca el borde y se descarta.
-    border_pad_px = 2
+    # Margen de borde: los hundimientos siempre exigen depresión cerrada (>= 2 px de margen
+    # propio: un pozo queda contenido en la celda, mientras que una vaguada o cauce natural
+    # que atraviesa el tile toca el borde y se descarta). Para el pase positivo, el margen
+    # solo se aplica cuando el llamador lo solicita (tiles chicos en píxeles).
+    border_pad_px = max(border_margin_px, 2) if sign < 0 else border_margin_px
     img_h, img_w = closed_mask.shape
 
     for offset, cnt in enumerate(contours, start=0):
         idx = start_idx + offset
-        if sign < 0:
+        if border_pad_px > 0:
             cnt_xs = cnt[:, 0, 0]
             cnt_ys = cnt[:, 0, 1]
             touches_border = (
@@ -322,6 +337,7 @@ def detect_anomalies(
     max_area: float = 6000.0,
     min_dz: float = 0.15,
     max_slope_deg: float = 35.0,
+    border_margin_px: int = 0,
 ) -> Dict[str, Any]:
     """Detecta estructuras arqueológicas en modelos SLRM y Slope usando OpenCV y clustering espacial.
 
@@ -346,6 +362,8 @@ def detect_anomalies(
         max_area: Área máxima en metros cuadrados para considerar una anomalía.
         min_dz: Desviación local mínima absoluta en metros (aplica a positivo y negativo).
         max_slope_deg: Pendiente máxima en grados para aceptar un contorno.
+        border_margin_px: Margen de borde en píxeles para descartar contornos que lo tocan
+            (la tendencia SLRM está sesgada cerca del borde; la cobertura real la da el overlap).
 
     Returns:
         Diccionario GeoJSON `FeatureCollection` con las anomalías validadas y metadatos de agrupamiento.
@@ -389,6 +407,7 @@ def detect_anomalies(
             max_area=max_area,
             sign=sign,
             start_idx=next_idx,
+            border_margin_px=border_margin_px,
         )
         next_idx += len(pass_candidates) + 1
         raw_candidates.extend(pass_candidates)

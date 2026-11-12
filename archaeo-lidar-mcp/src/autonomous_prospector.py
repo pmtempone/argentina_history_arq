@@ -311,6 +311,12 @@ async def run_autonomous_prospector(
     if zone_meta.get("archaeo_context"):
         print(f"       • Contexto: {zone_meta['archaeo_context']}")
 
+    # Margen de borde para el detector: la tendencia SLRM está sesgada cerca del borde del
+    # raster (modo 'nearest' del filtro gaussiano), así que los contornos que tocan el borde
+    # del tile se descartan; el overlap del tiling garantiza la cobertura de esa franja.
+    slrm_radius_px = max(2.0, slrm_radius_m / res_m) if res_m > 0 else 2.0
+    border_margin_px = min(12, max(2, int(np.ceil(slrm_radius_px))))
+
     # Generar SLRM y Slope maestros para inspección visual continua sin costuras
     master_slrm_path = Path(
         compute_slrm(master_dtm_path, proc_dir / f"{zone_key.lower()}_master_slrm.tif", radius_m=slrm_radius_m)
@@ -358,6 +364,7 @@ async def run_autonomous_prospector(
             max_area=det_max_area,
             min_dz=zone_min_dz,
             max_slope_deg=zone_max_slope,
+            border_margin_px=border_margin_px,
         )
 
         cell_feats = cell_fc.get("features", [])
