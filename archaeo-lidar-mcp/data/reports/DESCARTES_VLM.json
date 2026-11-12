@@ -1649,7 +1649,67 @@
         "field_inspection_recommended": false,
         "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
       }
+    },
+    "ARQ-MAN-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 254.63,
+      "mean_elevation_m": 0.241,
+      "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 88,
+        "functional_interpretation": "Lomada residual suave en ladera de sierra granítica (~50 m de base, resalte 0.27 m).",
+        "geomorphological_justification": "Panel 1: gradiente diagonal puro sin trazas lineales de muro ni quiebres ortogonales. Panel 2: SLRM uniforme, sin estructura interna ni bordes rectos. Panel 3: bombeo continuo simétrico de solo 0.27 m sobre 50 m, sin piso plano ni resaltes perimetrales (un recinto pircado perfilaría piso + bordes altos). Panel 4: domo liso. Resalte del orden del ruido de supermuestreo bicúbico GLO-30 30m->2m (bloques de 15x15 px visibles en la trama); la clasificación 'recinto' es un artefacto del umbral sobre la convexidad.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-MAN-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 654.91,
+      "mean_elevation_m": 0.296,
+      "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 88,
+        "functional_interpretation": "Lomada convexa de ladera (~55 m de base, resalte 0.41 m), sin geometría anular.",
+        "geomorphological_justification": "Panel 1: gradiente suave NW-SE sin sombras de muro perimetral ni traza anular. Panel 2: positivo difuso y continuo (0.2-0.4 m) sin anillo deprimido entre muros. Panel 3: campana lisa de 0.41 m sobre 55 m sin piso interior ni bordes de corral. Panel 4: domo sin paredes. Un corral de pirca de 650 m2 presentaría un anillo de sobreelevación discontinuo de 0.3-0.5 m y trazas lineales en hillshade; ambas ausentes. Morfología de loma coluvial granítica.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-MAN-0003": {
+      "anomaly_type": "estructura_hundida",
+      "area_m2": 49.66,
+      "mean_elevation_m": -0.228,
+      "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 87,
+        "functional_interpretation": "Microconcavidad de ladera (~15 m de núcleo, profundidad 0.24 m), no compatible con pozo.",
+        "geomorphological_justification": "Panel 1: gradiente de ladera sin paredes de excavación, sin anillo de escombro ni traza de deposición. Panel 2: SLRM uniforme, la concavidad no se distingue del fondo. Panel 3: parábola lisa de -0.24 m sobre ~35 m con núcleo de ~15 m: una casa-pozo comechingona (5-8 m, bordes netos, fondo plano) o un pozo de huaquero (paredes verticales + escombro perimetral) mostraría gradiente abrupto en el perfil; aquí la pendiente es continua. Panel 4: cuenca suave. Profundidad en el ruido del DEM supermuestreado (dZ umbral 0.20 m).",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-MAN-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 327.46,
+      "mean_elevation_m": 0.277,
+      "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 88,
+        "functional_interpretation": "Loma suave alargada en ladera (~45 m de base, resalte 0.35 m).",
+        "geomorphological_justification": "Panel 1: ladera NW escarpada y piso SE, sin trazas de pirca ni geometría. Panel 2: positivo difuso alargado sin estructura interna. Panel 3: campana continua de 0.35 m sobre 45 m, sin paredes ni meseta interior. Panel 4: domo liso. Misma firma que MAN-0001/0002: microrelieve residual de la ladera capturado por el umbral de dZ (0.20 m) apenas por encima del piso de ruido del supermuestreo; sin evidencia arquitectónica.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
     }
   },
-  "updated_at_utc": "2026-11-12T03:04:08Z"
+  "updated_at_utc": "2026-11-12T03:59:36Z"
 }

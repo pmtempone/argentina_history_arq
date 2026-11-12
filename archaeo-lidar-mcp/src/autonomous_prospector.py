@@ -154,6 +154,7 @@ async def run_autonomous_prospector(
     min_confidence: float = 0.70,
     min_elevation_m: float = 0.20,
     max_candidates_to_validate: int = 12,
+    ml_mode: str = "advisory",
     cache_dir: Optional[Union[str, Path]] = None,
     processed_dir: Optional[Union[str, Path]] = None,
     reports_dir: Optional[Union[str, Path]] = None,
@@ -383,8 +384,12 @@ async def run_autonomous_prospector(
             props = feat["properties"]
             conf = float(props["confidence"])
             mean_dz = float(props["mean_elevation_m"])
-            # Probabilidad calibrada del modelo supervisado cuando está disponible;
-            # reemplaza al score heurístico como umbral de entrada a la validación.
+            # Probabilidad calibrada del modelo supervisado cuando está disponible.
+            # - ml_mode="filter": reemplaza al score heurístico como umbral (modo estricto).
+            # - ml_mode="advisory": se registra en props para priorización y contexto del
+            #   Juez VLM, pero el filtro de entrada mantiene el score heurístico. Default:
+            #   el calibrador actual presenta sesgo de resolución (ver ML_BENCHMARK_METRICS)
+            #   y en modo filter anula todo candidato satelital (GLO-30) de zonas nuevas.
             if calibrator:
                 ml_prob = score_candidate(
                     props,
@@ -394,7 +399,8 @@ async def run_autonomous_prospector(
                 )
                 if ml_prob is not None:
                     props["ml_probability"] = ml_prob
-                    conf = ml_prob
+                    if ml_mode == "filter":
+                        conf = ml_prob
             if conf >= min_confidence and abs(mean_dz) >= zone_min_dz:
                 props["source_cell"] = cell_tag
                 passed_cell.append(feat)
@@ -495,6 +501,7 @@ async def run_autonomous_prospector(
                 "ZONA_26_STROBEL": "STR",
                 "ZONA_27_PIEDRA_PARADA": "PPA",
                 "ZONA_28_PAYUNIA": "PYU",
+                "ZONA_29_SIERRA_DE_MANCHAO": "MAN",
             }
             zone_short = zone_short_map.get(zone_key, zone_key.split("_")[-1][:3].upper())
             cand_id = f"ARQ-{zone_short}-{seq_idx:04d}"
@@ -769,6 +776,16 @@ def _parse_cli_args() -> argparse.Namespace:
         action="store_true",
         help="Re-evalúa únicamente las láminas existentes con el Juez Pericial VLM sin re-escanear celdas.",
     )
+    parser.add_argument(
+        "--ml-mode",
+        type=str,
+        default="advisory",
+        choices=["advisory", "filter"],
+        help=(
+            "Uso del calibrador ML: 'advisory' (default) registra ml_probability pero filtra con "
+            "el score heurístico; 'filter' usa la probabilidad ML como umbral de entrada (estricto)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -793,6 +810,7 @@ def main() -> None:
                 window_size_m=args.window_size,
                 overlap_ratio=args.overlap,
                 max_candidates_to_validate=args.max_candidates,
+                ml_mode=args.ml_mode,
                 hunt_highres=bool(args.hunt_highres or args.highres_id),
                 highres_id=args.highres_id,
             )

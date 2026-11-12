@@ -130,6 +130,13 @@ El score heurístico morfológico se reemplaza por una **probabilidad calibrada*
   candidatos auditados o se confirme un hallazgo en campo.
 - Si el modelo no existe, el sistema degrada al score heurístico (los resultados de esa
   corrida deben etiquetarse como no calibrados).
+- **Modo de uso (`--ml-mode`):**
+  - `advisory` (default): el ML puntúa cada candidato (`ml_probability` en props y contexto
+    del Juez VLM) pero el filtro de entrada usa el score heurístico. Motivo: el calibrador
+    actual presenta sesgo de resolución (positivos sintéticos 0.5 m/px vs negativos GLO-30)
+    y en modo `filter` anula la totalidad de candidatos de zonas satelitales nuevas.
+  - `filter`: la probabilidad ML es el umbral de entrada. Usar solo cuando el modelo esté
+    re-entrenado con positivos reales de la misma resolución.
 
 ---
 

@@ -192,6 +192,13 @@ hace más inteligente**.
 **Regla:** después de cada campaña con dictámenes nuevos, re-entrenar. Si un hallazgo se
 confirma en campo, es la mejora más valiosa posible del modelo.
 
+⚠️ **Por ahora el modelo puntúa "modo consejero"** (`--ml-mode advisory`, el default): su
+puntaje se guarda en cada candidato para priorizar, pero no bloquea nada — el filtro sigue
+siendo el score morfológico y la compuerta final es el Juez Pericial. Motivo: el modelo se
+entrenó sin hallazgos confirmados reales, así que hoy tiende a puntuar bajo a TODO lo que
+viene de imágenes satelitales. Cuando haya hallazgos confirmados en campo, se re-entrena y
+podrá pasarse al modo estricto (`--ml-mode filter`).
+
 ---
 
 ### 3.8 "Quiero usar los descartes para OTRA ciencia (agua, erosión, clima)"

@@ -1,0 +1,634 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "project": "ArchaeoLiDAR-AR-MCP Autonomous Prospector",
+    "target_zone": "ZONA_29_SIERRA_DE_MANCHAO",
+    "region_name": "Sierra de Manchao / Pocho (Córdoba)",
+    "generated_at_utc": "2026-11-12T03:58:34Z",
+    "metric_crs": "EPSG:5345",
+    "output_crs": "EPSG:4326",
+    "windows_scanned": 323,
+    "confirmed_inedito_count": 4,
+    "academic_papers_found": 0
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "ARQ-MAN-0001",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -66.42089715241735,
+              -28.289685955740886
+            ],
+            [
+              -66.42089722339725,
+              -28.289704001862987
+            ],
+            [
+              -66.42091768169814,
+              -28.289721985154586
+            ],
+            [
+              -66.42091775268162,
+              -28.289740031276526
+            ],
+            [
+              -66.42091782366514,
+              -28.289758077398435
+            ],
+            [
+              -66.42089750731748,
+              -28.289776186350878
+            ],
+            [
+              -66.42087719096294,
+              -28.28979429530033
+            ],
+            [
+              -66.42085680362813,
+              -28.289794358124887
+            ],
+            [
+              -66.42083641629324,
+              -28.289794420946397
+            ],
+            [
+              -66.4208160289583,
+              -28.28979448376486
+            ],
+            [
+              -66.42079564162329,
+              -28.289794546580282
+            ],
+            [
+              -66.4207752542882,
+              -28.289794609392672
+            ],
+            [
+              -66.4207547959969,
+              -28.28977662607982
+            ],
+            [
+              -66.42073433771249,
+              -28.289758642763793
+            ],
+            [
+              -66.42071387943493,
+              -28.289740659444575
+            ],
+            [
+              -66.42071380848586,
+              -28.289722613322155
+            ],
+            [
+              -66.42073412485493,
+              -28.289704504396678
+            ],
+            [
+              -66.42075444121711,
+              -28.289686395468184
+            ],
+            [
+              -66.42077482853163,
+              -28.289686332659137
+            ],
+            [
+              -66.42079521584608,
+              -28.28968626984703
+            ],
+            [
+              -66.42081560316048,
+              -28.289686207031895
+            ],
+            [
+              -66.4208359904748,
+              -28.28968614421371
+            ],
+            [
+              -66.42085637778905,
+              -28.289686081392478
+            ],
+            [
+              -66.42087676510323,
+              -28.28968601856821
+            ],
+            [
+              -66.42089715241735,
+              -28.289685955740886
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-MAN-0001",
+        "anomaly_type": "recinto_ortogonal",
+        "relief_sign": "positivo",
+        "confidence": 0.905,
+        "area_m2": 254.63,
+        "rectangularity": 0.8267,
+        "circularity": 1.0722,
+        "aspect_ratio": 1.667,
+        "mean_elevation_m": 0.241,
+        "centroid_wgs84": [
+          -66.42082,
+          -28.289738
+        ],
+        "is_architectural_complex": false,
+        "complex_group_type": "recinto_ortogonal",
+        "cluster_neighbors": [],
+        "ml_probability": 0.0647,
+        "source_cell": "C191_R11C3",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "biome": "sierras_centrales",
+        "archaeo_context": "Casas-pozo comechingonas semi-enterradas (relieve negativo), corrales pircados, morteros y aleros en las laderas occidentales.",
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0001_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0001.md"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-MAN-0002",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -66.41560843315723,
+              -28.31377593732608
+            ],
+            [
+              -66.4156288952394,
+              -28.313793921307482
+            ],
+            [
+              -66.41564935732848,
+              -28.313811905285696
+            ],
+            [
+              -66.41566981942442,
+              -28.313829889260735
+            ],
+            [
+              -66.41566988959352,
+              -28.313847935331044
+            ],
+            [
+              -66.41566995976265,
+              -28.31386598140131
+            ],
+            [
+              -66.41569042187253,
+              -28.31388396537297
+            ],
+            [
+              -66.41569049204524,
+              -28.313902011443094
+            ],
+            [
+              -66.4156701702705,
+              -28.313920119611836
+            ],
+            [
+              -66.41567024043991,
+              -28.313938165681908
+            ],
+            [
+              -66.41567031060939,
+              -28.313956211751936
+            ],
+            [
+              -66.41564998882103,
+              -28.31397431991767
+            ],
+            [
+              -66.41565005898718,
+              -28.313992365987648
+            ],
+            [
+              -66.41562973718855,
+              -28.314010474150372
+            ],
+            [
+              -66.41560941538303,
+              -28.3140285823101
+            ],
+            [
+              -66.41558909357065,
+              -28.314046690466835
+            ],
+            [
+              -66.4155687015987,
+              -28.314046752550585
+            ],
+            [
+              -66.4155483096267,
+              -28.314046814631283
+            ],
+            [
+              -66.41552784750893,
+              -28.31402883063884
+            ],
+            [
+              -66.41550745554024,
+              -28.314028892713402
+            ],
+            [
+              -66.41548699343274,
+              -28.314010908714675
+            ],
+            [
+              -66.4154665313321,
+              -28.31399292471275
+            ],
+            [
+              -66.41546646119693,
+              -28.313974878642348
+            ],
+            [
+              -66.41544599910668,
+              -28.313956894637155
+            ],
+            [
+              -66.41544592897509,
+              -28.31393884856661
+            ],
+            [
+              -66.41544585884353,
+              -28.31392080249602
+            ],
+            [
+              -66.4154253967672,
+              -28.313902818487446
+            ],
+            [
+              -66.41542532663922,
+              -28.313884772416703
+            ],
+            [
+              -66.41542525651131,
+              -28.31386672634593
+            ],
+            [
+              -66.41544557831799,
+              -28.313848618213182
+            ],
+            [
+              -66.41544550818676,
+              -28.313830572142358
+            ],
+            [
+              -66.41546582998319,
+              -28.31381246400661
+            ],
+            [
+              -66.41548615177271,
+              -28.31379435586787
+            ],
+            [
+              -66.41550654369672,
+              -28.313794293796956
+            ],
+            [
+              -66.41552686547587,
+              -28.313776185652205
+            ],
+            [
+              -66.4155472573963,
+              -28.31377612357525
+            ],
+            [
+              -66.41556764931669,
+              -28.313776061495236
+            ],
+            [
+              -66.41558804123699,
+              -28.31377599941218
+            ],
+            [
+              -66.41560843315723,
+              -28.31377593732608
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-MAN-0002",
+        "anomaly_type": "estructura_circular",
+        "relief_sign": "positivo",
+        "confidence": 0.978,
+        "area_m2": 654.91,
+        "rectangularity": 0.7858,
+        "circularity": 0.9958,
+        "aspect_ratio": 1.0,
+        "mean_elevation_m": 0.296,
+        "centroid_wgs84": [
+          -66.415558,
+          -28.313905
+        ],
+        "is_architectural_complex": false,
+        "complex_group_type": "estructura_circular",
+        "cluster_neighbors": [],
+        "ml_probability": 0.1319,
+        "source_cell": "C90_R5C4",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "biome": "sierras_centrales",
+        "archaeo_context": "Casas-pozo comechingonas semi-enterradas (relieve negativo), corrales pircados, morteros y aleros en las laderas occidentales.",
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0002_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0002.md"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-MAN-0003",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -66.41891470128249,
+              -28.298859587108986
+            ],
+            [
+              -66.41891477195514,
+              -28.29887763321141
+            ],
+            [
+              -66.41893523170211,
+              -28.29889561676075
+            ],
+            [
+              -66.41891491330064,
+              -28.298913725416135
+            ],
+            [
+              -66.41889452422288,
+              -28.298913787966182
+            ],
+            [
+              -66.41887413514506,
+              -28.298913850513188
+            ],
+            [
+              -66.41887406447917,
+              -28.298895804410755
+            ],
+            [
+              -66.41887399381334,
+              -28.298877758308283
+            ],
+            [
+              -66.41887392314756,
+              -28.298859712205758
+            ],
+            [
+              -66.41889431221506,
+              -28.298859649658883
+            ],
+            [
+              -66.41891470128249,
+              -28.298859587108986
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-MAN-0003",
+        "anomaly_type": "estructura_hundida",
+        "relief_sign": "negativo",
+        "confidence": 0.92,
+        "area_m2": 49.66,
+        "rectangularity": 0.7759,
+        "circularity": 1.2,
+        "aspect_ratio": 1.0,
+        "mean_elevation_m": -0.228,
+        "centroid_wgs84": [
+          -66.418898,
+          -28.298888
+        ],
+        "is_architectural_complex": true,
+        "complex_group_type": "complejo_agrupado",
+        "cluster_neighbors": [
+          "ARQ-0001"
+        ],
+        "ml_probability": 0.1876,
+        "source_cell": "C157_R9C3",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "biome": "sierras_centrales",
+        "archaeo_context": "Casas-pozo comechingonas semi-enterradas (relieve negativo), corrales pircados, morteros y aleros en las laderas occidentales.",
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0003_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0003.md"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-MAN-0004",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -66.4286357233577,
+              -28.29769250062555
+            ],
+            [
+              -66.42865618448945,
+              -28.297710482706247
+            ],
+            [
+              -66.42867664562809,
+              -28.297728464783745
+            ],
+            [
+              -66.42869710677358,
+              -28.297746446858067
+            ],
+            [
+              -66.42869717909316,
+              -28.297764492940566
+            ],
+            [
+              -66.42869725141283,
+              -28.297782539023014
+            ],
+            [
+              -66.42869732373256,
+              -28.297800585105417
+            ],
+            [
+              -66.42869739605234,
+              -28.297818631187745
+            ],
+            [
+              -66.4286770795256,
+              -28.297836741278573
+            ],
+            [
+              -66.42867715184208,
+              -28.297854787360873
+            ],
+            [
+              -66.42865683530508,
+              -28.29787289744869
+            ],
+            [
+              -66.42863644645145,
+              -28.297872961451205
+            ],
+            [
+              -66.42861605759776,
+              -28.297873025450677
+            ],
+            [
+              -66.42859566874398,
+              -28.29787308944711
+            ],
+            [
+              -66.42857527989018,
+              -28.297873153440495
+            ],
+            [
+              -66.42855481874035,
+              -28.297855171348306
+            ],
+            [
+              -66.42855474644449,
+              -28.29783712526571
+            ],
+            [
+              -66.42853428530508,
+              -28.297819143170216
+            ],
+            [
+              -66.4285342130128,
+              -28.297801097087483
+            ],
+            [
+              -66.42853414072059,
+              -28.29778305100471
+            ],
+            [
+              -66.42853406842845,
+              -28.297765004921878
+            ],
+            [
+              -66.42853399613637,
+              -28.297746958839
+            ],
+            [
+              -66.42853392384436,
+              -28.297728912756067
+            ],
+            [
+              -66.42855424037542,
+              -28.297710802686233
+            ],
+            [
+              -66.42857462919835,
+              -28.297710738696306
+            ],
+            [
+              -66.42859494571903,
+              -28.2976926286205
+            ],
+            [
+              -66.42861533453839,
+              -28.297692564624548
+            ],
+            [
+              -66.4286357233577,
+              -28.29769250062555
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-MAN-0004",
+        "anomaly_type": "estructura_circular",
+        "relief_sign": "positivo",
+        "confidence": 0.98,
+        "area_m2": 327.46,
+        "rectangularity": 0.8269,
+        "circularity": 1.0895,
+        "aspect_ratio": 1.25,
+        "mean_elevation_m": 0.277,
+        "centroid_wgs84": [
+          -66.428614,
+          -28.297785
+        ],
+        "is_architectural_complex": false,
+        "complex_group_type": "estructura_circular",
+        "cluster_neighbors": [],
+        "ml_probability": 0.0647,
+        "source_cell": "C155_R9C1",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "biome": "sierras_centrales",
+        "archaeo_context": "Casas-pozo comechingonas semi-enterradas (relieve negativo), corrales pircados, morteros y aleros en las laderas occidentales.",
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_29_sierra_de_manchao_ARQ-MAN-0004_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-MAN-0004.md"
+      }
+    }
+  ]
+}
