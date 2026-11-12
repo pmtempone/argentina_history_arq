@@ -101,12 +101,60 @@ Cada bioma argentino exige una calibración microtopográfica específica para e
 ## 4. Herramientas MCP Disponibles (Servidor FastMCP)
 
 El servidor expone herramientas nativas para invocar desde agentes o clientes MCP:
-* `tool_autonomous_prospect`: Ejecuta el barrido autónomo por celdas con overlap del 15% sobre cualquier zona (relieve positivo y negativo, validación IGN/OSM + catálogo de sitios registrados).
+* `tool_autonomous_prospect`: Ejecuta el barrido autónomo por celdas con overlap del 15% sobre cualquier zona (relieve positivo y negativo, puntuación ML calibrada, validación IGN/OSM + catálogo de sitios registrados).
 * `tool_hunt_highres_lidar_argentina`: Consulta en tiempo real las APIs de OpenTopography, Zenodo y el IGN.
 * `tool_vlm_judge_candidate`: Construye el prompt pericial estructurado con las métricas cuantitativas y la lámina compuesta.
-* `tool_record_vlm_verdict`: Registra el veredicto oficial, archiva descartes en `DESCARTES_VLM.json` y regenera el dossier INAPL.
+* `tool_record_vlm_verdict`: Registra el veredicto oficial, archiva descartes en `DESCARTES_VLM.json` + `INVENTARIO_GEOMORFOLOGICO.geojson` y regenera el dossier INAPL.
 * `tool_inspect_candidate`: Genera la lámina compuesta de 4 paneles (2x2) con el modelo 3D de Blender.
 * `tool_process_lidar_dtm`: Filtra la nube de puntos con SMRF (ASPRS Clase 2) y proyecta a GeoTIFF POSGAR 2007.
+
+---
+
+## 4b. Calibrador ML Supervisado (probabilidad calibrada)
+
+El score heurístico morfológico se reemplaza por una **probabilidad calibrada** (`ml_probability`) cuando existe el modelo entrenado en `data/processed/ml_calibrator.joblib`:
+
+```bash
+# Entrenar/re-entrenar el calibrador y regenerar el benchmark de métricas
+./venv/bin/python -c "from src.core.ml_calibrator import train_calibrator; print(train_calibrator())"
+```
+
+- **Clase 0 (hard negatives):** descartes reales auditados por el Juez Pericial (`DESCARTES_VLM.json`).
+- **Clase 1 (positivos):** estructuras sintéticas plantadas con verdad de campo conocida.
+- Métricas (precision/recall/F1 por clase, macro) e importancias de features en
+  `data/reports/ML_BENCHMARK_METRICS.md`. **Re-entrenar** cada vez que se agreguen
+  candidatos auditados o se confirme un hallazgo en campo.
+- Si el modelo no existe, el sistema degrada al score heurístico (los resultados de esa
+  corrida deben etiquetarse como no calibrados).
+
+---
+
+## 4c. Vigilancia Patrimonial: Protocolo `ALERTA_SAQUEO` (Ley 25.743)
+
+Cuando un hundimiento cerrado **circular de 5–25 m de diámetro** con dZ negativo aparece a
+**< 1000 m** de un sitio del catálogo (`known_sites.gpkg`), con contexto `historic=*` en OSM
+o asentamiento/infraestructura IGN, el candidato recibe `patrimonial_priority: ALERTA_SAQUEO`:
+
+1. El prompt del Juez VLM incluye la instrucción de analizar evidencia de excavación ilegal
+   (bordes netos, escombro perimetral, fondo irregular) y notificar al INAPL.
+2. El Dossier INAPL del candidato se emite con sección de denuncia prioritaria (art. 20 y 23).
+3. La distancia al sitio, diámetro y contexto quedan registrados en props y anexo confidencial.
+4. Este es un flujo de **denuncia urgente**, no de prospección ordinaria: nunca esperar al
+   lote de descartes; registrar y comunicar de inmediato.
+
+---
+
+## 4d. Inventario Geomorfológico Secundario
+
+Cada descarte `NATURAL` alimenta `data/reports/INVENTARIO_GEOMORFOLOGICO.geojson` con su
+subtipo etiquetado (paleocauce, médano fósil, morrena, escarpa, cono aluvial, roca
+fracturada, domo volcánico, canchal, albardón, lomada). Al informar resultados a terceros
+(hidrogeología, geomorfología, gestión de riesgo), citar este inventario como subproducto
+científico del descarte pericial. Regenerarlo completo:
+
+```bash
+./venv/bin/python -c "from src.core.geoform_inventory import backfill_inventory_from_descartes; print(backfill_inventory_from_descartes('./data/reports'))"
+```
 
 ---
 
@@ -154,3 +202,26 @@ Al finalizar la prospección, el sistema actualiza automáticamente:
 > **Recordatorio de confidencialidad (Ley 25.743):** los dossiers públicos omiten coordenadas exactas;
 > los GeoJSON de resultados por zona contienen geometría precisa y NO deben publicarse ni difundirse
 > fuera del entorno de trabajo autorizado.
+
+---
+
+## 7. Referencias Metodológicas (papers por técnica)
+
+Cada técnica del pipeline tiene precedente científico publicado; este proyecto agrega el empaquetado
+autónomo, la calibración por bioma y el marco legal argentino:
+
+| Técnica | Módulo | Referencia |
+| :--- | :--- | :--- |
+| SLRM (modelo de relieve local) | `relief_models.py` | Hesse, R. (2010). *LiDAR-derived Local Relief Models – a new tool for archaeological prospection*. Archaeological Prospection, 17(2), 67–72. |
+| Visualizaciones de relieve (hillshade, pendiente) | `visual_inspector.py` | Kokalj, Ž. & Hesse, R. (2019). *Relief Visualisation Toolbox (RVT)*, ZRC SAZU; Zakšek, Oštir & Kokalj (2011), *Remote Sensing* 3(2). |
+| Detección morfométrica sobre modelos de relieve | `anomaly_detector.py` | Guyot, A. et al. (2018). *Remote Sensing*, 10(2), 225 (Random Forest multi-escala, Carnac). |
+| ML sobre LiDAR para rasgos arqueológicos | `anomaly_detector.py` | Verschoof-van der Vaart & Lambers (2019), *J. Comp. Apps. Archaeology* 2(1); Trier et al. (2020), *Int. J. Applied Earth Obs. Geoinformation* (Faster R-CNN, Noruega). |
+| Calibrador ML con hard negatives a mega-escala | `ml_calibrator.py` | Berganzo-Besga, Orengo et al. (2021), *Remote Sensing* 13(20), 4181 (Galicia, 30.000 km²); ADAF (2026), *J. Archaeological Science: Reports*; Orengo et al. (2020), *PNAS* 117(33). |
+| Juez pericial multimodal | `vlm_judge.py` | Zheng, L. et al. (2023). *Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena*. NeurIPS 36. |
+| Vigilancia de saqueo por teledetección | `looting_monitor.py` | Parcak, S. et al. (2016). *Satellite evidence of archaeological site looting in Egypt: 2002–2013*. Antiquity, 90(350). |
+| LiDAR y ocupación prehispánica sudamericana | contexto | Canuto et al. (2018), *Science* 361 (PACUNAM, Petén); Prümers et al. (2022), *Nature* (Casarabe, Llanos de Mojos). |
+
+**Posicionamiento:** el estado del arte entrena redes (YOLO/R-CNN/U-Net) con datos etiquetados de
+alta resolución; este sistema opera de forma autónoma sobre DEM satelitales públicos con calibración
+por bioma, calibrador ML alimentado por descartes reales y salida documental legal. El
+`ML_BENCHMARK_METRICS.md` declara sus limitaciones explícitamente.

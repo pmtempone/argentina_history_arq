@@ -8,7 +8,7 @@
 
 Servidor **FastMCP** y pipeline científico en Python para la **prospección arqueológica autónoma 100% sin intervención humana (*Zero Human-in-the-Loop*)** sobre modelos de elevación satelitales (Copernicus DEM GLO-30), vuelos fotogramétricos con dron de ultra-alta resolución ($0.0025\text{ a }0.50\text{ m/px}$) y nubes de puntos LiDAR crudas en la República Argentina.
 
-Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), modelos de relieve local (SLRM NaN-safe) con **detección de relieve positivo y negativo** (recintos, chenques y terrazas emergentes; casas-pozo, patios hundidos y zanjas excavadas), visión por computadora (OpenCV), renderizado volumétrico 3D isométrico térmico en **Blender 4.2 LTS headless (EEVEE)**, validación catastral y académica (IGN WFS, OpenStreetMap Overpass, OpenAlex, catálogo de sitios arqueológicos publicados) y auditoría cognitiva multimodal con el **Juez Pericial VLM Senior (CONICET/NOA)** bajo el marco legal de la **Ley Nacional N° 25.743 (INAPL)**.
+Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), modelos de relieve local (SLRM NaN-safe) con **detección de relieve positivo y negativo** (recintos, chenques y terrazas emergentes; casas-pozo, patios hundidos y zanjas excavadas), visión por computadora (OpenCV), **calibrador ML supervisado con probabilidad calibrada** entrenado sobre descartes periciales auditados (hard negatives), renderizado volumétrico 3D isométrico térmico en **Blender 4.2 LTS headless (EEVEE)**, validación catastral y académica (IGN WFS, OpenStreetMap Overpass, OpenAlex, catálogo de sitios arqueológicos publicados), **vigilancia patrimonial de saqueo (*huaqueo*)**, auditoría cognitiva multimodal con el **Juez Pericial VLM Senior (CONICET/NOA)** e **inventario geomorfológico secundario** derivado de los descartes, bajo el marco legal de la **Ley Nacional N° 25.743 (INAPL)**.
 
 ---
 
@@ -60,11 +60,18 @@ Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), mode
                    • Panel 4: Render 3D isométrico térmico (Blender EEVEE)
                                          │
                                          ▼
-                 [ 7. Juez Pericial VLM Senior (CONICET/NOA) ]
-                   Auditoría estricta con eliminación de falsos positivos:
-                   ├─► ANTROPICA  ──► Confirmado en MAPA_FINAL_PROSPECCION.geojson
-                   ├─► NATURAL    ──► Archivado en DESCARTES_VLM.json (sin falsas alarmas)
-                   └─► ARTEFACTO  ──► Archivado en DESCARTES_VLM.json (técnico/moderno)
+                 [ 7. Juez Pericial VLM Senior (CONICET/NOA) + Calibrador ML ]
+                    • Puntuación previa con probabilidad ML calibrada (ml_probability):
+                      GradientBoosting con hard negatives de descartes auditados
+                      (metodología: Guyot 2018; Berganzo-Besga & Orengo 2021)
+                    • Auditoría estricta con eliminación de falsos positivos
+                      (LLM-as-Judge: Zheng et al. 2023, NeurIPS):
+                    ├─► ANTROPICA  ──► Confirmado en MAPA_FINAL_PROSPECCION.geojson
+                    ├─► NATURAL    ──► Archivado en DESCARTES_VLM.json (sin falsas alarmas)
+                    │                  + INVENTARIO_GEOMORFOLOGICO.geojson (subtipo)
+                    └─► ARTEFACTO  ──► Archivado en DESCARTES_VLM.json (técnico/moderno)
+                    • Vigilancia patrimonial: hundimiento circular de 5-25 m a <1000 m
+                      de un sitio registrado -> ALERTA_SAQUEO (Parcak et al. 2016)
                                          │
                                          ▼
                  [ 8. Documentación Legal INAPL (Ley 25.743) ]
@@ -173,6 +180,33 @@ Para iniciar el servidor MCP:
 ```bash
 python -m src.server
 ```
+
+---
+
+## 📚 Referencias Metodológicas (papers por técnica)
+
+Cada técnica del pipeline tiene precedente científico publicado; el valor agregado de este
+proyecto es la integración autónoma + marco legal para Argentina:
+
+| Técnica del pipeline | Módulo | Referencia |
+| :--- | :--- | :--- |
+| **SLRM — Simple Local Relief Model (NaN-safe)** | `relief_models.py` | Hesse, R. (2010). *LiDAR-derived Local Relief Models – a new tool for archaeological prospection*. Archaeological Prospection, 17(2), 67–72. |
+| **Visualizaciones de relieve (hillshade multidireccional, pendiente)** | `visual_inspector.py` | Kokalj, Ž. & Hesse, R. (2019). *Relief Visualisation Toolbox (RVT)* — ZRC SAZU. Ver también Zakšek, Oštir & Kokalj (2011), *Remote Sensing* 3(2) (sky-view factor). |
+| **Detección morfométrica multi-técnica sobre modelos de relieve** | `anomaly_detector.py` | Guyot, A. et al. (2018). *Detecting Neolithic Burial Mounds from LiDAR-Derived Elevation Data Using a Multi-Scale Approach and Machine Learning Techniques*. Remote Sensing, 10(2), 225. |
+| **Clasificación de rasgos con ML sobre DTM (barrows, kilns, campos celtas)** | `anomaly_detector.py` (tipologías) | Verschoof-van der Vaart & Lambers (2019), *J. Comp. Apps. Archaeology* 2(1); Trier et al. (2020), *Int. J. Applied Earth Obs. Geoinformation* (Faster R-CNN, Noruega). |
+| **Calibrador ML con hard negatives + probabilidad calibrada a mega-escala** | `ml_calibrator.py` | Berganzo-Besga, I., Orengo, H.A. et al. (2021). *Remote Sensing* 13(20), 4181 (10.527 túmulos / 30.000 km², Galicia); Herramienta ADAF (2026), *J. Archaeological Science: Reports* (116 sitios hallados sobre inspección manual, Irlanda); Orengo et al. (2020), *PNAS* 117(33) (túmulos con CNN). |
+| **Juez pericial multimodal (LLM-as-Judge)** | `vlm_judge.py` | Zheng, L. et al. (2023). *Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena*. NeurIPS 36. |
+| **Vigilancia de saqueo por teledetección** | `looting_monitor.py` | Parcak, S. et al. (2016). *Satellite evidence of archaeological site looting in Egypt: 2002–2013*. Antiquity, 90(350). |
+| **LiDAR para reescribir la ocupación prehispánica sudamericana** | contexto de campaña | Canuto, M.A. et al. (2018), *Science* 361 (LiDAR PACUNAM, Petén); Prümers, H. et al. (2022), *Nature* (urbanismo Casarabe, Llanos de Mojos). |
+| **Contexto arqueoastronómico de La Ciudacita** | zona ZONA_21 | Moyano, R. & Díaz, M.G. (2017). *Los nevados del Aconquija como sitio de frontera y espacio de observación lunar*. Estudios Atacameños, 50. |
+
+> **Posicionamiento honesto:** los papers del estado del arte usan redes entrenadas con
+> datos etiquetados (YOLO/R-CNN/U-Net) con precision/recall documentados sobre datos
+> LiDAR de alta resolución. Este repositorio difiere por diseño: opera de forma autónoma
+> (*Zero Human-in-the-Loop*) sobre DEM satelitales públicos (GLO-30) con catálogo por
+> bioma, validación multifuente, calibrador ML alimentado por descartes periciales
+> reales y salida documental legal (Ley 25.743). El `ML_BENCHMARK_METRICS.md` declara
+> explícitamente sus limitaciones de dataset y resolución.
 
 ---
 

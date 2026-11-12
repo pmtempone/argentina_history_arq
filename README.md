@@ -10,10 +10,13 @@ Repositorio central del proyecto de teledetección satelital, LiDAR y fotogramet
   * `src/autonomous_prospector.py`: Pipeline principal de prospección por ventanas deslizantes (tiling).
   * `src/core/highres_hunter.py`: Cazador autónomo de datasets LiDAR y UAV (< 1.0 m/px) en OpenTopography, Zenodo y el IGN.
   * `src/utils/blender_render.py`: Renderizador 3D volumétrico isométrico térmico en Blender 4.2 LTS headless (EEVEE).
-  * `src/core/vlm_judge.py`: Juez pericial multimodal VLM con criterios arqueológicos CONICET/NOA y gestión de falsas alarmas.
+  * `src/core/vlm_judge.py`: Juez pericial multimodal VLM (LLM-as-Judge, Zheng et al. 2023) con criterios arqueológicos CONICET/NOA y gestión de falsas alarmas.
+  * `src/core/ml_calibrator.py`: Calibrador ML supervisado (GradientBoosting calibrado con hard negatives de descartes periciales; metodología Guyot 2018 / Berganzo-Besga & Orengo 2021). Métricas: `data/reports/ML_BENCHMARK_METRICS.md`.
+  * `src/core/looting_monitor.py`: Vigilancia patrimonial `ALERTA_SAQUEO` (metodología Parcak et al. 2016).
+  * `src/core/geoform_inventory.py`: Inventario geomorfológico secundario derivado de los descartes NATURAL.
   * `src/core/data_fetcher.py`: Catálogo de 28 zonas arqueológicas con calibración adaptativa por bioma.
   * `src/core/known_sites.py` + `scripts/build_known_sites_gpkg.py`: Catálogo de sitios arqueológicos publicados (coordenadas aproximadas ±100 m) para clasificar candidatos `SITIO_REGISTRADO`.
-  * `data/reports/`: Entregables patrimoniales (`MAPA_FINAL_PROSPECCION.geojson`, `DESCARTES_VLM.json`, dossiers INAPL y anexo confidencial de coordenadas).
+  * `data/reports/`: Entregables patrimoniales (`MAPA_FINAL_PROSPECCION.geojson`, `DESCARTES_VLM.json`, `INVENTARIO_GEOMORFOLOGICO.geojson`, dossiers INAPL y anexo confidencial de coordenadas).
 * **`.agents/skills/archaeo-lidar-prospector/SKILL.md`**: Skill oficial para el asistente **Antigravity** (AGY) para operar autónomamente el software, ejecutar prospecciones y registrar dictámenes periciales.
 
 ---
