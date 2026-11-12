@@ -1,0 +1,33 @@
+# Prospección Arqueológica con LiDAR y Teledetección en Argentina
+
+Repositorio central del proyecto de teledetección satelital, LiDAR y fotogrametría aérea con dron para el descubrimiento y preservación del patrimonio arqueológico en la República Argentina, bajo el marco de la **Ley Nacional N° 25.743 (INAPL)**.
+
+---
+
+## 📁 Estructura del Repositorio
+
+* **`archaeo-lidar-mcp/`**: Servidor FastMCP y motor autónomo de prospección en Python:
+  * `src/autonomous_prospector.py`: Pipeline principal de prospección por ventanas deslizantes (tiling).
+  * `src/core/highres_hunter.py`: Cazador autónomo de datasets LiDAR y UAV (< 1.0 m/px) en OpenTopography, Zenodo y el IGN.
+  * `src/core/blender_renderer.py`: Renderizador 3D volumétrico isométrico térmico en Blender 4.2 LTS headless (EEVEE).
+  * `src/core/vlm_judge.py`: Juez pericial multimodal VLM con criterios arqueológicos CONICET/NOA y gestión de falsas alarmas.
+  * `src/core/data_fetcher.py`: Catálogo de 28 zonas arqueológicas con calibración adaptativa por bioma.
+  * `data/reports/`: Entregables patrimoniales (`MAPA_FINAL_PROSPECCION.geojson`, `DESCARTES_VLM.json`, dossiers INAPL y anexo confidencial de coordenadas).
+* **`.agents/skills/archaeo-lidar-prospector/SKILL.md`**: Skill oficial para el asistente **Antigravity** (AGY) para operar autónomamente el software, ejecutar prospecciones y registrar dictámenes periciales.
+
+---
+
+## ⚡ Ejecución Rápida
+
+```bash
+cd archaeo-lidar-mcp
+source venv/bin/activate
+
+# Prospección autónoma en el Delta del Paraná (Cerritos de indios / Humedal)
+python -m src.autonomous_prospector --target ZONA_23_DELTA_PARANA --max-candidates 4
+
+# Caza y procesamiento de datasets de dron de ultra alta resolución (ej. San Rafael a 5 cm/px)
+python -m src.autonomous_prospector --highres-id ZENODO:3383227 --max-candidates 4
+```
+
+Para documentación técnica detallada, consulta el [**README de ArchaeoLiDAR-AR-MCP**](archaeo-lidar-mcp/README.md) y el skill en [`.agents/skills/archaeo-lidar-prospector/SKILL.md`](.agents/skills/archaeo-lidar-prospector/SKILL.md).

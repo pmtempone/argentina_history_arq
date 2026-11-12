@@ -1,0 +1,66 @@
+# DOSSIER TÉCNICO DE PROSPECCIÓN ARQUEOLÓGICA REMOTA (LiDAR)
+**Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
+**Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
+**Código de Candidato:** `ARQ-LLU-0001`
+**Fecha de Generación (UTC):** `2026-11-11T15:25:36Z`
+
+---
+
+> **AVISO DE CONFIDENCIALIDAD GEODÉSICA (LEY 25.743):**
+> Con el objeto de prevenir acciones de saqueo (*guaqueo*) o destrucción intencional, las coordenadas
+> puntuales WGS84 y POSGAR 2007 han sido omitidas de este documento principal y resguardadas en el
+> archivo cifrado/aislado `ANEXO_CONFIDENCIAL_COORDENADAS.json`.
+
+---
+
+## 1. Síntesis de Detección y Clasificación Patrimonial
+
+| Parámetro | Valor Registrado |
+| :--- | :--- |
+| **ID de Anomalía** | `ARQ-LLU-0001` |
+| **Clasificación Preliminar** | **CANDIDATO_INEDITO** |
+| **Tipología Morfológica** | `recinto_ortogonal` |
+| **Índice de Confianza Algorítmica** | `0.727` |
+| **Faja Métrica de Cálculo** | `EPSG:5344` (POSGAR 2007) |
+
+---
+
+## 2. Métricas Morfométricas y Microtopográficas (SLRM)
+
+- **Área Estimada en Planta:** `298.08 m²`
+- **Índice de Rectangularidad:** `0.6485`
+- **Índice de Circularidad Isoperimétrica:** `0.6471`
+- **Sobre-elevación Local Media (SLRM):** `2.637 m`
+- **Distancia al Curso de Agua más Próximo (IGN):** `No determinado (sin datos IGN)`
+
+---
+
+## 3. Verificación de Nube de Puntos Cruda e Inspección Multimodal
+
+- **Densidad de Retornos de Suelo (ASPRS Clase 2):** `N/D pts/m²`
+- **Puntaje de Integridad del Perfil Transversal:** `N/D`
+- **Lámina Compuesta (Hillshade 1.5x + SLRM + Perfil + 3D):** `data/processed/zona_14_llullaillaco_ARQ-LLU-0001_composite.png`
+- **Modelo 3D Isométrico Térmico/Infrarrojo (Blender EEVEE):** `N/D`
+- **Gráfico de Corte Transversal (Cross-Section):** `N/D`
+
+---
+
+## 4. Anexo Reservado de Coordenadas
+
+Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
+direcciones provinciales de patrimonio se encuentran en:
+- Archivo: `data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json`
+
+---
+
+## 5. Juicio Pericial de Inteligencia Artificial Multimodal
+
+| Campo | Dictamen |
+| :--- | :--- |
+| **Veredicto final** | **NATURAL** |
+| **Nivel de certeza** | `95%` |
+| **Interpretación funcional** | Cresta rocosa / espinazo de cumbre volcánica periglacial (6.700 m s.n.m.) |
+| **¿Inspección terrestre / dron?** | **NO** |
+| **Backend evaluador** | `mcp-host-agent` |
+
+**Justificación geomorfológica:** La anomalía de 298 m² en el filo cumbral del Llullaillaco corresponde a la morfología de cresta rocosa y dorso de la arista cimera. En GLO-30 (30m), la plataforma incaica de 10x6 m queda integrada en el macro-relieve natural de la cumbre.

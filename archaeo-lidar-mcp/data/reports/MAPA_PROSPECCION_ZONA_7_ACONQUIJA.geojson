@@ -1,0 +1,699 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "project": "ArchaeoLiDAR-AR-MCP Autonomous Prospector",
+    "target_zone": "ZONA_7_ACONQUIJA",
+    "region_name": "Pucará de Aconquija / Las Pircas (Catamarca - Tucumán)",
+    "generated_at_utc": "2026-11-11T14:55:12Z",
+    "metric_crs": "EPSG:5345",
+    "output_crs": "EPSG:4326",
+    "windows_scanned": 20,
+    "confirmed_inedito_count": 4,
+    "academic_papers_found": 0
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "ARQ-ACO-0001",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -65.94198783476442,
+              -27.181340818481644
+            ],
+            [
+              -65.94198782542955,
+              -27.181358867975614
+            ],
+            [
+              -65.94196764281979,
+              -27.181358859625902
+            ],
+            [
+              -65.94194746021005,
+              -27.181358851273284
+            ],
+            [
+              -65.94192728694489,
+              -27.181340793423814
+            ],
+            [
+              -65.94194746955138,
+              -27.181340801779335
+            ],
+            [
+              -65.9419676521579,
+              -27.18134081013194
+            ],
+            [
+              -65.94198783476442,
+              -27.181340818481644
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-ACO-0001",
+        "anomaly_type": "recinto_ortogonal",
+        "confidence": 0.884,
+        "area_m2": 24.83,
+        "rectangularity": 0.7759,
+        "circularity": 1.2,
+        "aspect_ratio": 3.0,
+        "mean_elevation_m": 2.493,
+        "centroid_wgs84": [
+          -65.941962,
+          -27.181349
+        ],
+        "is_architectural_complex": true,
+        "complex_group_type": "complejo_agrupado",
+        "cluster_neighbors": [
+          "ARQ-0002"
+        ],
+        "source_cell": "C15_R3C2",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0001_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0001.md"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-ACO-0002",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -65.95306730909189,
+              -27.183204061942934
+            ],
+            [
+              -65.9530874844879,
+              -27.183222118188148
+            ],
+            [
+              -65.95310765989036,
+              -27.183240174430406
+            ],
+            [
+              -65.95312783529936,
+              -27.183258230669733
+            ],
+            [
+              -65.95314801071481,
+              -27.183276286906114
+            ],
+            [
+              -65.95316819367322,
+              -27.18327629364734
+            ],
+            [
+              -65.95318837663163,
+              -27.18327630038568
+            ],
+            [
+              -65.95318836909846,
+              -27.183294349877894
+            ],
+            [
+              -65.95318836156525,
+              -27.183312399370056
+            ],
+            [
+              -65.95318835403205,
+              -27.18333044886218
+            ],
+            [
+              -65.95318834649885,
+              -27.18334849835426
+            ],
+            [
+              -65.95318833896563,
+              -27.183366547846283
+            ],
+            [
+              -65.95318833143241,
+              -27.183384597338268
+            ],
+            [
+              -65.95316814845452,
+              -27.1833845905999
+            ],
+            [
+              -65.95314795793689,
+              -27.183402633350568
+            ],
+            [
+              -65.9531277674128,
+              -27.18342067609826
+            ],
+            [
+              -65.95312775986982,
+              -27.183438725590097
+            ],
+            [
+              -65.95310756933596,
+              -27.183456768334782
+            ],
+            [
+              -65.95310756178971,
+              -27.183474817826504
+            ],
+            [
+              -65.95310755424345,
+              -27.18349286731819
+            ],
+            [
+              -65.95308736369658,
+              -27.183510910059812
+            ],
+            [
+              -65.95306717314322,
+              -27.18352895279847
+            ],
+            [
+              -65.95304698258336,
+              -27.183546995534165
+            ],
+            [
+              -65.95302680713556,
+              -27.183528939283903
+            ],
+            [
+              -65.95302681469482,
+              -27.183510889792338
+            ],
+            [
+              -65.95300663925674,
+              -27.18349283353909
+            ],
+            [
+              -65.95300664681923,
+              -27.18347478404744
+            ],
+            [
+              -65.9529864713909,
+              -27.183456727791206
+            ],
+            [
+              -65.95298647895662,
+              -27.183438678299463
+            ],
+            [
+              -65.95298648652235,
+              -27.18342062880767
+            ],
+            [
+              -65.95298649408805,
+              -27.18340257931584
+            ],
+            [
+              -65.95296631867595,
+              -27.183384523056553
+            ],
+            [
+              -65.95296632624489,
+              -27.18336647356463
+            ],
+            [
+              -65.95296633381383,
+              -27.183348424072655
+            ],
+            [
+              -65.95296634138276,
+              -27.183330374580645
+            ],
+            [
+              -65.9529663489517,
+              -27.183312325088583
+            ],
+            [
+              -65.95296635652062,
+              -27.183294275596456
+            ],
+            [
+              -65.95298654704786,
+              -27.183276232871677
+            ],
+            [
+              -65.95298655461352,
+              -27.18325818337947
+            ],
+            [
+              -65.95300674513102,
+              -27.183240140651677
+            ],
+            [
+              -65.95302693564203,
+              -27.183222097920922
+            ],
+            [
+              -65.95304712614654,
+              -27.183204055187197
+            ],
+            [
+              -65.95306730909189,
+              -27.183204061942934
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-ACO-0002",
+        "anomaly_type": "estructura_circular",
+        "confidence": 0.908,
+        "area_m2": 630.91,
+        "rectangularity": 0.688,
+        "circularity": 0.8104,
+        "aspect_ratio": 1.341,
+        "mean_elevation_m": 1.786,
+        "centroid_wgs84": [
+          -65.953068,
+          -27.18336
+        ],
+        "is_architectural_complex": true,
+        "complex_group_type": "complejo_agrupado",
+        "cluster_neighbors": [
+          "ARQ-0019",
+          "ARQ-0020"
+        ],
+        "source_cell": "C09_R2C0",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0002_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0002.md"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-ACO-0003",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                -65.95088332164636,
+                -27.192859787011148
+              ],
+              [
+                -65.95086313696369,
+                -27.192859779938797
+              ],
+              [
+                -65.95084294436712,
+                -27.192877822330452
+              ],
+              [
+                -65.95086312905306,
+                -27.192877829405713
+              ],
+              [
+                -65.95088332164636,
+                -27.192859787011148
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                -65.95080257499532,
+                -27.192877808171204
+              ],
+              [
+                -65.95078239823305,
+                -27.192859751620325
+              ],
+              [
+                -65.95076221355042,
+                -27.19285974453344
+              ],
+              [
+                -65.95078239030943,
+                -27.192877801087228
+              ],
+              [
+                -65.95080257499532,
+                -27.192877808171204
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-ACO-0003",
+        "anomaly_type": "terraza_lineal",
+        "confidence": 0.771,
+        "area_m2": 52.97,
+        "rectangularity": 0.4447,
+        "circularity": 0.3291,
+        "aspect_ratio": 5.917,
+        "mean_elevation_m": 2.693,
+        "centroid_wgs84": [
+          -65.950823,
+          -27.192869
+        ],
+        "is_architectural_complex": true,
+        "complex_group_type": "complejo_agrupado",
+        "cluster_neighbors": [
+          "ARQ-0001",
+          "ARQ-0004",
+          "ARQ-0010"
+        ],
+        "source_cell": "C01_R0C0",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0003_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0003.md"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-ACO-0004",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -65.94630352530613,
+              -27.18841793709265
+            ],
+            [
+              -65.94628334142452,
+              -27.188417929362153
+            ],
+            [
+              -65.9462631575429,
+              -27.18841792162874
+            ],
+            [
+              -65.9462429736613,
+              -27.18841791389243
+            ],
+            [
+              -65.94622278977972,
+              -27.18841790615321
+            ],
+            [
+              -65.94620260589814,
+              -27.18841789841108
+            ],
+            [
+              -65.94618242201655,
+              -27.188417890666056
+            ],
+            [
+              -65.94616222946921,
+              -27.188435932395134
+            ],
+            [
+              -65.9461420455844,
+              -27.188435924644303
+            ],
+            [
+              -65.9461218616996,
+              -27.188435916890544
+            ],
+            [
+              -65.9461016778148,
+              -27.188435909133876
+            ],
+            [
+              -65.94608150260879,
+              -27.18841785189732
+            ],
+            [
+              -65.94606131872727,
+              -27.188417844134868
+            ],
+            [
+              -65.94604113484574,
+              -27.1884178363695
+            ],
+            [
+              -65.94602095096424,
+              -27.188417828601214
+            ],
+            [
+              -65.94600076708272,
+              -27.188417820830033
+            ],
+            [
+              -65.94598059189626,
+              -27.18839976357894
+            ],
+            [
+              -65.94596041671626,
+              -27.1883817063249
+            ],
+            [
+              -65.94594023284128,
+              -27.188381698545015
+            ],
+            [
+              -65.94592004896631,
+              -27.188381690762238
+            ],
+            [
+              -65.94589986509133,
+              -27.18838168297654
+            ],
+            [
+              -65.94587968121638,
+              -27.188381675187937
+            ],
+            [
+              -65.94585949734143,
+              -27.18838166739644
+            ],
+            [
+              -65.9458393134665,
+              -27.188381659602026
+            ],
+            [
+              -65.94581912959156,
+              -27.188381651804722
+            ],
+            [
+              -65.94579894571663,
+              -27.1883816440045
+            ],
+            [
+              -65.94577876184171,
+              -27.188381636201377
+            ],
+            [
+              -65.94575857796681,
+              -27.188381628395348
+            ],
+            [
+              -65.94575856923608,
+              -27.188399677872344
+            ],
+            [
+              -65.94573837662392,
+              -27.18841771954035
+            ],
+            [
+              -65.94575856050531,
+              -27.1884177273493
+            ],
+            [
+              -65.94577874438671,
+              -27.18841773515534
+            ],
+            [
+              -65.94579892826813,
+              -27.18841774295847
+            ],
+            [
+              -65.94581911214956,
+              -27.1884177507587
+            ],
+            [
+              -65.94583930474874,
+              -27.188399709079054
+            ],
+            [
+              -65.94585948862694,
+              -27.18839971687347
+            ],
+            [
+              -65.94587967250513,
+              -27.188399724664983
+            ],
+            [
+              -65.94589985638335,
+              -27.188399732453583
+            ],
+            [
+              -65.9459200315568,
+              -27.188417789716276
+            ],
+            [
+              -65.94594021543827,
+              -27.188417797499078
+            ],
+            [
+              -65.94596039931974,
+              -27.188417805278974
+            ],
+            [
+              -65.94598057450621,
+              -27.188435862532927
+            ],
+            [
+              -65.94600075839095,
+              -27.188435870307018
+            ],
+            [
+              -65.94602094227572,
+              -27.1884358780782
+            ],
+            [
+              -65.94604111747519,
+              -27.188453935323416
+            ],
+            [
+              -65.9460613013632,
+              -27.188453943088792
+            ],
+            [
+              -65.94608147657243,
+              -27.18847200032818
+            ],
+            [
+              -65.94610166046371,
+              -27.18847200808775
+            ],
+            [
+              -65.94612185302731,
+              -27.1884539663675
+            ],
+            [
+              -65.94614203691536,
+              -27.188453974121266
+            ],
+            [
+              -65.94616222080342,
+              -27.188453981872115
+            ],
+            [
+              -65.94618240469148,
+              -27.188453989620058
+            ],
+            [
+              -65.94620258857955,
+              -27.1884539973651
+            ],
+            [
+              -65.94622277246764,
+              -27.18845400510724
+            ],
+            [
+              -65.94624295635573,
+              -27.188454012846478
+            ],
+            [
+              -65.94626314024383,
+              -27.1884540205828
+            ],
+            [
+              -65.94628333277824,
+              -27.188435978839205
+            ],
+            [
+              -65.94630352530613,
+              -27.18841793709265
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "ARQ-ACO-0004",
+        "anomaly_type": "terraza_lineal",
+        "confidence": 0.818,
+        "area_m2": 310.77,
+        "rectangularity": 0.4714,
+        "circularity": 0.2215,
+        "aspect_ratio": 6.867,
+        "mean_elevation_m": 2.501,
+        "centroid_wgs84": [
+          -65.946025,
+          -27.188421
+        ],
+        "is_architectural_complex": true,
+        "complex_group_type": "complejo_agrupado",
+        "cluster_neighbors": [
+          "ARQ-0038",
+          "ARQ-0039",
+          "ARQ-0043"
+        ],
+        "source_cell": "C02_R0C1",
+        "classification": "CANDIDATO_INEDITO",
+        "distance_to_water_m": null,
+        "ign_matches_count": 0,
+        "osm_matches_count": 0,
+        "academic_references_count": 0,
+        "dem_source": "Copernicus DEM GLO-30 (AWS Open Data)",
+        "dem_native_resolution_m": 30.0,
+        "dem_processing_resolution_m": 2.0,
+        "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0004_composite.png",
+        "vlm_verdict": {
+          "verdict": "PENDIENTE_REVISION",
+          "certainty_pct": 0,
+          "functional_interpretation": "Sin dictamen",
+          "geomorphological_justification": "No hay backend multimodal configurado (GEMINI_API_KEY ausente). Requiere revisión por el agente anfitrión vía tool_vlm_judge_candidate.",
+          "field_inspection_recommended": false,
+          "backend": "none"
+        },
+        "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0004.md"
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+*.dylib
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# macOS / OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# IDE & Editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Large geospatial datasets & raw downloads (LiDAR clouds, DEM GeoTIFFs > 50MB)
+data/raw/*
+!data/raw/.gitkeep
+archaeo-lidar-mcp/data/raw/*
+!archaeo-lidar-mcp/data/raw/.gitkeep
+
+# Intermediate raster tiles & outputs
+data/processed/*
+!data/processed/.gitkeep
+archaeo-lidar-mcp/data/processed/*
+!archaeo-lidar-mcp/data/processed/.gitkeep
+
+# Sensitive geodetic coordinates under Ley 25.743 (INAPL anti-looting)
+*ANEXO_CONFIDENCIAL_COORDENADAS.json
+
+# Temporary / scratch files
+scratch/
+tmp/
+*.tmp
+*.log

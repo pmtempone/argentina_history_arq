@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "project": "ArchaeoLiDAR-AR-MCP Autonomous Prospector",
+    "target_zone": "ZONA_2_YOCAVIL",
+    "region_name": "Valle de Yocavil / Santa María / Quilmes (Catamarca - Tucumán)",
+    "generated_at_utc": "2026-11-11T14:16:03Z",
+    "metric_crs": "EPSG:5345",
+    "output_crs": "EPSG:4326",
+    "windows_scanned": 20,
+    "confirmed_inedito_count": 0,
+    "academic_papers_found": 0
+  },
+  "features": []
+}

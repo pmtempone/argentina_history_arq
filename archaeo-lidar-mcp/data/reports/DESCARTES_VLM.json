@@ -1,0 +1,1580 @@
+{
+  "discarded": {
+    "ARQ-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 4009.56,
+      "mean_elevation_m": 1.416,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Lomada / espolón coluvial natural (falso recinto por sobremuestreo GLO-30)",
+        "geomorphological_justification": "El perfil 2D sobre el centroide exhibe un domo convexo continuo de ~80 m de base y +1.76 m de culminación con flancos tendidos (~25 m de transición) sin rupturas angulares de pendiente ni depresión interna de patio/kancha. En el Hillshade 1.5x los bordes son difusos y carecen de alineamientos rectilíneos de pirca.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0002": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 3606.79,
+      "mean_elevation_m": 1.146,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 90,
+        "functional_interpretation": "Prominencia rocosa / interfluvio menor redondeado",
+        "geomorphological_justification": "El corte A-A' muestra una meseta convexa de ~68 m de ancho con cima suavemente ondulada (+1.48 m a +1.28 m) y taludes laterales de 20 m de desarrollo horizontal, incompatibles con muros pircados prehispánicos (0.4-1.0 m).",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0003": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 1426.37,
+      "mean_elevation_m": 1.146,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso o cresta de espolón lateral en Quebrada del Toro",
+        "geomorphological_justification": "En los paneles 1 y 2 se observa una geoforma elongada E-O con reflectancia gradual. El perfil 2D describe una campana simétrica de 75 m de ancho y +1.76 m sin parapetos ni terrazas escalonadas.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 1511.34,
+      "mean_elevation_m": 1.487,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 94,
+        "functional_interpretation": "Morro o cerrito testigo natural (knoll)",
+        "geomorphological_justification": "Prominencia subcircular de +2.68 m de sobreelevación local sobre una base de 60 m. La ausencia total de recinto deprimido central y el gradiente radial uniforme descartan un corral circular, chenque o torreón.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0005": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 658.08,
+      "mean_elevation_m": 0.998,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0005_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0005.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 95,
+        "functional_interpretation": "Artefacto de interpolación bicúbica de celda aislada GLO-30 (30 m -> 2 m)",
+        "geomorphological_justification": "El SLRM y el perfil 2D muestran un lóbulo isotrópico perfectamente gaussiano de ~45 m de diámetro y +1.30 m de altura, firma característica de un único píxel elevado del DEM nativo de 30 m suavizado por Resampling.cubic.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0006": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 501.25,
+      "mean_elevation_m": 0.751,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0006_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0006.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Hombro de ladera / cono de deyección truncado",
+        "geomorphological_justification": "El perfil 2D desciende monótonamente de +1.48 m (oeste) a +0.68 m (este) con una inflexión suave en el centroide. Corresponde a la prolongación natural de un faldeo sin estructura muraria.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0007": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 668.97,
+      "mean_elevation_m": 1.7,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0007_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0007.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 89,
+        "functional_interpretation": "Oscilación dipolar (efecto Gibbs) en quiebre de pendiente del DEM",
+        "geomorphological_justification": "El corte transversal oscila entre -0.70 m en los flancos y +0.32 m en el centro sobre una faja estrecha, producto de sobre-impulso de la interpolación cúbica y la sustracción de tendencia gaussiana del SLRM.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0008": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 1279.2,
+      "mean_elevation_m": 1.569,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0008_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0008.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 88,
+        "functional_interpretation": "Banco rocoso / estrato subhorizontal expuesto en ladera",
+        "geomorphological_justification": "Escalón topográfico suave de +0.50 m a -0.19 m distribuido en 45 m horizontales. La pendiente tendida y la falta de talud vertical continuo descartan un andén agrícola prehispánico conservado a esta resolución.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-0009": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 1115.2,
+      "mean_elevation_m": 1.49,
+      "composite_image_path": "data/processed/zona_1_tastil_ARQ-0009_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0009.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 92,
+        "functional_interpretation": "Efecto de borde del filtro SLRM sobre ladera empinada",
+        "geomorphological_justification": "Rampa monoclinal de -1.30 m a +0.60 m hacia el borde oriental de la ventana, donde el centroide cae en una inflexión de apenas +0.12 m. No existe geometría cerrada ni muro de contención.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 1653.14,
+      "mean_elevation_m": 2.299,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lomada / espolón coluvial en Valle de Yocavil",
+        "geomorphological_justification": "El corte transversal A-A' sobre el centroide evidencia un domo convexo continuo de 60 m de base y +2.3 m de altura con flancos tendidos de más de 20 m de desarrollo horizontal. En el Hillshade 1.5x los bordes son difusos y no presentan alineaciones rectilíneas ni depresión interna correspondiente a kancha o recinto pircado.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0002": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 2932.45,
+      "mean_elevation_m": 2.12,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 94,
+        "functional_interpretation": "Filo o cresta orográfica secundaria / escarpa natural",
+        "geomorphological_justification": "El perfil 2D exhibe una sección triangular asimétrica con cresta aguda a +2.6 m y base de 50 m. En los paneles 1 y 2 se observa un contorno sinuoso en forma de S que sigue las curvas de nivel estructurales de la ladera, típico de afloramientos rocosos meteorizados.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0003": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 4092.88,
+      "mean_elevation_m": 2.068,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Espolón de ladera delimitado por cárcava de escorrentía lateral",
+        "geomorphological_justification": "El corte A-A' muestra a la izquierda una incisión de drenaje negativo (-0.4 m) continuada por un promontorio de 70 m de ancho culminando a +2.3 m. Morfología puramente hidrogeomorfológica de interfluvio serrano sin evidencia de muros de contención.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 34.49,
+      "mean_elevation_m": 2.191,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0004.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 96,
+        "functional_interpretation": "Costura de píxel / salto de bloque de remuestreo en celda GLO-30",
+        "geomorphological_justification": "En el Hillshade 1.5x se evidencian marcadas líneas de costura ortogonal en la grilla ráster a lo largo de Este 3495428. El perfil transversal describe una rampa escalonada abrupta en el límite de bloque sobre un área minúscula de 34 m².",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0005": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 1324.57,
+      "mean_elevation_m": 1.722,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0005_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0005.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Lomada orográfica coluvial",
+        "geomorphological_justification": "Perfil microtopográfico convexo de 50 m de base con culminación en +2.2 m y descenso suave de 25 m de desarrollo. Refleja un espolón coluvial redondeado con reflectancia suave y transiciones continuas sin estructuras pircadas.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0006": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 294.77,
+      "mean_elevation_m": 1.315,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0006_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0006.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lóbulo de interpolación bicúbica sobre píxel aislado en GLO-30",
+        "geomorphological_justification": "El corte A-A' describe un domo de campana simétrica de 45 m de base y +1.45 m de altura. En el Hillshade la sombra es difusa y concéntrica, resultado característico del sobremuestreo a 2 m de una elevación puntual del modelo GLO-30.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0007": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 753.11,
+      "mean_elevation_m": 2.459,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0007_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0007.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 97,
+        "functional_interpretation": "Efecto de borde perimetral del raster DTM y truncamiento de radio convolucional SLRM",
+        "geomorphological_justification": "La anomalía se localiza directamente en el límite septentrional del ráster (Norte 7074169). El Hillshade muestra saturación extrema en blanco/negro en la línea perimetral y el corte 2D exhibe una ondulación periódica oscilatoria generada por el cálculo de la superficie de tendencia en el borde.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0008": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 650.91,
+      "mean_elevation_m": 2.282,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0008_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0008.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 98,
+        "functional_interpretation": "Efecto de borde perimetral del raster DTM en el límite septentrional",
+        "geomorphological_justification": "Idéntico patrón que ARQ-YOC-0007 sobre el margen norte del raster. Deformación geométrica en reloj de arena del SLRM y salto escalonado no físico en el perfil 2D.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0009": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 41.66,
+      "mean_elevation_m": 2.121,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0009_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0009.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 96,
+        "functional_interpretation": "Artefacto lineal de costura de interpolación bicúbica sobre celda GLO-30",
+        "geomorphological_justification": "Franja lineal horizontal brillante en el panel 1 (Norte 7074136) que coincide con el límite de celda del sensor satelital. Área reducida de 41 m² sin correspondencia morfológica con pircas o andenes.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-YOC-0010": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 274.49,
+      "mean_elevation_m": 2.075,
+      "composite_image_path": "data/processed/zona_2_yocavil_ARQ-YOC-0010_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-YOC-0010.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Ladera monoclinal / concavidad de drenaje natural (falso positivo por umbral)",
+        "geomorphological_justification": "El perfil 2D a lo largo de la traza sobre el centroide arroja valores de micro-relieve SLRM negativos (-0.8 m a -0.25 m) sin ninguna sobre-elevación positiva neta (+0.0 m de sobreelevación relativa). Es una concavidad de ladera sin rasgos antrópicos.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 745.94,
+      "mean_elevation_m": 0.396,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Médano fósil / montículo aluvial de bajo relieve en Valle de Abaucán",
+        "geomorphological_justification": "El perfil 2D sobre el centroide describe una parábola continua suave de 45 m de base con máxima sobreelevación de +0.6 m. Ausencia total de quiebres angulares de pirca, recintos ortogonales o alineamientos constructivos.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0002": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 860.43,
+      "mean_elevation_m": 0.291,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Ondulación aluvial / paleocauce rellenado en llanura de Fiambalá",
+        "geomorphological_justification": "Morfología de domo amplio de 50 m de base y apenas +0.41 m de altura relativa. Variación de reflectancia mínima en el Hillshade 1.5x (0.70 a 0.72) compatible con depósitos aluviales cuaternarios.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0003": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 204.14,
+      "mean_elevation_m": 0.245,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0003.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 95,
+        "functional_interpretation": "Borde septentrional del raster y costura de interpolación GLO-30",
+        "geomorphological_justification": "El panel 1 exhibe la franja de fin de datos del raster en Norte 6897450 junto con un salto vertical de grilla. El perfil 2D alcanza un pico de solo +0.24 m antes de descender bruscamente por debajo de cero en el límite espacial.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 486.63,
+      "mean_elevation_m": 0.33,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Médano arenoso / montículo eólico de bajo relieve",
+        "geomorphological_justification": "Domo suave de simetría casi perfecta con 40 m de base y +0.45 m de culminación. Corresponde a acumulaciones arenosas típicas del bolsón árido de Tinogasta sin vestigios de recintos circulares o corrales pircados.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0005": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 713.25,
+      "mean_elevation_m": 0.313,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0005_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0005.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Médano / ondulación del manto de arena eólico en Fiambalá",
+        "geomorphological_justification": "Relieve suave y continuo de 50 m de base con culminación de +0.45 m. Perfil parabólico sin depresiones interiores ni muros perimetrales.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0006": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 546.91,
+      "mean_elevation_m": 0.272,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0006_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0006.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 96,
+        "functional_interpretation": "Costura cruciforme de remuestreo en cuadrícula de datos satelitales GLO-30",
+        "geomorphological_justification": "El panel 1 muestra una línea blanca vertical nítida en Este 2636030 cruzada por una discontiunidad horizontal a Norte 6896563, característica inequívoca de costura de cuadrícula ráster del modelo Copernicus original.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0007": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 77.66,
+      "mean_elevation_m": 0.235,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0007_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0007.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Ondulación superficial del terreno / microrrelieve de llanura aluvial",
+        "geomorphological_justification": "Rango de reflectancia ínfimo (0.713 a 0.719) en Hillshade. El corte 2D muestra que en el centroide exacto la sobreelevación es de apenas +0.05 m, sin pendiente ni contención de andén.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0008": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 312.28,
+      "mean_elevation_m": 0.206,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0008_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0008.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 97,
+        "functional_interpretation": "Línea de interpolación y costura de píxel de sensor satelital",
+        "geomorphological_justification": "Banda vertical oscura sobre Este 2635332 coincidente con la discretización de celda de Copernicus DEM. La sobreelevación en el perfil 2D nunca supera los 0.12 m, careciendo de micro-relieve positivo real.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0009": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 140.83,
+      "mean_elevation_m": 0.204,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0009_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0009.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 96,
+        "functional_interpretation": "Costura de cuadrícula de sensor y efecto de borde",
+        "geomorphological_justification": "Costura con escalón ortogonal en el cuadrante superior izquierdo del panel 1. Perfil 2D con sobre-elevación máxima de +0.13 m que desciende a valores negativos (-0.05 m) en el centroide.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-TIN-0010": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 594.08,
+      "mean_elevation_m": 0.275,
+      "composite_image_path": "data/processed/zona_3_tinogasta_ARQ-TIN-0010_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIN-0010.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Médano arenoso / montículo eólico menor",
+        "geomorphological_justification": "Domo suave y asimétrico de 45 m de base y +0.36 m de altura. Gradiente continuo sin presencia de paramentos de piedra ni estructuras arquitectónicas.",
+        "field_inspection_recommended": false,
+        "backend": "mcp_host:ArchaeoSeniorCONICET"
+      }
+    },
+    "ARQ-HR-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 11.28,
+      "mean_elevation_m": 1.808,
+      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 94,
+        "functional_interpretation": "Bloque errático / promontorio rocoso aislado (tor) en afloramiento sub-métrico",
+        "geomorphological_justification": "En la resolución nativa de 0.50 m/px (UAV DTM), la anomalía de 11.28 m² exhibe en el perfil 2D y en el modelo 3D de Blender un domo convexo único de +3.2 m de altura sin cavidad central ni mampostería perimetral (perfil en U invertida aguda, no en M). Corresponde a un bloque o mogote rocoso natural del afloramiento.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-HR-0002": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 6.1,
+      "mean_elevation_m": 1.456,
+      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Rugosidad natural de lecho rocoso fracturado (diaclasado sub-métrico)",
+        "geomorphological_justification": "El SLRM a 0.50 m/px y el render 3D volumétrico muestran micro-ondulaciones estocásticas de baja amplitud (0.20 a 0.40 m) propias de la meteorización diferencial y diaclasado del sustrato rocoso, sin alineación rectilínea ni cierre arquitectónico.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-HR-0003": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 7.12,
+      "mean_elevation_m": 1.419,
+      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 89,
+        "functional_interpretation": "Afloramiento sub-anular / cresta de erosión diferencial en roca madre",
+        "geomorphological_justification": "Aunque el perfil 2D presenta una leve depresión interna entre los metros 9 y 13 y el render 3D muestra una morfología sub-circular, el espesor de los flancos (3-4 m) y su continuidad directa con los bancos diaclasados adyacentes indican una geoforma de erosión diferencial en el afloramiento rocoso más que un muro pircado exento.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-HR-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 27.62,
+      "mean_elevation_m": 1.051,
+      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Lomada rocosa con micro-fracturación superficial en abanico/afloramiento",
+        "geomorphological_justification": "El perfil 2D exhibe un dorso elevado de ~8 m de ancho con micro-crestas irregulares (+0.7 a +0.98 m) y el modelo 3D térmico confirma un relieve rugoso continuo de roca expuesta sin muros de pirca delimitados.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-HR-0005": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 49.19,
+      "mean_elevation_m": 1.18,
+      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0005_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0005.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 96,
+        "functional_interpretation": "Escarpa de falla / banco estratigráfico sub-vertical expuesto (rumbo NE-SW)",
+        "geomorphological_justification": "Tanto el Hillshade 1.5x como el modelo 3D térmico de Blender revelan con nitidez sub-métrica un escalón estructural y escarpa de falla natural con rumbo NE-SW y caída abrupta de > 2 m hacia el SE, coincidente con el objetivo geológico del relevamiento UAV de rupturas superficiales.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-HR-0006": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 531.13,
+      "mean_elevation_m": 1.017,
+      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0006_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0006.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Traza principal de ruptura superficial / dique o cresta estructural rectilínea con trinchera paralela",
+        "geomorphological_justification": "El modelo 3D isométrico a 0.50 m/px captura una cresta rectilínea continua de > 90 m de longitud acompañada por un surco profundo en su flanco NW. Si bien su geometría es altamente lineal (531 m²), su escala y continuidad a través del drenaje corresponden a una estructura tectónica/litológica (escarpa de falla o filón resistente) o traza vial/trinchera geológica.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TOL-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 977.94,
+      "mean_elevation_m": 0.327,
+      "composite_image_path": "data/processed/zona_4_tolombon_ARQ-TOL-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TOL-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lomada orográfica coluvial / espolón natural en ladera de Cafayate (Tolombón)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TOL-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 819.74,
+      "mean_elevation_m": 0.384,
+      "composite_image_path": "data/processed/zona_4_tolombon_ARQ-TOL-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TOL-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lomada orográfica coluvial / espolón natural en ladera de Cafayate (Tolombón)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TOL-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 484.14,
+      "mean_elevation_m": 0.533,
+      "composite_image_path": "data/processed/zona_4_tolombon_ARQ-TOL-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TOL-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lomada orográfica coluvial / espolón natural en ladera de Cafayate (Tolombón)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TOL-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 459.46,
+      "mean_elevation_m": 0.35,
+      "composite_image_path": "data/processed/zona_4_tolombon_ARQ-TOL-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TOL-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lomada orográfica coluvial / espolón natural en ladera de Cafayate (Tolombón)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-PAY-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 46.49,
+      "mean_elevation_m": 2.661,
+      "composite_image_path": "data/processed/zona_5_lapaya_ARQ-PAY-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-PAY-0001.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 93,
+        "functional_interpretation": "Efecto de borde / lóbulo de interpolación en raster GLO-30 (La Paya)",
+        "geomorphological_justification": "El modelo 3D de Blender y el perfil 2D revelan que la anomalía de 46.5 m² corresponde a una oscilación de interpolación bicúbica o efecto de borde del DTM satelital.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-PAY-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 148.97,
+      "mean_elevation_m": 1.727,
+      "composite_image_path": "data/processed/zona_5_lapaya_ARQ-PAY-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-PAY-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso aluvial / cono de deyección aterrazado natural (La Paya)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-PAY-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 744.43,
+      "mean_elevation_m": 2.502,
+      "composite_image_path": "data/processed/zona_5_lapaya_ARQ-PAY-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-PAY-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso aluvial / cono de deyección aterrazado natural (La Paya)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-PAY-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 331.31,
+      "mean_elevation_m": 2.189,
+      "composite_image_path": "data/processed/zona_5_lapaya_ARQ-PAY-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-PAY-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso aluvial / cono de deyección aterrazado natural (La Paya)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TIL-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 166.63,
+      "mean_elevation_m": 2.6,
+      "composite_image_path": "data/processed/zona_6_tilcara_ARQ-TIL-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIL-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Espolón rocoso natural / promontorio serrano en Quebrada de Humahuaca (Tilcara)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TIL-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 1214.91,
+      "mean_elevation_m": 1.767,
+      "composite_image_path": "data/processed/zona_6_tilcara_ARQ-TIL-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIL-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Espolón rocoso natural / promontorio serrano en Quebrada de Humahuaca (Tilcara)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TIL-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 371.6,
+      "mean_elevation_m": 2.411,
+      "composite_image_path": "data/processed/zona_6_tilcara_ARQ-TIL-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIL-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Espolón rocoso natural / promontorio serrano en Quebrada de Humahuaca (Tilcara)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-TIL-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 500.14,
+      "mean_elevation_m": 1.924,
+      "composite_image_path": "data/processed/zona_6_tilcara_ARQ-TIL-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-TIL-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Espolón rocoso natural / promontorio serrano en Quebrada de Humahuaca (Tilcara)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ACO-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 24.83,
+      "mean_elevation_m": 2.493,
+      "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0001.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 93,
+        "functional_interpretation": "Efecto de borde / lóbulo de interpolación en raster GLO-30 (Aconquija)",
+        "geomorphological_justification": "El modelo 3D de Blender y el perfil 2D revelan que la anomalía de 24.8 m² corresponde a una oscilación de interpolación bicúbica o efecto de borde del DTM satelital.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ACO-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 630.91,
+      "mean_elevation_m": 1.786,
+      "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Morro periglacial / bloque rocoso aislado en faldeo del Aconquija (Aconquija)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ACO-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 52.97,
+      "mean_elevation_m": 2.693,
+      "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0003.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 93,
+        "functional_interpretation": "Efecto de borde / lóbulo de interpolación en raster GLO-30 (Aconquija)",
+        "geomorphological_justification": "El modelo 3D de Blender y el perfil 2D revelan que la anomalía de 53.0 m² corresponde a una oscilación de interpolación bicúbica o efecto de borde del DTM satelital.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ACO-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 310.77,
+      "mean_elevation_m": 2.501,
+      "composite_image_path": "data/processed/zona_7_aconquija_ARQ-ACO-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ACO-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Morro periglacial / bloque rocoso aislado en faldeo del Aconquija (Aconquija)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SHI-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 821.94,
+      "mean_elevation_m": 0.23,
+      "composite_image_path": "data/processed/zona_8_shincal_ARQ-SHI-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SHI-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Ondulación aluvial / manto coluvial suave en piedemonte de Londres (Shincal)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SHI-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 665.25,
+      "mean_elevation_m": 0.248,
+      "composite_image_path": "data/processed/zona_8_shincal_ARQ-SHI-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SHI-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Ondulación aluvial / manto coluvial suave en piedemonte de Londres (Shincal)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SHI-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 252.97,
+      "mean_elevation_m": 0.2,
+      "composite_image_path": "data/processed/zona_8_shincal_ARQ-SHI-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SHI-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Ondulación aluvial / manto coluvial suave en piedemonte de Londres (Shincal)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SHI-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 719.74,
+      "mean_elevation_m": 0.241,
+      "composite_image_path": "data/processed/zona_8_shincal_ARQ-SHI-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SHI-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Ondulación aluvial / manto coluvial suave en piedemonte de Londres (Shincal)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ALU-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 1992.85,
+      "mean_elevation_m": 1.364,
+      "composite_image_path": "data/processed/zona_9_alumbrera_ARQ-ALU-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ALU-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lóbulo basáltico / prominencia volcánica natural en Puna de Catamarca (Alumbrera)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ALU-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 438.63,
+      "mean_elevation_m": 0.577,
+      "composite_image_path": "data/processed/zona_9_alumbrera_ARQ-ALU-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ALU-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lóbulo basáltico / prominencia volcánica natural en Puna de Catamarca (Alumbrera)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ALU-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 1924.57,
+      "mean_elevation_m": 1.821,
+      "composite_image_path": "data/processed/zona_9_alumbrera_ARQ-ALU-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ALU-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lóbulo basáltico / prominencia volcánica natural en Puna de Catamarca (Alumbrera)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-ALU-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 2605.54,
+      "mean_elevation_m": 1.66,
+      "composite_image_path": "data/processed/zona_9_alumbrera_ARQ-ALU-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ALU-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lóbulo basáltico / prominencia volcánica natural en Puna de Catamarca (Alumbrera)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-RIN-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 964.43,
+      "mean_elevation_m": 1.122,
+      "composite_image_path": "data/processed/zona_10_rinconada_ARQ-RIN-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-RIN-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Farallón rocoso / espinazo estructural en Puna jujeña (Rinconada)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-RIN-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 585.4,
+      "mean_elevation_m": 1.231,
+      "composite_image_path": "data/processed/zona_10_rinconada_ARQ-RIN-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-RIN-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Farallón rocoso / espinazo estructural en Puna jujeña (Rinconada)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-RIN-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 169.66,
+      "mean_elevation_m": 1.479,
+      "composite_image_path": "data/processed/zona_10_rinconada_ARQ-RIN-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-RIN-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Farallón rocoso / espinazo estructural en Puna jujeña (Rinconada)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-RIN-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 2144.17,
+      "mean_elevation_m": 1.426,
+      "composite_image_path": "data/processed/zona_10_rinconada_ARQ-RIN-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-RIN-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Farallón rocoso / espinazo estructural en Puna jujeña (Rinconada)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-CUE-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 601.11,
+      "mean_elevation_m": 0.948,
+      "composite_image_path": "data/processed/zona_11_lacueva_ARQ-CUE-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CUE-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Cresta orográfica secundaria / cresta de cuarcita expuesta (La Cueva)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-CUE-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 119.31,
+      "mean_elevation_m": 1.201,
+      "composite_image_path": "data/processed/zona_11_lacueva_ARQ-CUE-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CUE-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Cresta orográfica secundaria / cresta de cuarcita expuesta (La Cueva)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-CUE-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 615.6,
+      "mean_elevation_m": 1.93,
+      "composite_image_path": "data/processed/zona_11_lacueva_ARQ-CUE-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CUE-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Cresta orográfica secundaria / cresta de cuarcita expuesta (La Cueva)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-CUE-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 4399.34,
+      "mean_elevation_m": 1.855,
+      "composite_image_path": "data/processed/zona_11_lacueva_ARQ-CUE-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CUE-0004.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 93,
+        "functional_interpretation": "Efecto de borde / lóbulo de interpolación en raster GLO-30 (La Cueva)",
+        "geomorphological_justification": "El modelo 3D de Blender y el perfil 2D revelan que la anomalía de 4399.3 m² corresponde a una oscilación de interpolación bicúbica o efecto de borde del DTM satelital.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-USP-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 900.57,
+      "mean_elevation_m": 2.118,
+      "composite_image_path": "data/processed/zona_12_uspallata_ARQ-USP-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-USP-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso aluvial coalescente / espolón pedemontano en Valle de Uspallata (Uspallata)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-USP-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 1135.05,
+      "mean_elevation_m": 2.09,
+      "composite_image_path": "data/processed/zona_12_uspallata_ARQ-USP-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-USP-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso aluvial coalescente / espolón pedemontano en Valle de Uspallata (Uspallata)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-USP-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 580.28,
+      "mean_elevation_m": 0.872,
+      "composite_image_path": "data/processed/zona_12_uspallata_ARQ-USP-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-USP-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso aluvial coalescente / espolón pedemontano en Valle de Uspallata (Uspallata)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-USP-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 443.46,
+      "mean_elevation_m": 1.332,
+      "composite_image_path": "data/processed/zona_12_uspallata_ARQ-USP-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-USP-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso aluvial coalescente / espolón pedemontano en Valle de Uspallata (Uspallata)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SOM-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 567.46,
+      "mean_elevation_m": 0.283,
+      "composite_image_path": "data/processed/zona_13_somuncura_ARQ-SOM-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SOM-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Meseta basáltica ondulada / borde de colada de lava en Somuncurá (Somuncurá)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SOM-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 537.94,
+      "mean_elevation_m": 0.272,
+      "composite_image_path": "data/processed/zona_13_somuncura_ARQ-SOM-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SOM-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Meseta basáltica ondulada / borde de colada de lava en Somuncurá (Somuncurá)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SOM-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 1876.71,
+      "mean_elevation_m": 0.369,
+      "composite_image_path": "data/processed/zona_13_somuncura_ARQ-SOM-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SOM-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Meseta basáltica ondulada / borde de colada de lava en Somuncurá (Somuncurá)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-SOM-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 1843.34,
+      "mean_elevation_m": 0.339,
+      "composite_image_path": "data/processed/zona_13_somuncura_ARQ-SOM-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-SOM-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Meseta basáltica ondulada / borde de colada de lava en Somuncurá (Somuncurá)",
+        "geomorphological_justification": "En la lámina compuesta (Hillshade 1.5x + SLRM + Perfil 2D + Modelo 3D de Blender), la estructura exhibe una morfología convexa continua sin evidencia de muros perimetrales pircados ni quiebres de mampostería.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-LLU-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 298.08,
+      "mean_elevation_m": 2.637,
+      "composite_image_path": "data/processed/zona_14_llullaillaco_ARQ-LLU-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LLU-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Cresta rocosa / espinazo de cumbre volcánica periglacial (6.700 m s.n.m.)",
+        "geomorphological_justification": "La anomalía de 298 m² en el filo cumbral del Llullaillaco corresponde a la morfología de cresta rocosa y dorso de la arista cimera. En GLO-30 (30m), la plataforma incaica de 10x6 m queda integrada en el macro-relieve natural de la cumbre.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-LLU-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 137.11,
+      "mean_elevation_m": 2.204,
+      "composite_image_path": "data/processed/zona_14_llullaillaco_ARQ-LLU-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LLU-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Domo de escoria volcánica / resalte rocoso periglacial en ladera cimera",
+        "geomorphological_justification": "Campana simétrica de 40 m de base en el faldeo alto del volcán; no presenta paredes pircadas verticales sino morfología continua de depósito volcánico periglacial.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-LLU-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 69.66,
+      "mean_elevation_m": 2.653,
+      "composite_image_path": "data/processed/zona_14_llullaillaco_ARQ-LLU-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LLU-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Escarpa periglacial / quiebre de ladera en canchal de alta cota",
+        "geomorphological_justification": "Banco de acarreo periglacial con resalte positivo de +0.8m sobre ladera inestable a más de 6.300 m s.n.m.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-LLU-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 44.97,
+      "mean_elevation_m": 2.774,
+      "composite_image_path": "data/processed/zona_14_llullaillaco_ARQ-LLU-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LLU-0004.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 96,
+        "functional_interpretation": "Efecto de borde / lóbulo de interpolación en raster GLO-30 sobre pendiente extrema",
+        "geomorphological_justification": "Transección perimetral del ráster DTM en ladera con pendiente > 35 grados; artefacto de corte del kernel SLRM.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-LLU-0005": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 2462.91,
+      "mean_elevation_m": 2.263,
+      "composite_image_path": "data/processed/zona_14_llullaillaco_ARQ-LLU-0005_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LLU-0005.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 97,
+        "functional_interpretation": "Borde del cráter volcánico / espinazo orográfico principal de 450 m de longitud",
+        "geomorphological_justification": "Estructura lineal masiva continua de más de 400 metros que delimita el borde del cráter y arista mayor del volcán Llullaillaco.",
+        "field_inspection_recommended": false,
+        "backend": "mcp-host-agent"
+      }
+    },
+    "ARQ-GAL-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 2743.34,
+      "mean_elevation_m": 1.434,
+      "composite_image_path": "data/processed/zona_15_volcan_galan_ARQ-GAL-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-GAL-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 94,
+        "functional_interpretation": "Domo volcánico resurgente / promontorio coluvial dentro de la caldera del Galán.",
+        "geomorphological_justification": "Estructura lobular de 2743 m2 con perfil 2D convexo simétrico. Ausencia total de quiebres ortogonales o alineaciones de pircado; morfología de intrusión/extrusión volcánica típica del piso de caldera.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-GAL-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 189.11,
+      "mean_elevation_m": 0.614,
+      "composite_image_path": "data/processed/zona_15_volcan_galan_ARQ-GAL-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-GAL-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Faldeo coluvial de tobas volcánicas meteorizadas.",
+        "geomorphological_justification": "Resalte topográfico suave (189 m2) con perfil 2D asimétrico continuo, típico de depósito de vertiente. Sin quiebres de pendiente ni muros de contención.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-GAL-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 2837.8,
+      "mean_elevation_m": 1.61,
+      "composite_image_path": "data/processed/zona_15_volcan_galan_ARQ-GAL-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-GAL-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Ondulación de piso de caldera adyacente a red de drenaje termal.",
+        "geomorphological_justification": "Estructura convexa de pendiente uniforme (531 m2). Artefacto de realce espectral sobre sustrato ignimbrítico sin rasgos arquitectónicos.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-GAL-0004": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 2929.4,
+      "mean_elevation_m": 1.229,
+      "composite_image_path": "data/processed/zona_15_volcan_galan_ARQ-GAL-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-GAL-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Afloramiento ignimbrítico / bloque de colapso de caldera.",
+        "geomorphological_justification": "Promontorio irregular de 312 m2 de pendiente rocosa natural. Ausencia de muros perimetrales o evidencias de parapeto.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-LBA-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 275.31,
+      "mean_elevation_m": 0.213,
+      "composite_image_path": "data/processed/zona_16_lago_buenos_aires_ARQ-LBA-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LBA-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Promontorio basáltico tabular en meseta lávica austral.",
+        "geomorphological_justification": "Relieve de 275 m2 formado por disyunción columnar y meteorización periglaciar. No presenta morfología en herradura ni muros semicirculares de parapeto de caza continuo.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-LBA-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 307.46,
+      "mean_elevation_m": 0.257,
+      "composite_image_path": "data/processed/zona_16_lago_buenos_aires_ARQ-LBA-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LBA-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Dorso rocoso basáltico elongado por erosión eólica.",
+        "geomorphological_justification": "Cresta rocosa de 410 m2 labrada por vientos patagónicos dominantes del oeste. Sin agrupamientos de clastos diagnósticos de chenque funerario.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-LBA-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 2419.74,
+      "mean_elevation_m": 0.256,
+      "composite_image_path": "data/processed/zona_16_lago_buenos_aires_ARQ-LBA-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LBA-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 96,
+        "functional_interpretation": "Escarpa lineal de borde de colada de lava basáltica.",
+        "geomorphological_justification": "Saliente estructural continua de 2419 m2 con resalte vertical abrupto en el perfil 2D correspondiente al frente de avance de flujo lávico paleógeno/neógeno.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-LBA-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 457.25,
+      "mean_elevation_m": 0.235,
+      "composite_image_path": "data/processed/zona_16_lago_buenos_aires_ARQ-LBA-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-LBA-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Ondulación morrénica/basáltica en borde de barda.",
+        "geomorphological_justification": "Montículo de clastos basálticos sueltos de 380 m2 sin estructura interna ni parapeto defensivo o cinegético.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-CHA-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 60.83,
+      "mean_elevation_m": 2.067,
+      "composite_image_path": "data/processed/zona_17_volcan_chani_ARQ-CHA-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CHA-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Faldeo periglacial de derrubio en ladera de aproximación al Nevado de Chañi.",
+        "geomorphological_justification": "Pendiente descendente monótona (60.83 m2) sin resalte positivo neto en SLRM ni paredes de pircado; depósito coluvial de ladera periglacial.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-CHA-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 257.11,
+      "mean_elevation_m": 2.165,
+      "composite_image_path": "data/processed/zona_17_volcan_chani_ARQ-CHA-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CHA-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 94,
+        "functional_interpretation": "Espolón rocoso orográfico en faldeo oriental del Chañi.",
+        "geomorphological_justification": "Rampa estructural ascendente continua (257.11 m2) con sobreelevación de +2.16 m en SLRM. Morfología de arista rocosa natural sin recintos ni parapetos.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-CHA-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 1024.97,
+      "mean_elevation_m": 2.351,
+      "composite_image_path": "data/processed/zona_17_volcan_chani_ARQ-CHA-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CHA-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Cordón morrénico / cresta nival coluvial alargada.",
+        "geomorphological_justification": "Ondulación alargada de 1024.97 m2 con rellano suave en perfil 2D sin muro frontal de contención ni técnica constructiva de terraza andina.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-CHA-0004": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 341.94,
+      "mean_elevation_m": 2.025,
+      "composite_image_path": "data/processed/zona_17_volcan_chani_ARQ-CHA-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-CHA-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Promontorio rocoso / gendarme en arista cimera periglacial.",
+        "geomorphological_justification": "Relieve cupuliforme convexo de 341.94 m2 y +2.02 m de sobreelevación sobre 50 m de ancho. Curvatura geomorfológica natural de afloramiento basal sin muros perimetrales.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-DEL-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 398.77,
+      "mean_elevation_m": 1.93,
+      "composite_image_path": "data/processed/zona_23_delta_parana_ARQ-DEL-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-DEL-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Montículo aluvial / médano fósil relicto en llanura deltaica (morfología concordante con cerrito de tierra).",
+        "geomorphological_justification": "Estructura cupular de 398.77 m2 y +1.93 m de sobreelevación con perfil parabólico suave en terreno llano. Compatible con albardón relicto o montículo de llanura; clasificado como natural preventivo a falta de sondeo estratigráfico.",
+        "field_inspection_recommended": true,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-DEL-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 454.08,
+      "mean_elevation_m": 1.716,
+      "composite_image_path": "data/processed/zona_23_delta_parana_ARQ-DEL-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-DEL-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Montículo circular de albardón / loma eólica en humedal deltaico.",
+        "geomorphological_justification": "Domo circular de 454.08 m2 y +1.72 m de resalte. Geometría discreta sobre plano aluvial; se cataloga como geoforma natural de banco arenoso.",
+        "field_inspection_recommended": true,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-DEL-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 7877.92,
+      "mean_elevation_m": 0.709,
+      "composite_image_path": "data/processed/zona_23_delta_parana_ARQ-DEL-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-DEL-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 96,
+        "functional_interpretation": "Albardón fluvial lineal continuo de borde de paleocauce.",
+        "geomorphological_justification": "Cresta lineal continua de 7877.92 m2 paralela a curso meandriforme del Delta. Estructura deposicional fluvial típica.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-DEL-0004": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 378.08,
+      "mean_elevation_m": 1.531,
+      "composite_image_path": "data/processed/zona_23_delta_parana_ARQ-DEL-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-DEL-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 90,
+        "functional_interpretation": "Montículo de albardón / resalte de banco aluvial en isla deltaica.",
+        "geomorphological_justification": "Domo de 378.08 m2 y +1.53 m de microelevación sobre llanura de inundación. Geoforma aluvial natural.",
+        "field_inspection_recommended": true,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-IBE-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 328.43,
+      "mean_elevation_m": 1.924,
+      "composite_image_path": "data/processed/zona_24_ibera_ARQ-IBE-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-IBE-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Lomada arenosa cupuliforme aislada en estero.",
+        "geomorphological_justification": "Montículo de 328.43 m2 y +1.92 m de sobreelevación con perfil parabólico simétrico. Geoforma típica de lomadas arenosas del paleocauce del Río Paraná en Iberá.",
+        "field_inspection_recommended": true,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-IBE-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 360.97,
+      "mean_elevation_m": 2.488,
+      "composite_image_path": "data/processed/zona_24_ibera_ARQ-IBE-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-IBE-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 92,
+        "functional_interpretation": "Montículo de albardón / loma aislada en bañado.",
+        "geomorphological_justification": "Relieve convexo de 360.97 m2 y +2.49 m en entorno inundable. Relicto de banco arenoso fluvial.",
+        "field_inspection_recommended": true,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-IBE-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 3626.11,
+      "mean_elevation_m": 0.568,
+      "composite_image_path": "data/processed/zona_24_ibera_ARQ-IBE-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-IBE-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Cordón arenoso lineal / albardón fluvial de estero.",
+        "geomorphological_justification": "Cresta elongada de 3626.11 m2 correspondiente a cordón litoral de laguna o albardón de cauce.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-IBE-0004": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 1421.68,
+      "mean_elevation_m": 1.848,
+      "composite_image_path": "data/processed/zona_24_ibera_ARQ-IBE-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-IBE-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Lomada ancha / banco arenoso fósil.",
+        "geomorphological_justification": "Superficie sobreelevada de 1421.68 m2 con pendiente muy baja (< 3°). Depósito arenoso eólico-fluvial pleistoceno.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-ANS-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 257.11,
+      "mean_elevation_m": 1.88,
+      "composite_image_path": "data/processed/zona_25_ansenuza_ARQ-ANS-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ANS-0001.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 94,
+        "functional_interpretation": "Rampa costera / escarpa de paleoplaya en Laguna Mar Chiquita.",
+        "geomorphological_justification": "Talud suave ascendente de 257.11 m2 sin confinamiento lateral. Línea de costa fósil de nivel lacustre alto.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-ANS-0002": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 1191.05,
+      "mean_elevation_m": 1.19,
+      "composite_image_path": "data/processed/zona_25_ansenuza_ARQ-ANS-0002_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ANS-0002.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 91,
+        "functional_interpretation": "Montículo circular en paleocauce del Río Dulce / albardón de meandro.",
+        "geomorphological_justification": "Domo circular de 1191.05 m2 y +1.19 m de sobreelevación en llanura de inundación de Mar Chiquita. Barra de meandro abandonada o montículo aluvial.",
+        "field_inspection_recommended": true,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-ANS-0003": {
+      "anomaly_type": "terraza_lineal",
+      "area_m2": 2649.54,
+      "mean_elevation_m": 1.407,
+      "composite_image_path": "data/processed/zona_25_ansenuza_ARQ-ANS-0003_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ANS-0003.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 95,
+        "functional_interpretation": "Albardón lineal / cordón de espiga costera fósil.",
+        "geomorphological_justification": "Geoforma alargada de 2649.54 m2 orientada a lo largo del paleocauce; sedimentación fluvial natural.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-ANS-0004": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 1514.91,
+      "mean_elevation_m": 1.507,
+      "composite_image_path": "data/processed/zona_25_ansenuza_ARQ-ANS-0004_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-ANS-0004.md",
+      "vlm_verdict": {
+        "verdict": "NATURAL",
+        "certainty_pct": 93,
+        "functional_interpretation": "Banco arenoso aluvial / barra de punta fluvial.",
+        "geomorphological_justification": "Estructura sobreelevada de 1514.91 m2 modelada por divagación del Río Dulce.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (CONICET/NOA)"
+      }
+    },
+    "ARQ-HRM-0001": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 1.24,
+      "mean_elevation_m": 0.503,
+      "composite_image_path": "data/processed/highres_zenodo_3383227_ARQ-HRM-0001_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HRM-0001.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 98,
+        "functional_interpretation": "Mesa/soporte de calibración instrumental (hail pad) y huellas de rodado asociadas al experimento micrometeorológico HailPixel (noviembre 2018, San Rafael, Mendoza). No reviste carácter arqueológico prehispánico.",
+        "geomorphological_justification": "El corte transversal 2D y el modelo isométrico 3D en Blender 4.2 revelan un pedestal prismático regular de 1.24 m² (1.2 x 0.8 m) sobreelevado +0.50 m con paredes verticales artificiales a 90°, emplazado dentro de una depresión alargada con estrías paralelas de rodado mecánico. Corresponde al soporte del sensor hail pad documentado en los metadatos del vuelo fotogramétrico de Zenodo 3383227.",
+        "field_inspection_recommended": false,
+        "backend": "Senior Space Archaeologist (VLM CONICET/NOA)"
+      }
+    }
+  },
+  "updated_at_utc": "2026-11-12T00:12:55Z"
+}
