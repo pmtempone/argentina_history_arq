@@ -2,7 +2,7 @@
 **Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
 **Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
 **Código de Candidato:** `ARQ-0025`
-**Fecha de Generación (UTC):** `2026-11-12T04:10:22Z`
+**Fecha de Generación (UTC):** `2026-11-12T10:22:00Z`
 
 ---
 
@@ -69,7 +69,7 @@
 
 **Figura 1 — Lámina compuesta de 4 paneles** (1: Hillshade 1.5x · 2: SLRM · 3: Perfil 2D · 4: Render 3D Blender):
 
-![Lámina compuesta de 4 paneles del candidato ARQ-0025](../../archaeo-lidar-mcp/data/processed/synthetic_posgar_faja2_dtm_ARQ-0025_composite.png)
+![Lámina compuesta de 4 paneles del candidato ARQ-0025](../processed/synthetic_posgar_faja2_dtm_ARQ-0025_composite.png)
 
 
 ---

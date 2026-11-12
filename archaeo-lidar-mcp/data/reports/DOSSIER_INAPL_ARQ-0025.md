@@ -2,7 +2,7 @@
 **Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
 **Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
 **Código de Candidato:** `ARQ-0025`
-**Fecha de Generación (UTC):** `2026-11-12T04:10:22Z`
+**Fecha de Generación (UTC):** `2026-11-12T10:21:21Z`
 
 ---
 
@@ -15,21 +15,16 @@
 
 ## ⭐ Conclusión Ejecutiva (respuesta directa)
 
-⏳ **PENDIENTE — el candidato aún no fue auditado visualmente**
+❌ **NO — la anomalía es un artefacto técnico o un error del mapa**
 
-**¿Qué es?** Se detectó una forma sospechosa pero falta el juicio pericial (lámina compuesta disponible).
-**Certeza del juicio:** `0%` · **Prioridad de investigación:** MEDIA (pendiente de auditoría)
+**¿Qué es?** Origen del rasgo: Estructura circular sintética: anillo plantado sobre el DTM de validación (synthetic_posgar_faja2_dtm), no sobre terreno real relevado.
+**Certeza del juicio:** `95%` · **Prioridad de investigación:** BAJA (descartado)
 
-**Próximo paso:** juicio pericial sobre la lámina compuesta (sección 3).
+**Próximo paso:** ninguno — archivado como descarte (queda en `DESCARTES_VLM.json` y `INVENTARIO_GEOMORFOLOGICO.geojson` como dato geomorfológico).
 
 | Parámetro | Valor |
 | :--- | :--- |
-| **Veredicto pericial** | **PENDIENTE_REVISION** |
-
-> ℹ️ **Cómo completar el dictamen:** el Juez Pericial (agente o VLM) debe inspeccionar la
-> lámina compuesta (sección 3) y registrar el veredicto con
-> `src.core.vlm_judge.record_vlm_verdict(candidate_id=..., verdict_data=...)`. Este
-> documento se regenerará automáticamente con la conclusión definitiva.
+| **Veredicto pericial** | **ARTEFACTO** |
 
 
 ---
@@ -41,7 +36,7 @@
 | **ID de Anomalía** | `ARQ-0025` |
 | **Clasificación Preliminar** | **CANDIDATO_INEDITO** |
 | **Tipología Morfológica** | `estructura_circular` |
-| **Índice de Confianza Algorítmica** | `0.968` |
+| **Índice de Confianza Algorítmica** | `0.945` |
 | **Faja Métrica de Cálculo** | `EPSG:5344` (POSGAR 2007) |
 | **Bioma / Entorno** | `N/D` |
 | **Contexto Arqueológico Esperado** | `N/D` |
@@ -53,7 +48,7 @@
 - **Área Estimada en Planta:** `73.99 m²`
 - **Índice de Rectangularidad:** `0.7916`
 - **Índice de Circularidad Isoperimétrica:** `0.9694`
-- **Sobre-elevación Local Media (SLRM):** `0.491 m`
+- **Sobre-elevación Local Media (SLRM):** `0.53 m`
 - **Distancia al Curso de Agua más Próximo (IGN):** `No determinado (sin datos IGN)`
 
 ---
@@ -79,3 +74,17 @@
 Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
 direcciones provinciales de patrimonio se encuentran en:
 - Archivo: `ANEXO_CONFIDENCIAL_COORDENADAS.json`
+
+---
+
+## 5. Juicio Pericial de Inteligencia Artificial Multimodal
+
+| Campo | Dictamen |
+| :--- | :--- |
+| **Veredicto final** | **ARTEFACTO** |
+| **Nivel de certeza** | `95%` |
+| **Interpretación funcional** | Estructura circular sintética: anillo plantado sobre el DTM de validación (synthetic_posgar_faja2_dtm), no sobre terreno real relevado. |
+| **¿Inspección terrestre / dron?** | **NO** |
+| **Backend evaluador** | `agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)` |
+
+**Justificación geomorfológica:** Panel 1 (Hillshade): anillo circular perfecto de grosor constante, sin variación, sin ruido de fondo en el resto del tile (terreno plano homogéneo = DEM sintético). Panel 2 (SLRM): meseta circular uniforme con borde limpio, sin brechas de muro ni desgaste: un chenque o corral real erosionado nunca presenta continuidad perfecta. Panel 3 (Perfil): piso plano con paredes verticales y hombros nítidos: firma de estructura plantada por software. Fuente del DTM: synthetic_posgar_faja2_dtm.tif (data/raw), corrida de validación previa. No derivar personal a las coordenadas del anexo.

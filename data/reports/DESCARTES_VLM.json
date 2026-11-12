@@ -1,0 +1,35 @@
+{
+  "discarded": {
+    "ARQ-0026": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 103.8,
+      "mean_elevation_m": 0.53,
+      "composite_image_path": "data/processed/synthetic_posgar_faja2_dtm_ARQ-0026_composite.png",
+      "dossier_path": "../data/reports/DOSSIER_INAPL_ARQ-0026.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 95,
+        "functional_interpretation": "Recinto ortogonal sintético: estructura plantada sobre un DTM de validación (synthetic_posgar_faja2_dtm), no sobre terreno real relevado.",
+        "geomorphological_justification": "Panel 1 (Hillshade): trazas de muro de 4 lados rectos con esquinas netas y grosor uniforme, sin ruido de fondo (terreno plano homogéneo = DEM sintético, no natural). Panel 2 (SLRM): meseta interior perfectamente uniforme con bordes verticales, sin desgaste ni colapso de muros: geometría idealizada inexistente en estructuras reales erosionadas. Panel 3 (Perfil): piso plano de 0.55 m con caídas abruptas de 90 grados y hombros perfectamente nítidos: firma de estructura plantada por software. La fuente del DTM (synthetic_posgar_faja2_dtm.tif, data/raw) confirma origen de test. Las coordenadas del anexo apuntan al área de faja 2 pero el terreno analizado NO es el terreno real de esa ubicación: enviar personal a campo sería un error.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    },
+    "ARQ-0025": {
+      "anomaly_type": "estructura_circular",
+      "area_m2": 73.99,
+      "mean_elevation_m": 0.53,
+      "composite_image_path": "data/processed/synthetic_posgar_faja2_dtm_ARQ-0025_composite.png",
+      "dossier_path": "../data/reports/DOSSIER_INAPL_ARQ-0025.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 95,
+        "functional_interpretation": "Estructura circular sintética: anillo plantado sobre el DTM de validación (synthetic_posgar_faja2_dtm), no sobre terreno real relevado.",
+        "geomorphological_justification": "Panel 1 (Hillshade): anillo circular perfecto de grosor constante, sin variación, sin ruido de fondo en el resto del tile (terreno plano homogéneo = DEM sintético). Panel 2 (SLRM): meseta circular uniforme con borde limpio, sin brechas de muro ni desgaste: un chenque o corral real erosionado nunca presenta continuidad perfecta. Panel 3 (Perfil): piso plano con paredes verticales y hombros nítidos: firma de estructura plantada por software. Fuente del DTM: synthetic_posgar_faja2_dtm.tif (data/raw), corrida de validación previa. No derivar personal a las coordenadas del anexo.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
+    }
+  },
+  "updated_at_utc": "2026-11-12T10:21:21Z"
+}
