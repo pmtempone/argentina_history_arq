@@ -8,7 +8,7 @@
 
 Servidor **FastMCP** y pipeline científico en Python para la **prospección arqueológica autónoma 100% sin intervención humana (*Zero Human-in-the-Loop*)** sobre modelos de elevación satelitales (Copernicus DEM GLO-30), vuelos fotogramétricos con dron de ultra-alta resolución ($0.0025\text{ a }0.50\text{ m/px}$) y nubes de puntos LiDAR crudas en la República Argentina.
 
-Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), modelos de relieve local (SLRM NaN-safe), visión por computadora (OpenCV), renderizado volumétrico 3D isométrico térmico en **Blender 4.2 LTS headless (EEVEE)**, validación catastral y académica (IGN WFS, OpenStreetMap Overpass, OpenAlex) y auditoría cognitiva multimodal con el **Juez Pericial VLM Senior (CONICET/NOA)** bajo el marco legal de la **Ley Nacional N° 25.743 (INAPL)**.
+Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), modelos de relieve local (SLRM NaN-safe) con **detección de relieve positivo y negativo** (recintos, chenques y terrazas emergentes; casas-pozo, patios hundidos y zanjas excavadas), visión por computadora (OpenCV), renderizado volumétrico 3D isométrico térmico en **Blender 4.2 LTS headless (EEVEE)**, validación catastral y académica (IGN WFS, OpenStreetMap Overpass, OpenAlex, catálogo de sitios arqueológicos publicados) y auditoría cognitiva multimodal con el **Juez Pericial VLM Senior (CONICET/NOA)** bajo el marco legal de la **Ley Nacional N° 25.743 (INAPL)**.
 
 ---
 
@@ -40,13 +40,16 @@ Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), mode
                                          │
                                          ▼
                  [ 4. Detección Morfométrica (OpenCV & cKDTree) ]
-                   • Recintos Ortogonales, Círculos, Terrazas, Pircas
+                   • Doble pase de signo sobre el SLRM (positivo y negativo):
+                   • Positivo: Recintos Ortogonales, Círculos, Terrazas, Pircas
+                   • Negativo: Casas-pozo, Patios hundidos, Zanjas, Canales
+                   • Hundimientos cerrados (contornos al borde del tile descartados)
+                   • Piso físico de área: min_area >= 2 píxeles del raster nativo
                    • Deduplicación espacial en solapamientos
-                                         │
-                                         ▼
                  [ 5. Validación Multifuente y Catastral ]
                    • OpenStreetMap (Overpass API)
                    • Instituto Geográfico Nacional (IGN WFS)
+                   • Catálogo de sitios arqueológicos publicados (SITIO_REGISTRADO)
                    • Literatura científica (OpenAlex / Semantic Scholar)
                                          │
                                          ▼
@@ -73,38 +76,48 @@ Integra procesamiento geodésico estricto en **POSGAR 2007** (Fajas 1 a 7), mode
 
 ## 📊 Balance de la Campaña Arqueológica Nacional
 
-El sistema ha completado el barrido sobre **20 zonas y 2 relevamientos fotogramétricos UAV de alta resolución**, con un rigor que garantiza **cero falsos positivos en campo**:
+El sistema ha completado el barrido sobre **28 zonas y 2 relevamientos fotogramétricos UAV de alta resolución**, con un rigor que garantiza **cero falsos positivos en campo**:
 
 | Métrica | Valor Consolidado |
 | :--- | :--- |
 | **Celdas métricas escaneadas** | **1.303 cuadrículas** |
 | **Candidatos inéditos aislados** | **105 anomalías** |
-| **Dictamen `NATURAL` (Albardones, médanos, espinazos, canchales)** | **87 casos (82.9%)** |
+| **Dictamen `NATURAL` (Albardones, médanos, espinazos, canchales, vaguadas)** | **87 casos (82.9%)** |
 | **Dictamen `ARTEFACTO` (Costuras de tile satelital + instrumental moderno)** | **18 casos (17.1%)** |
 | **Falsas alarmas derivadas a campo** | **0 falsos positivos (0.0%)** |
-| **Dossiers Técnicos INAPL generados** | **105 informes oficiales (Ley 25.743)** |
+| **Dossiers Técnicos INAPL generados** | **107 informes oficiales (Ley 25.743)** |
+
+> **Nota de alcance (campaña satelital):** el barrido con Copernicus GLO-30 (30 m/px) opera con el piso
+> físico de área (≥ 2 píxeles ⇒ ~1800 m² a 30 m/px); estructuras menores a ese tamaño solo son
+> recuperables con datos de alta resolución (LiDAR/UAV < 1 m/px). Ver `min_area_effective_m2` en los
+> metadatos de cada corrida.
 
 ---
 
 ## 🗺️ Catálogo de Zonas y Calibración Adaptativa por Bioma
 
-A diferencia de modelos homogéneos, el pipeline calibra dinámicamente sus umbrales según el bioma y la morfología arqueológica esperada:
+A diferencia de modelos homogéneos, el pipeline calibra dinámicamente sus umbrales según el bioma y la morfología arqueológica esperada. Tabla de las Zonas 17 a 28 + UAV; las Zonas 1 a 16 se definen en `src/core/data_fetcher.py` (`TARGET_ZONES`), fuente de verdad del catálogo completo:
 
-| Grupo | ID Zona | Región / Bioma | EPSG | Radio SLRM | Área ($m^2$) | dZ mín | Pendiente | Objetivo Arqueológico |
+| Grupo | ID Zona | Región / Bioma | EPSG | Radio SLRM | Área ($m^2$) | \|dZ\| mín | Pendiente | Objetivo Arqueológico |
 | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Alta Montaña** | `ZONA_17_CHANI` | Volcán Chañi (Jujuy/Salta - 5.896 m) | 5345 | 12 m | 15–1500 | +0.30 m | 32° | Plataformas ceremoniales cimeras y tambos incaicos. |
-| **Alta Montaña** | `ZONA_18_FAMATINA` | Famatina / La Mejicana (La Rioja) | 5344 | 12 m | 15–2000 | +0.30 m | 32° | Kanchas estatales incaicas y postas del Qhapaq Ñan. |
-| **Sierras** | `ZONA_19_ACHALA` | Pampa de Achala (Córdoba) | 5345 | 10 m | 12–800 | +0.20 m | 25° | Casas-pozo comechingonas y corrales pircados. |
-| **Yungas** | `ZONA_20_VALLE_GRANDE` | Valle Grande / Santa Ana (Jujuy) | 5345 | 15 m | 40–4000 | +0.40 m | 35° | Andenes agrícolas y calzadas empedradas bajo monte. |
-| **Yungas** | `ZONA_21_CIUDACITA` | Faldeo Oriental Aconquija (Tucumán) | 5345 | 15 m | 30–5000 | +0.35 m | 35° | Pucarás en filos, kanchas y plazas amuralladas. |
-| **Selva** | `ZONA_22_TEYU_CUARE` | Peñón de Teyú Cuaré (Misiones) | 5347 | 20 m | 50–6000 | +0.30 m | 25° | Ruinas jesuítico-guaraníes bajo canopia y zanjas. |
-| **Humedal** | `ZONA_23_DELTA_PARANA` | Delta del Paraná / Victoria (Entre Ríos)| 5346 | 40 m | 200–9000 | +0.35 m | 8° | Cerritos y túmulos de tierra (Goya-Malabrigo / Chaná).|
-| **Humedal** | `ZONA_24_IBERA` | Esteros del Iberá (Corrientes) | 5346 | 40 m | 200–8000 | +0.30 m | 8° | Montículos habitacionales sobre albardones e islas. |
-| **Humedal** | `ZONA_25_ANSENUZA` | Mar Chiquita / Río Dulce (Córdoba) | 5345 | 35 m | 150–6000 | +0.25 m | 10° | Asentamientos monticulares en paleocauces. |
-| **Patagonia** | `ZONA_26_STROBEL` | Meseta del Lago Strobel (Santa Cruz) | 5343 | 8 m | 6–400 | +0.25 m | 20° | Parapetos semicirculares de caza y chenques líticos. |
-| **Patagonia** | `ZONA_27_PIEDRA_PARADA`| Río Chubut Medio (Chubut) | 5343 | 8 m | 8–500 | +0.25 m | 22° | Estructuras anulares y enterratorios en terrazas. |
-| **Basalto** | `ZONA_28_PAYUNIA` | La Payunia (Mendoza) | 5344 | 10 m | 10–600 | +0.25 m | 25° | Apostaderos y corrales entre coladas basálticas. |
-| **UAV Sub-m**| `ZENODO:3383227` | San Rafael (Mendoza - **5 cm/px**) | 5344 | 2.5 m | 1–300 | +0.10 m | 35° | Muros finos, zanjas y pedestales a escala centimétrica. |
+| **Alta Montaña** | `ZONA_17_CHANI` | Volcán Chañi (Jujuy/Salta - 5.896 m) | 5345 | 12 m | 15–1500 | 0.30 m | 32° | Plataformas ceremoniales cimeras y tambos incaicos. |
+| **Alta Montaña** | `ZONA_18_FAMATINA` | Famatina / La Mejicana (La Rioja) | 5344 | 12 m | 15–2000 | 0.30 m | 32° | Kanchas estatales incaicas y postas del Qhapaq Ñan. |
+| **Sierras** | `ZONA_19_ACHALA` | Pampa de Achala (Córdoba) | 5345 | 10 m | 12–800 | 0.20 m | 25° | Casas-pozo comechingonas (relieve negativo) y corrales pircados. |
+| **Yungas** | `ZONA_20_VALLE_GRANDE` | Valle Grande / Santa Ana (Jujuy) | 5345 | 15 m | 40–4000 | 0.40 m | 35° | Andenes agrícolas y calzadas empedradas bajo monte. |
+| **Yungas** | `ZONA_21_CIUDACITA` | Faldeo Oriental Aconquija (Tucumán) | 5345 | 15 m | 30–5000 | 0.35 m | 35° | Pucarás en filos, kanchas y plazas amuralladas. |
+| **Selva** | `ZONA_22_TEYU_CUARE` | Peñón de Teyú Cuaré (Misiones) | 5347 | 20 m | 50–6000 | 0.30 m | 25° | Ruinas jesuítico-guaraníes bajo canopia y zanjas (relieve negativo). |
+| **Humedal** | `ZONA_23_DELTA_PARANA` | Delta del Paraná / Victoria (Entre Ríos)| 5346 | 40 m | 200–9000 | 0.35 m | 8° | Cerritos y túmulos de tierra (Goya-Malabrigo / Chaná).|
+| **Humedal** | `ZONA_24_IBERA` | Esteros del Iberá (Corrientes) | 5346 | 40 m | 200–8000 | 0.30 m | 8° | Montículos habitacionales sobre albardones e islas. |
+| **Humedal** | `ZONA_25_ANSENUZA` | Mar Chiquita / Río Dulce (Córdoba) | 5345 | 35 m | 150–6000 | 0.25 m | 10° | Asentamientos monticulares en paleocauces. |
+| **Patagonia** | `ZONA_26_STROBEL` | Meseta del Lago Strobel (Santa Cruz) | 5343 | 8 m | 6–400 | 0.25 m | 20° | Parapetos semicirculares de caza y chenques líticos. |
+| **Patagonia** | `ZONA_27_PIEDRA_PARADA`| Río Chubut Medio (Chubut) | 5343 | 8 m | 8–500 | 0.25 m | 22° | Estructuras anulares y enterratorios en terrazas. |
+| **Basalto** | `ZONA_28_PAYUNIA` | La Payunia (Mendoza) | 5344 | 10 m | 10–600 | 0.25 m | 25° | Apostaderos y corrales entre coladas basálticas. |
+| **UAV Sub-m**| `ZENODO:3383227` | San Rafael (Mendoza - **5 cm/px**) | 5344 | 2.5 m | 1–300 | 0.10 m | 35° | Muros finos, zanjas y pedestales a escala centimétrica. |
+
+> **Umbrales en valor absoluto:** `\|dZ\|` aplica tanto a sobreelevaciones (recintos, cerritos) como a
+> hundimientos (casas-pozo, zanjas). El `min_area` se eleva automáticamente al piso físico de 2 píxeles
+> del raster nativo (`min_area_effective_m2` en metadata); a 30 m/px el piso es ~1800 m², por lo que las
+> áreas mínimas de 6–15 m² de las zonas patagónicas solo son operativas con datos de alta resolución.
 
 ---
 
@@ -137,6 +150,9 @@ python -m src.autonomous_prospector --highres-id ZENODO:3383227 --max-candidates
 
 # Procesar una nube de puntos cruda (.laz) local
 python scripts/process_real_lidar.py data/raw/mi_vuelo.laz --resolution 0.5 --radius 10.0
+
+# Regenerar el catálogo de sitios arqueológicos registrados (validación SITIO_REGISTRADO)
+python scripts/build_known_sites_gpkg.py
 ```
 
 ---
@@ -165,3 +181,5 @@ python -m src.server
 Para prevenir actos de saqueo (*guaqueo*) o daño al patrimonio arqueológico de la Nación Argentina:
 * Todos los dossiers técnicos públicos ([`data/reports/DOSSIER_INAPL_*.md`](data/reports/)) omiten las coordenadas geográficas precisas.
 * Las coordenadas geodésicas exactas en WGS84 y POSGAR 2007 quedan encriptadas y resguardadas exclusivamente en [`data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json`](data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json) para uso exclusivo de las autoridades del **INAPL** y direcciones provinciales de patrimonio cultural.
+* Los mapas por zona (`data/reports/MAPA_PROSPECCION_*.geojson`) contienen la geometría precisa de los candidatos: **no deben publicarse ni difundirse** fuera del entorno de trabajo autorizado; solo difundir los dossiers públicos.
+* El catálogo de sitios registrados (`data/known_sites_published.csv` → `data/known_sites.gpkg`) almacena únicamente sitios publicados y de dominio turístico/científico, con coordenadas aproximadas a ±100 m (3 decimales).
