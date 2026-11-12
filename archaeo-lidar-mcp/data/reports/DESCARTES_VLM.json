@@ -1724,7 +1724,22 @@
         "field_inspection_recommended": false,
         "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
       }
+    },
+    "ARQ-0026": {
+      "anomaly_type": "recinto_ortogonal",
+      "area_m2": 103.8,
+      "mean_elevation_m": 0.53,
+      "composite_image_path": "data/processed/synthetic_posgar_faja2_dtm_ARQ-0026_composite.png",
+      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-0026.md",
+      "vlm_verdict": {
+        "verdict": "ARTEFACTO",
+        "certainty_pct": 95,
+        "functional_interpretation": "Recinto ortogonal sintético: estructura plantada sobre un DTM de validación (synthetic_posgar_faja2_dtm), no sobre terreno real relevado.",
+        "geomorphological_justification": "Panel 1 (Hillshade): trazas de muro de 4 lados rectos con esquinas netas y grosor uniforme, sin ruido de fondo (terreno plano homogéneo = DEM sintético, no natural). Panel 2 (SLRM): meseta interior perfectamente uniforme con bordes verticales, sin desgaste ni colapso de muros: geometría idealizada inexistente en estructuras reales erosionadas. Panel 3 (Perfil): piso plano de 0.55 m con caídas abruptas y hombros perfectamente nítidos: firma de estructura plantada por software. Fuente del DTM: synthetic_posgar_faja2_dtm.tif (data/raw), corrida de validación previa. No derivar personal a campo.",
+        "field_inspection_recommended": false,
+        "backend": "agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)"
+      }
     }
   },
-  "updated_at_utc": "2026-11-12T10:21:21Z"
+  "updated_at_utc": "2026-11-12T10:26:38Z"
 }

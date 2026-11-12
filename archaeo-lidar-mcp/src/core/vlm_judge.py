@@ -23,7 +23,7 @@ VerdictLiteral = Literal["ANTROPICA", "NATURAL", "ARTEFACTO", "PENDIENTE_REVISIO
 DISCARD_VERDICTS = {"NATURAL", "ARTEFACTO"}
 
 ARCHAEO_SYSTEM_PROMPT = """Actuás como un Arqueólogo Espacial Senior del CONICET especialista en el Noroeste Argentino.
-Analizá los 3 paneles de la lámina adjunta (1: Hillshade 1.5x, 2: SLRM microtopográfico, 3: Perfil de corte 2D).
+Analizá los 4 paneles de la lámina adjunta (1: Hillshade 1.5x, 2: SLRM microtopográfico, 3: Perfil de corte 2D, 4: Render 3D isométrico; si la lámina es de una campaña previa puede tener 3 paneles sin render).
 Tu objetivo es determinar si la estructura es:
 a) ESTRUCTURA_ANTROPICA_PROBABLE (Muro pircado, recinto, andén, corral).
 b) FORMACION_GEOLOGICA_NATURAL (Filo rocoso, dique ígneo, escarpa de falla).

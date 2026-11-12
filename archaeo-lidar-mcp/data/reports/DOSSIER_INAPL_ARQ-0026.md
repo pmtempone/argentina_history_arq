@@ -2,7 +2,7 @@
 **Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
 **Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
 **Código de Candidato:** `ARQ-0026`
-**Fecha de Generación (UTC):** `2026-11-12T04:10:23Z`
+**Fecha de Generación (UTC):** `2026-11-12T10:26:38Z`
 
 ---
 
@@ -15,21 +15,16 @@
 
 ## ⭐ Conclusión Ejecutiva (respuesta directa)
 
-⏳ **PENDIENTE — el candidato aún no fue auditado visualmente**
+❌ **NO — la anomalía es un artefacto técnico o un error del mapa**
 
-**¿Qué es?** Se detectó una forma sospechosa pero falta el juicio pericial (lámina compuesta disponible).
-**Certeza del juicio:** `0%` · **Prioridad de investigación:** MEDIA (pendiente de auditoría)
+**¿Qué es?** Origen del rasgo: Recinto ortogonal sintético: estructura plantada sobre un DTM de validación (synthetic_posgar_faja2_dtm), no sobre terreno real relevado.
+**Certeza del juicio:** `95%` · **Prioridad de investigación:** BAJA (descartado)
 
-**Próximo paso:** juicio pericial sobre la lámina compuesta (sección 3).
+**Próximo paso:** ninguno — archivado como descarte (queda en `DESCARTES_VLM.json` y `INVENTARIO_GEOMORFOLOGICO.geojson` como dato geomorfológico).
 
 | Parámetro | Valor |
 | :--- | :--- |
-| **Veredicto pericial** | **PENDIENTE_REVISION** |
-
-> ℹ️ **Cómo completar el dictamen:** el Juez Pericial (agente o VLM) debe inspeccionar la
-> lámina compuesta (sección 3) y registrar el veredicto con
-> `src.core.vlm_judge.record_vlm_verdict(candidate_id=..., verdict_data=...)`. Este
-> documento se regenerará automáticamente con la conclusión definitiva.
+| **Veredicto pericial** | **ARTEFACTO** |
 
 
 ---
@@ -79,3 +74,17 @@
 Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
 direcciones provinciales de patrimonio se encuentran en:
 - Archivo: `ANEXO_CONFIDENCIAL_COORDENADAS.json`
+
+---
+
+## 5. Juicio Pericial de Inteligencia Artificial Multimodal
+
+| Campo | Dictamen |
+| :--- | :--- |
+| **Veredicto final** | **ARTEFACTO** |
+| **Nivel de certeza** | `95%` |
+| **Interpretación funcional** | Recinto ortogonal sintético: estructura plantada sobre un DTM de validación (synthetic_posgar_faja2_dtm), no sobre terreno real relevado. |
+| **¿Inspección terrestre / dron?** | **NO** |
+| **Backend evaluador** | `agente pericial in situ (modo mcp_host, Juez Senior CONICET/NOA)` |
+
+**Justificación geomorfológica:** Panel 1 (Hillshade): trazas de muro de 4 lados rectos con esquinas netas y grosor uniforme, sin ruido de fondo (terreno plano homogéneo = DEM sintético, no natural). Panel 2 (SLRM): meseta interior perfectamente uniforme con bordes verticales, sin desgaste ni colapso de muros: geometría idealizada inexistente en estructuras reales erosionadas. Panel 3 (Perfil): piso plano de 0.55 m con caídas abruptas y hombros perfectamente nítidos: firma de estructura plantada por software. Fuente del DTM: synthetic_posgar_faja2_dtm.tif (data/raw), corrida de validación previa. No derivar personal a campo.
