@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 import rasterio
+from rasterio.transform import from_origin
 
 from src.core.anomaly_detector import detect_anomalies
 from src.core.crs_manager import ensure_metric_crs, get_posgar_faja, reproject_geometry
@@ -85,6 +86,85 @@ def test_slrm_slope_and_cv_anomaly_detection(synthetic_posgar_dtm: Path, tmp_pat
         # Como están a ~74 m (< 80 m), ambos deben haberse agrupado en un complejo arquitectónico
         assert props["is_architectural_complex"] is True
         assert props["complex_group_type"] == "complejo_agrupado"
+
+
+def test_negative_relief_detection(synthetic_posgar_dtm_with_pit: Path, tmp_path: Path) -> None:
+    """Verifica que el detector encuentre el hundimiento plantado (casa-pozo) además de las positivas.
+
+    El DTM sintético tiene una pirca (+0.6 m), un chenque circular (+0.6 m) y un pozo de
+    12 m de diámetro excavado a -0.6 m. El pase de relieve negativo debe recuperar el pozo
+    con `estructura_hundida`, valor SLRM con signo negativo y fuera del complejo (< 80 m).
+    """
+    slrm_path = compute_slrm(synthetic_posgar_dtm_with_pit, tmp_path / "slrm_neg.tif", radius_m=15.0)
+    slope_path = compute_slope(synthetic_posgar_dtm_with_pit, tmp_path / "slope_neg.tif")
+
+    fc = detect_anomalies(slrm_path, slope_path, min_area=12.0, max_area=6000.0)
+    features = fc["features"]
+    types_found = {f["properties"]["anomaly_type"] for f in features}
+
+    assert "estructura_hundida" in types_found
+    # Las estructuras positivas siguen detectándose
+    assert "recinto_ortogonal" in types_found
+    assert "estructura_circular" in types_found
+
+    pits = [f for f in features if f["properties"]["anomaly_type"] == "estructura_hundida"]
+    assert len(pits) == 1
+
+    pit = pits[0]
+    props = pit["properties"]
+    # El hundimiento debe reportar desviación SLRM negativa
+    assert props["mean_elevation_m"] < 0.0
+    assert props["relief_sign"] == "negativo"
+    # Área teórica del pozo: pi * 6^2 ≈ 113.10 m² (tolerancia 15%)
+    expected_area = math.pi * (6.0**2)
+    rel_err = abs(float(props["area_m2"]) - expected_area) / expected_area
+    assert rel_err < 0.15, f"Error de área en pozo ({props['area_m2']} vs {expected_area}): {rel_err:.2%}"
+    # A más de 80 m de la pirca/chenque: no debe agruparse en el complejo
+    assert props["is_architectural_complex"] is False
+    # Geometría en WGS84 válida (Argentina)
+    lon, lat = props["centroid_wgs84"]
+    assert -75.0 <= lon <= -53.0
+    assert -56.0 <= lat <= -21.0
+
+
+def test_min_area_physical_floor_by_resolution(tmp_path: Path) -> None:
+    """Verifica el piso físico de área: `min_area` no puede quedar por debajo de 2 píxeles del raster.
+
+    Con un raster de 10 m/px (píxel = 100 m²), un `min_area` solicitado de 12 m² es
+    físicamente irrecuperable; el detector debe elevarlo a 200 m² y registrar la
+    aplicación del piso en los metadatos.
+    """
+    width = height = 40
+    res = 10.0
+    transform = from_origin(2500000.0, 7000200.0, res, res)
+    data = np.full((height, width), 2000.0, dtype=np.float32)
+
+    coarse_dtm = tmp_path / "coarse_dtm.tif"
+    profile = {
+        "driver": "GTiff",
+        "height": height,
+        "width": width,
+        "count": 1,
+        "dtype": "float32",
+        "crs": rasterio.crs.CRS.from_epsg(5344),
+        "transform": transform,
+        "nodata": -9999.0,
+    }
+    with rasterio.open(coarse_dtm, "w", **profile) as dst:
+        dst.write(data, 1)
+
+    slrm_path = compute_slrm(coarse_dtm, tmp_path / "coarse_slrm.tif", radius_m=25.0)
+    slope_path = compute_slope(coarse_dtm, tmp_path / "coarse_slope.tif")
+
+    fc = detect_anomalies(slrm_path, slope_path, min_area=12.0, max_area=6000.0)
+    meta = fc["metadata"]
+
+    assert meta["pixel_area_m2"] == pytest.approx(100.0)
+    assert meta["min_area_requested_m2"] == pytest.approx(12.0)
+    assert meta["min_area_effective_m2"] == pytest.approx(200.0)
+    assert meta["min_area_floor_applied"] is True
+    # Terreno plano sin estructuras: sin detecciones
+    assert len(fc["features"]) == 0
 
 
 def test_visual_inspector_and_dossier(synthetic_posgar_dtm: Path, tmp_path: Path) -> None:

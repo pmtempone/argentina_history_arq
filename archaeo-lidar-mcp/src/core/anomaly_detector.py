@@ -1,4 +1,13 @@
-"""Detección geométrica de anomalías microtopográficas con OpenCV y clustering espacial cKDTree."""
+"""Detección geométrica de anomalías microtopográficas con OpenCV y clustering espacial cKDTree.
+
+El detector opera en doble pase de signo:
+- **Relieve positivo** (sobreelevaciones): pircas, recintos, montículos, chenques, terrazas.
+- **Relieve negativo** (hundimientos): pozos, casas-pozo, patios hundidos, zanjas y canales.
+
+Esto permite capturar tanto estructuras emergentes como excavadas, con la misma cadena
+OpenCV (filtro bilateral + umbral adaptativo + clausura morfológica) aplicada al SLRM
+espejado según el signo del pase.
+"""
 
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
@@ -11,6 +20,11 @@ from shapely.geometry import Polygon, mapping
 
 from src.core.crs_manager import ensure_metric_crs, reproject_geometry
 from src.schemas import AnomalyFeature, AnomalyTypeLiteral
+
+# Factor mínimo de área expresado en píxeles del raster: un contorno medible necesita al
+# menos este número de píxeles; por debajo, cualquier "detección" es un artefacto de
+# interpolación del DEM y debe filtrarse sin importar el `min_area` solicitado por zona.
+MIN_AREA_PIXEL_FACTOR: float = 2.0
 
 
 def _read_raster_with_nan(path: Path) -> Tuple[np.ndarray, rasterio.Affine, str, float]:
@@ -74,60 +88,55 @@ def _classify_contour_morphology(
     return "recinto_ortogonal", round(float(conf), 3)
 
 
-def detect_anomalies(
-    slrm_path: Union[str, Path],
-    slope_path: Union[str, Path],
-    min_area: float = 12.0,
-    max_area: float = 6000.0,
-    min_dz: float = 0.15,
-    max_slope_deg: float = 35.0,
-) -> Dict[str, Any]:
-    """Detecta estructuras arqueológicas en modelos SLRM y Slope usando OpenCV y clustering espacial.
-
-    Pasos del algoritmo:
-    1. Verifica que `slrm_path` y `slope_path` estén en proyección métrica POSGAR 2007 y reemplaza
-       valores `nodata` con `np.nan`.
-    2. Aísla micro-elevaciones positivas en el rango `[0.15 m, 3.0 m]` y enmascara pendientes
-       naturales abruptas (`> 35°`).
-    3. Aplica filtro bilateral (`cv2.bilateralFilter`) para preservar bordes de muros reduciendo ruido,
-       combina umbral adaptativo (`cv2.adaptiveThreshold`) con la máscara de rango microtopográfico y
-       aplica clausura morfológica (`cv2.MORPH_CLOSE`).
-    4. Extrae contornos externos (`cv2.findContours`), calcula aproximación poligonal (`approxPolyDP`),
-       área métrica real en $\text{m}^2$, rectangularidad, circularidad y relación de aspecto.
-    5. Clasifica cada estructura en `recinto_ortogonal`, `estructura_circular` o `terraza_lineal`.
-    6. Ejecuta clustering espacial con `scipy.spatial.cKDTree` para identificar complejos arquitectónicos
-       (estructuras a menos de 80 m entre sí).
-    7. Reproyecta los polígonos y centroides a `EPSG:4326` (WGS84) y retorna un GeoJSON `FeatureCollection`.
+def _classify_negative_morphology(
+    rectangularity: float,
+    circularity: float,
+    aspect_ratio: float,
+) -> Tuple[AnomalyTypeLiteral, float]:
+    """Clasifica contornos de relieve negativo (hundimientos) según sus descriptores geométricos.
 
     Args:
-        slrm_path: Ruta al GeoTIFF del Simple Local Relief Model.
-        slope_path: Ruta al GeoTIFF de pendiente en grados.
-        min_area: Área mínima en metros cuadrados para considerar una anomalía (por defecto 12.0 m²).
-        max_area: Área máxima en metros cuadrados para considerar una anomalía (por defecto 6000.0 m²).
+        rectangularity: Relación área / caja mínima rotada [0-1].
+        circularity: Índice isoperimétrico `4 * pi * A / P^2` [0-1].
+        aspect_ratio: Relación largo/ancho de la caja mínima rotada (>= 1.0).
 
     Returns:
-        Diccionario GeoJSON `FeatureCollection` con las anomalías validadas y metadatos de agrupamiento.
+        Tupla `(anomaly_type, confidence)` con `zanja_lineal` o `estructura_hundida`.
     """
-    src_slrm = Path(slrm_path)
-    src_slope = Path(slope_path)
+    # Zanja o canal lineal: alta elongación
+    if aspect_ratio >= 3.5:
+        conf = min(0.95, 0.60 + 0.05 * min(aspect_ratio - 3.5, 5.0))
+        return "zanja_lineal", round(float(conf), 3)
 
-    metric_slrm = Path(ensure_metric_crs(src_slrm, src_slrm.parent / f"{src_slrm.stem}_posgar.tif"))
-    metric_slope = Path(ensure_metric_crs(src_slope, src_slope.parent / f"{src_slope.stem}_posgar.tif"))
+    # Pozo, casa-pozo, patio hundido o túmulo deprimido: descriptores dominantes
+    dominant = max(circularity, rectangularity)
+    conf = max(0.50, min(0.92, 0.52 + 0.40 * dominant))
+    return "estructura_hundida", round(float(conf), 3)
 
-    slrm, transform, crs_str, pixel_area_m2 = _read_raster_with_nan(metric_slrm)
-    slope, _, _, _ = _read_raster_with_nan(metric_slope)
 
-    valid_mask = (~np.isnan(slrm)) & (~np.isnan(slope))
+def _build_sign_pass_mask(
+    slrm: np.ndarray,
+    slope: np.ndarray,
+    valid_mask: np.ndarray,
+    min_dz: float,
+    max_slope_deg: float,
+    sign: int,
+) -> np.ndarray:
+    """Construye la máscara binaria OpenCV para un pase de signo (+1 positivo, -1 negativo).
 
-    # Normalizar SLRM en el rango de interés [0.0 m, 3.0 m] a [0, 255] uint8 ignorando NaNs
-    slrm_clean = np.where(valid_mask, np.clip(slrm, 0.0, 3.0), 0.0).astype(np.float32)
-    slrm_u8 = np.clip((slrm_clean / 3.0) * 255.0, 0, 255).astype(np.uint8)
+    Espeja el SLRM (`slrm * sign`) de modo que las anomalías del signo buscado queden como
+    elevaciones positivas, y aplica la cadena filtro bilateral -> umbral adaptativo ->
+    máscara de microelevación -> máscara de pendiente -> clausura morfológica.
+    """
+    signed = slrm * sign
+    signed_clean = np.where(valid_mask, np.clip(signed, 0.0, 3.0), 0.0).astype(np.float32)
+    signed_u8 = np.clip((signed_clean / 3.0) * 255.0, 0, 255).astype(np.uint8)
 
     # Filtro bilateral sobre imagen uint8 (preserva bordes de pircas y montículos)
-    filtered_u8 = cv2.bilateralFilter(slrm_u8, d=7, sigmaColor=35, sigmaSpace=35)
-    filtered_slrm = (filtered_u8.astype(np.float32) / 255.0) * 3.0
+    filtered_u8 = cv2.bilateralFilter(signed_u8, d=7, sigmaColor=35, sigmaSpace=35)
+    filtered_signed = (filtered_u8.astype(np.float32) / 255.0) * 3.0
 
-    # Umbral adaptativo sobre la imagen filtrada + condición estricta de microelevación [0.15m, 3.0m] y pendiente <= 35°
+    # Umbral adaptativo sobre la imagen filtrada + condición estricta de microelevación [min_dz, 3.0m]
     adaptive_bin = cv2.adaptiveThreshold(
         filtered_u8,
         maxValue=255,
@@ -137,7 +146,12 @@ def detect_anomalies(
         C=-2,
     )
 
-    elevation_mask = (filtered_slrm >= min_dz) & (filtered_slrm <= 3.0) & (slrm >= min_dz) & (slrm <= 3.0)
+    elevation_mask = (
+        (filtered_signed >= min_dz)
+        & (filtered_signed <= 3.0)
+        & (signed >= min_dz)
+        & (signed <= 3.0)
+    )
     slope_mask = slope <= max_slope_deg
     combined_mask = np.where(
         valid_mask & elevation_mask & slope_mask & (adaptive_bin > 0),
@@ -145,17 +159,58 @@ def detect_anomalies(
         0,
     ).astype(np.uint8)
 
-    # Clausura morfológica suave para consolidar muros contiguos sin distorsionar el área
+    # Clausura morfológica suave para consolidar bordes contiguos sin distorsionar el área
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    closed_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel, iterations=1)
+    return cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel, iterations=1)
 
+
+def _extract_candidates_from_mask(
+    closed_mask: np.ndarray,
+    slrm: np.ndarray,
+    valid_mask: np.ndarray,
+    transform: rasterio.Affine,
+    crs_str: str,
+    pixel_area_m2: float,
+    min_area: float,
+    max_area: float,
+    sign: int,
+    start_idx: int,
+) -> List[Dict[str, Any]]:
+    """Extrae y clasifica contornos de una máscara binaria para un pase de signo.
+
+    Args:
+        sign: +1 para relieve positivo, -1 para relieve negativo.
+        start_idx: Índice global inicial para numerar los candidatos sin colisiones entre pases.
+
+    Returns:
+        Lista de candidatos en crudo con geometría métrica y WGS84, tipología y confianza.
+    """
     contours, _ = cv2.findContours(closed_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     raw_candidates: List[Dict[str, Any]] = []
     res_x = float(abs(transform.a))
     res_y = float(abs(transform.e))
 
-    for idx, cnt in enumerate(contours, start=1):
+    # Margen de borde (en píxeles) para exigir que los hundimientos sean depresiones CERRADAS:
+    # un pozo o patio hundido queda completamente contenido en la celda, mientras que una
+    # vaguada, cauce o espinazo natural que atraviesa el tile toca el borde y se descarta.
+    border_pad_px = 2
+    img_h, img_w = closed_mask.shape
+
+    for offset, cnt in enumerate(contours, start=0):
+        idx = start_idx + offset
+        if sign < 0:
+            cnt_xs = cnt[:, 0, 0]
+            cnt_ys = cnt[:, 0, 1]
+            touches_border = (
+                cnt_xs.min() <= border_pad_px
+                or cnt_ys.min() <= border_pad_px
+                or cnt_xs.max() >= (img_w - 1 - border_pad_px)
+                or cnt_ys.max() >= (img_h - 1 - border_pad_px)
+            )
+            if touches_border:
+                continue
+
         area_px = float(cv2.contourArea(cnt))
         if area_px <= 0.0:
             continue
@@ -192,14 +247,21 @@ def detect_anomalies(
         approx = cv2.approxPolyDP(cnt, epsilon, True)
         num_vertices = len(approx)
 
-        anomaly_type, confidence = _classify_contour_morphology(
-            rectangularity=rectangularity,
-            circularity=circularity,
-            aspect_ratio=aspect_ratio,
-            num_vertices=num_vertices,
-        )
+        if sign > 0:
+            anomaly_type, confidence = _classify_contour_morphology(
+                rectangularity=rectangularity,
+                circularity=circularity,
+                aspect_ratio=aspect_ratio,
+                num_vertices=num_vertices,
+            )
+        else:
+            anomaly_type, confidence = _classify_negative_morphology(
+                rectangularity=rectangularity,
+                circularity=circularity,
+                aspect_ratio=aspect_ratio,
+            )
 
-        # Calcular elevación media dentro del contorno
+        # Desviación media real (con signo) dentro del contorno respecto a la tendencia local
         cnt_mask = np.zeros(slrm.shape, dtype=np.uint8)
         cv2.drawContours(cnt_mask, [cnt], -1, 1, thickness=cv2.FILLED)
         vals = slrm[(cnt_mask == 1) & valid_mask]
@@ -236,6 +298,7 @@ def detect_anomalies(
         raw_candidates.append(
             {
                 "id": f"ARQ-{idx:04d}",
+                "relief_sign": "positivo" if sign > 0 else "negativo",
                 "anomaly_type": anomaly_type,
                 "confidence": confidence,
                 "area_m2": round(area_m2, 2),
@@ -248,6 +311,87 @@ def detect_anomalies(
                 "geometry_geojson": geom_wgs84,
             }
         )
+
+    return raw_candidates
+
+
+def detect_anomalies(
+    slrm_path: Union[str, Path],
+    slope_path: Union[str, Path],
+    min_area: float = 12.0,
+    max_area: float = 6000.0,
+    min_dz: float = 0.15,
+    max_slope_deg: float = 35.0,
+) -> Dict[str, Any]:
+    """Detecta estructuras arqueológicas en modelos SLRM y Slope usando OpenCV y clustering espacial.
+
+    Pasos del algoritmo:
+    1. Verifica que `slrm_path` y `slope_path` estén en proyección métrica POSGAR 2007 y reemplaza
+       valores `nodata` con `np.nan`.
+    2. Aplica un piso físico de área: ningún contorno por debajo de `MIN_AREA_PIXEL_FACTOR` píxeles
+       puede provenir de una estructura real a la resolución nativa del DEM.
+    3. Ejecuta dos pases de detección: relieve positivo (recintos, círculos, terrazas) y relieve
+       negativo (pozos, casas-pozo, zanjas), con la cadena bilateral + umbral adaptativo + clausura.
+       Los hundimientos deben ser depresiones cerradas dentro de la celda: contornos que tocan el
+       borde del tile (vaguadas, cauces que lo atraviesan) se descartan como morfología natural.
+    4. Clasifica cada estructura según su tipología morfológica y su signo de relieve.
+    5. Ejecuta clustering espacial con `scipy.spatial.cKDTree` para identificar complejos
+       arquitectónicos (estructuras a menos de 80 m entre sí).
+    6. Reproyecta los polígonos y centroides a `EPSG:4326` (WGS84) y retorna un GeoJSON `FeatureCollection`.
+
+    Args:
+        slrm_path: Ruta al GeoTIFF del Simple Local Relief Model.
+        slope_path: Ruta al GeoTIFF de pendiente en grados.
+        min_area: Área mínima solicitada en metros cuadrados (se eleva al piso físico por resolución).
+        max_area: Área máxima en metros cuadrados para considerar una anomalía.
+        min_dz: Desviación local mínima absoluta en metros (aplica a positivo y negativo).
+        max_slope_deg: Pendiente máxima en grados para aceptar un contorno.
+
+    Returns:
+        Diccionario GeoJSON `FeatureCollection` con las anomalías validadas y metadatos de agrupamiento.
+    """
+    src_slrm = Path(slrm_path)
+    src_slope = Path(slope_path)
+
+    metric_slrm = Path(ensure_metric_crs(src_slrm, src_slrm.parent / f"{src_slrm.stem}_posgar.tif"))
+    metric_slope = Path(ensure_metric_crs(src_slope, src_slope.parent / f"{src_slope.stem}_posgar.tif"))
+
+    slrm, transform, crs_str, pixel_area_m2 = _read_raster_with_nan(metric_slrm)
+    slope, _, _, _ = _read_raster_with_nan(metric_slope)
+
+    valid_mask = (~np.isnan(slrm)) & (~np.isnan(slope))
+
+    # Piso físico de área coherente con la resolución nativa del raster: un contorno menor a
+    # `MIN_AREA_PIXEL_FACTOR` píxeles es indistinguible del ruido de interpolación del DEM.
+    min_area_requested = float(min_area)
+    min_area_effective = max(min_area_requested, pixel_area_m2 * MIN_AREA_PIXEL_FACTOR)
+    floor_applied = min_area_effective > min_area_requested
+
+    raw_candidates: List[Dict[str, Any]] = []
+    next_idx = 1
+    for sign in (1, -1):
+        closed_mask = _build_sign_pass_mask(
+            slrm=slrm,
+            slope=slope,
+            valid_mask=valid_mask,
+            min_dz=min_dz,
+            max_slope_deg=max_slope_deg,
+            sign=sign,
+        )
+        pass_candidates = _extract_candidates_from_mask(
+            closed_mask=closed_mask,
+            slrm=slrm,
+            valid_mask=valid_mask,
+            transform=transform,
+            crs_str=crs_str,
+            pixel_area_m2=pixel_area_m2,
+            min_area=min_area_effective,
+            max_area=max_area,
+            sign=sign,
+            start_idx=next_idx,
+        )
+        next_idx += len(pass_candidates) + 1
+        raw_candidates.extend(pass_candidates)
 
     # Clustering espacial con cKDTree para detectar complejos arquitectónicos (< 80 m)
     cluster_assignments: Dict[int, List[int]] = {}
@@ -284,6 +428,7 @@ def detect_anomalies(
             "properties": {
                 "id": validated_feat.id,
                 "anomaly_type": validated_feat.anomaly_type,
+                "relief_sign": cand["relief_sign"],
                 "confidence": validated_feat.confidence,
                 "area_m2": validated_feat.area_m2,
                 "rectangularity": validated_feat.rectangularity,
@@ -305,6 +450,10 @@ def detect_anomalies(
             "source_crs": crs_str,
             "total_detected": len(features),
             "architectural_complex_members": len(cluster_assignments),
+            "pixel_area_m2": round(pixel_area_m2, 4),
+            "min_area_requested_m2": round(min_area_requested, 2),
+            "min_area_effective_m2": round(min_area_effective, 2),
+            "min_area_floor_applied": floor_applied,
         },
         "features": features,
     }

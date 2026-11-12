@@ -114,10 +114,10 @@ def _deduplicate_candidates_metric(
     if len(candidates) <= 1:
         return candidates
 
-    # Ordenar de mayor a menor score compuesto (confianza * mean_elevation_m)
+    # Ordenar de mayor a menor score compuesto (confianza * |desviación SLRM|)
     sorted_cands = sorted(
         candidates,
-        key=lambda f: float(f["properties"]["confidence"]) * float(f["properties"]["mean_elevation_m"]),
+        key=lambda f: float(f["properties"]["confidence"]) * abs(float(f["properties"]["mean_elevation_m"])),
         reverse=True,
     )
 
@@ -307,7 +307,7 @@ async def run_autonomous_prospector(
 
     print(f"   ⚙️  Parámetros Adaptativos de Bioma [{zone_meta.get('biome', 'estándar')}]:")
     print(f"       • Radio SLRM: {slrm_radius_m:.1f} m | Área: [{det_min_area:.0f}, {det_max_area:.0f}] m²")
-    print(f"       • dZ mín: +{zone_min_dz:.2f} m | Pendiente máx: {zone_max_slope:.0f}°")
+    print(f"       • dZ mín (abs): {zone_min_dz:.2f} m | Pendiente máx: {zone_max_slope:.0f}°")
     if zone_meta.get("archaeo_context"):
         print(f"       • Contexto: {zone_meta['archaeo_context']}")
 
@@ -366,7 +366,7 @@ async def run_autonomous_prospector(
             props = feat["properties"]
             conf = float(props["confidence"])
             mean_dz = float(props["mean_elevation_m"])
-            if conf >= min_confidence and mean_dz >= zone_min_dz:
+            if conf >= min_confidence and abs(mean_dz) >= zone_min_dz:
                 props["source_cell"] = cell_tag
                 passed_cell.append(feat)
 
@@ -388,6 +388,8 @@ async def run_autonomous_prospector(
         "recinto_ortogonal": [],
         "estructura_circular": [],
         "terraza_lineal": [],
+        "estructura_hundida": [],
+        "zanja_lineal": [],
     }
     for f in dedup_features:
         t = f["properties"].get("anomaly_type", "recinto_ortogonal")
@@ -395,7 +397,7 @@ async def run_autonomous_prospector(
 
     selected_features: List[Dict[str, Any]] = []
     quota = max(1, max_candidates_to_validate // 3)
-    for t_key in ("recinto_ortogonal", "estructura_circular", "terraza_lineal"):
+    for t_key in ("recinto_ortogonal", "estructura_circular", "terraza_lineal", "estructura_hundida", "zanja_lineal"):
         selected_features.extend(by_type.get(t_key, [])[:quota])
     for f in dedup_features:
         if len(selected_features) >= max_candidates_to_validate:
@@ -486,7 +488,7 @@ async def run_autonomous_prospector(
         props["academic_references_count"] = len(zone_papers)
 
         print(
-            f"   -> {cand_id} ({props['anomaly_type']}, {props['area_m2']} m², dZ=+{props['mean_elevation_m']} m) "
+            f"   -> {cand_id} ({props['anomaly_type']}, {props['area_m2']} m², dZ={props['mean_elevation_m']:+.2f} m) "
             f"=> Clasificación: {val_res.classification}"
         )
 
@@ -762,7 +764,7 @@ def main() -> None:
                 v = d["vlm_verdict"]
                 print(
                     f"{cid:<10} | {v['verdict']:<12} | {v['certainty_pct']:>5}%   | "
-                    f"{d['area_m2']:<10.2f} | +{d['mean_elevation_m']:<7.3f} | "
+                    f"{d['area_m2']:<10.2f} | {d['mean_elevation_m']:<+8.3f} | "
                     f"{v['functional_interpretation'][:58]}"
                 )
             print("-" * 118)
@@ -778,7 +780,7 @@ def main() -> None:
         for c in surviving_candidates:
             print(
                 f"{c['id']:<10} | {c['source_cell']:<10} | {c['anomaly_type']:<22} | "
-                f"{c.get('vlm_verdict', 'N/A'):<18} | {c['area_m2']:<10.2f} | +{c['mean_elevation_m']:<7.3f} | "
+                f"{c.get('vlm_verdict', 'N/A'):<18} | {c['area_m2']:<10.2f} | {c['mean_elevation_m']:<+8.3f} | "
                 f"{c['composite_image_path']}"
             )
     print("-" * 118)
