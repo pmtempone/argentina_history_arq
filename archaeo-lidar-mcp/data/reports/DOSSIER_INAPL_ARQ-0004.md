@@ -2,7 +2,7 @@
 **Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
 **Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
 **Código de Candidato:** `ARQ-0004`
-**Fecha de Generación (UTC):** `2026-11-11T12:03:36Z`
+**Fecha de Generación (UTC):** `2026-11-12T04:08:55Z`
 
 ---
 
@@ -13,6 +13,22 @@
 
 ---
 
+## ⭐ Conclusión Ejecutiva (respuesta directa)
+
+❌ **NO — la anomalía corresponde a una geoforma natural**
+
+**¿Qué es?** La forma del terreno responde a: Morro o cerrito testigo natural (knoll)
+**Certeza del juicio:** `94%` · **Prioridad de investigación:** BAJA (descartado)
+
+**Próximo paso:** ninguno — archivado como descarte (queda en `DESCARTES_VLM.json` y `INVENTARIO_GEOMORFOLOGICO.geojson` como dato geomorfológico).
+
+| Parámetro | Valor |
+| :--- | :--- |
+| **Veredicto pericial** | **NATURAL** |
+
+
+---
+
 ## 1. Síntesis de Detección y Clasificación Patrimonial
 
 | Parámetro | Valor Registrado |
@@ -20,16 +36,18 @@
 | **ID de Anomalía** | `ARQ-0004` |
 | **Clasificación Preliminar** | **CANDIDATO_INEDITO** |
 | **Tipología Morfológica** | `estructura_circular` |
-| **Índice de Confianza Algorítmica** | `0.732` |
-| **Faja Métrica de Cálculo** | `EPSG:5345` (POSGAR 2007) |
+| **Índice de Confianza Algorítmica** | `0.0` |
+| **Faja Métrica de Cálculo** | `EPSG:5344` (POSGAR 2007) |
+| **Bioma / Entorno** | `N/D` |
+| **Contexto Arqueológico Esperado** | `N/D` |
 
 ---
 
 ## 2. Métricas Morfométricas y Microtopográficas (SLRM)
 
 - **Área Estimada en Planta:** `1511.34 m²`
-- **Índice de Rectangularidad:** `0.6206`
-- **Índice de Circularidad Isoperimétrica:** `0.6623`
+- **Índice de Rectangularidad:** `0.0`
+- **Índice de Circularidad Isoperimétrica:** `0.0`
 - **Sobre-elevación Local Media (SLRM):** `1.487 m`
 - **Distancia al Curso de Agua más Próximo (IGN):** `No determinado (sin datos IGN)`
 
@@ -39,8 +57,11 @@
 
 - **Densidad de Retornos de Suelo (ASPRS Clase 2):** `N/D pts/m²`
 - **Puntaje de Integridad del Perfil Transversal:** `N/D`
-- **Lámina Compuesta (Hillshade 1.5x + SLRM + Perfil):** `data/processed/zona_1_tastil_ARQ-0004_composite.png`
+- **Lámina Compuesta (Hillshade 1.5x + SLRM + Perfil + 3D):** `N/D`
+- **Modelo 3D Isométrico Térmico/Infrarrojo (Blender EEVEE):** `N/D`
 - **Gráfico de Corte Transversal (Cross-Section):** `N/D`
+
+
 
 ---
 
@@ -48,7 +69,7 @@
 
 Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
 direcciones provinciales de patrimonio se encuentran en:
-- Archivo: `data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json`
+- Archivo: `ANEXO_CONFIDENCIAL_COORDENADAS.json`
 
 ---
 

@@ -2,7 +2,7 @@
 **Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
 **Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
 **Código de Candidato:** `ARQ-YOC-0010`
-**Fecha de Generación (UTC):** `2026-11-11T14:16:03Z`
+**Fecha de Generación (UTC):** `2026-11-12T04:08:56Z`
 
 ---
 
@@ -13,6 +13,22 @@
 
 ---
 
+## ⭐ Conclusión Ejecutiva (respuesta directa)
+
+❌ **NO — la anomalía corresponde a una geoforma natural**
+
+**¿Qué es?** La forma del terreno responde a: Ladera monoclinal / concavidad de drenaje natural (falso positivo por umbral)
+**Certeza del juicio:** `95%` · **Prioridad de investigación:** BAJA (descartado)
+
+**Próximo paso:** ninguno — archivado como descarte (queda en `DESCARTES_VLM.json` y `INVENTARIO_GEOMORFOLOGICO.geojson` como dato geomorfológico).
+
+| Parámetro | Valor |
+| :--- | :--- |
+| **Veredicto pericial** | **NATURAL** |
+
+
+---
+
 ## 1. Síntesis de Detección y Clasificación Patrimonial
 
 | Parámetro | Valor Registrado |
@@ -20,16 +36,18 @@
 | **ID de Anomalía** | `ARQ-YOC-0010` |
 | **Clasificación Preliminar** | **CANDIDATO_INEDITO** |
 | **Tipología Morfológica** | `terraza_lineal` |
-| **Índice de Confianza Algorítmica** | `0.9` |
-| **Faja Métrica de Cálculo** | `EPSG:5345` (POSGAR 2007) |
+| **Índice de Confianza Algorítmica** | `0.0` |
+| **Faja Métrica de Cálculo** | `EPSG:5344` (POSGAR 2007) |
+| **Bioma / Entorno** | `N/D` |
+| **Contexto Arqueológico Esperado** | `N/D` |
 
 ---
 
 ## 2. Métricas Morfométricas y Microtopográficas (SLRM)
 
 - **Área Estimada en Planta:** `274.49 m²`
-- **Índice de Rectangularidad:** `0.8472`
-- **Índice de Circularidad Isoperimétrica:** `0.2931`
+- **Índice de Rectangularidad:** `0.0`
+- **Índice de Circularidad Isoperimétrica:** `0.0`
 - **Sobre-elevación Local Media (SLRM):** `2.075 m`
 - **Distancia al Curso de Agua más Próximo (IGN):** `No determinado (sin datos IGN)`
 
@@ -39,9 +57,11 @@
 
 - **Densidad de Retornos de Suelo (ASPRS Clase 2):** `N/D pts/m²`
 - **Puntaje de Integridad del Perfil Transversal:** `N/D`
-- **Lámina Compuesta (Hillshade 1.5x + SLRM + Perfil + 3D):** `data/processed/zona_2_yocavil_ARQ-YOC-0010_composite.png`
+- **Lámina Compuesta (Hillshade 1.5x + SLRM + Perfil + 3D):** `N/D`
 - **Modelo 3D Isométrico Térmico/Infrarrojo (Blender EEVEE):** `N/D`
 - **Gráfico de Corte Transversal (Cross-Section):** `N/D`
+
+
 
 ---
 
@@ -49,7 +69,7 @@
 
 Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
 direcciones provinciales de patrimonio se encuentran en:
-- Archivo: `data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json`
+- Archivo: `ANEXO_CONFIDENCIAL_COORDENADAS.json`
 
 ---
 

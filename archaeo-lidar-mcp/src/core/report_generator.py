@@ -101,6 +101,32 @@ def generate_inapl_dossier(
     if not blender_3d_image:
         blender_3d_image = "N/D"
 
+    # ---- Imágenes embebidas (rutas relativas al dossier para que rendericen en cualquier visor) ----
+    import os
+    out_dir_resolved = target_dir.resolve()
+    images_md = ""
+    if isinstance(composite_image, str) and composite_image != "N/D" and Path(composite_image).exists():
+        rel = os.path.relpath(Path(composite_image).resolve(), out_dir_resolved)
+        images_md += f"""
+**Figura 1 — Lámina compuesta de 4 paneles** (1: Hillshade 1.5x · 2: SLRM · 3: Perfil 2D · 4: Render 3D Blender):
+
+![Lámina compuesta de 4 paneles del candidato {candidate_id}]({rel})
+"""
+    if isinstance(blender_3d_image, str) and blender_3d_image != "N/D" and Path(blender_3d_image).exists() and blender_3d_image != composite_image:
+        rel_3d = os.path.relpath(Path(blender_3d_image).resolve(), out_dir_resolved)
+        images_md += f"""
+**Figura 2 — Modelo 3D isométrico térmico (Blender EEVEE)**:
+
+![Modelo 3D del candidato {candidate_id}]({rel_3d})
+"""
+    if isinstance(cross_section_image, str) and cross_section_image != "N/D" and Path(cross_section_image).exists():
+        rel_cs = os.path.relpath(Path(cross_section_image).resolve(), out_dir_resolved)
+        images_md += f"""
+**Figura 3 — Corte transversal de la nube de puntos**:
+
+![Corte transversal del candidato {candidate_id}]({rel_cs})
+"""
+
     dossier_md = f"""# DOSSIER TÉCNICO DE PROSPECCIÓN ARQUEOLÓGICA REMOTA (LiDAR)
 **Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
 **Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
@@ -148,16 +174,82 @@ def generate_inapl_dossier(
 - **Modelo 3D Isométrico Térmico/Infrarrojo (Blender EEVEE):** `{blender_3d_image}`
 - **Gráfico de Corte Transversal (Cross-Section):** `{cross_section_image}`
 
+{images_md}
+
 ---
 
 ## 4. Anexo Reservado de Coordenadas
 
 Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
 direcciones provinciales de patrimonio se encuentran en:
-- Archivo: `{annex_path}`
+- Archivo: `{annex_path.name}`
 """
 
     vlm = candidate_data.get("vlm_verdict")
+    verdict_value = str(vlm.get("verdict", "PENDIENTE_REVISION")) if isinstance(vlm, dict) else "PENDIENTE_REVISION"
+    certainty = int(vlm.get("certainty_pct", 0)) if isinstance(vlm, dict) else 0
+    interpretation = vlm.get("functional_interpretation", "Sin dictamen pericial registrado") if isinstance(vlm, dict) else "Sin dictamen pericial registrado"
+    field_recommended = bool(vlm.get("field_inspection_recommended")) if isinstance(vlm, dict) else False
+
+    # ---- Conclusión ejecutiva: la respuesta directa para el investigador ----
+    if verdict_value == "ANTROPICA":
+        headline = "✅ **SÍ — se detectó evidencia compatible con estructura antrópica**"
+        reading = f"El candidato corresponde a: {interpretation}"
+        priority = "ALTA" if field_recommended else "MEDIA"
+    elif verdict_value == "NATURAL":
+        headline = "❌ **NO — la anomalía corresponde a una geoforma natural**"
+        reading = f"La forma del terreno responde a: {interpretation}"
+        priority = "BAJA (descartado)"
+    elif verdict_value == "ARTEFACTO":
+        headline = "❌ **NO — la anomalía es un artefacto técnico o un error del mapa**"
+        reading = f"Origen del rasgo: {interpretation}"
+        priority = "BAJA (descartado)"
+    else:
+        headline = "⏳ **PENDIENTE — el candidato aún no fue auditado visualmente**"
+        reading = "Se detectó una forma sospechosa pero falta el juicio pericial (lámina compuesta disponible)."
+        priority = "MEDIA (pendiente de auditoría)"
+
+    next_step = (
+        f"**Próximo paso:** inspección terrestre / vuelo de dron **RECOMENDADA** (coordenadas en `{annex_path.name}`)."
+        if field_recommended and verdict_value == "ANTROPICA"
+        else ("**Próximo paso:** juicio pericial sobre la lámina compuesta (sección 3)."
+              if verdict_value == "PENDIENTE_REVISION"
+              else "**Próximo paso:** ninguno — archivado como descarte (queda en `DESCARTES_VLM.json` y `INVENTARIO_GEOMORFOLOGICO.geojson` como dato geomorfológico).")
+    )
+
+    site_info = candidate_data.get("nearest_known_site")
+    context_rows = ""
+    if site_info and isinstance(site_info, dict):
+        context_rows += f"| **Sitio registrado más cercano** | `{site_info.get('name', 'N/D')}` ({site_info.get('distance_m', 'N/D')} m) |\n"
+    if candidate_data.get("patrimonial_priority") == "ALERTA_SAQUEO":
+        context_rows += f"| **Prioridad patrimonial** | **⚠️ ALERTA_SAQUEO — vía de denuncia urgente (art. 20 y 23)** |\n"
+
+    conclusion_md = f"""## ⭐ Conclusión Ejecutiva (respuesta directa)
+
+{headline}
+
+**¿Qué es?** {reading}
+**Certeza del juicio:** `{certainty}%` · **Prioridad de investigación:** {priority}
+
+{next_step}
+
+| Parámetro | Valor |
+| :--- | :--- |
+| **Veredicto pericial** | **{verdict_value}** |
+{context_rows}"""
+
+    if not isinstance(vlm, dict):
+        conclusion_md += """
+> ℹ️ **Cómo completar el dictamen:** el Juez Pericial (agente o VLM) debe inspeccionar la
+> lámina compuesta (sección 3) y registrar el veredicto con
+> `src.core.vlm_judge.record_vlm_verdict(candidate_id=..., verdict_data=...)`. Este
+> documento se regenerará automáticamente con la conclusión definitiva.
+"""
+    # Insertar la Conclusión Ejecutiva ARRIBA (después del aviso de confidencialidad,
+    # antes de la síntesis técnica): es lo primero que el investigador debe leer.
+    marker = "## 1. Síntesis de Detección"
+    head, _sep, tail = dossier_md.partition(marker)
+    dossier_md = head + conclusion_md + "\n\n---\n\n" + marker + tail
     if isinstance(vlm, dict):
         decision = "SÍ" if vlm.get("field_inspection_recommended") else "NO"
         dossier_md += f"""
@@ -175,7 +267,8 @@ direcciones provinciales de patrimonio se encuentran en:
 
 **Justificación geomorfológica:** {vlm.get('geomorphological_justification', 'N/D')}
 """
-
+    else:
+        dossier_md += ""
     if candidate_data.get("patrimonial_priority") == "ALERTA_SAQUEO":
         site_info = candidate_data.get("nearest_known_site") or {}
         diameter = candidate_data.get("diameter_m", "N/D")

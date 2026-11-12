@@ -2,7 +2,7 @@
 **Autoridad de Aplicación:** Instituto Nacional de Antropología y Pensamiento Latinoamericano (INAPL)
 **Marco Legal:** Ley Nacional N° 25.743 - Protección del Patrimonio Arqueológico y Paleontológico
 **Código de Candidato:** `ARQ-ANS-0004`
-**Fecha de Generación (UTC):** `2026-11-11T23:31:35Z`
+**Fecha de Generación (UTC):** `2026-11-12T04:08:59Z`
 
 ---
 
@@ -10,6 +10,22 @@
 > Con el objeto de prevenir acciones de saqueo (*guaqueo*) o destrucción intencional, las coordenadas
 > puntuales WGS84 y POSGAR 2007 han sido omitidas de este documento principal y resguardadas en el
 > archivo cifrado/aislado `ANEXO_CONFIDENCIAL_COORDENADAS.json`.
+
+---
+
+## ⭐ Conclusión Ejecutiva (respuesta directa)
+
+❌ **NO — la anomalía corresponde a una geoforma natural**
+
+**¿Qué es?** La forma del terreno responde a: Banco arenoso aluvial / barra de punta fluvial.
+**Certeza del juicio:** `93%` · **Prioridad de investigación:** BAJA (descartado)
+
+**Próximo paso:** ninguno — archivado como descarte (queda en `DESCARTES_VLM.json` y `INVENTARIO_GEOMORFOLOGICO.geojson` como dato geomorfológico).
+
+| Parámetro | Valor |
+| :--- | :--- |
+| **Veredicto pericial** | **NATURAL** |
+
 
 ---
 
@@ -45,13 +61,19 @@
 - **Modelo 3D Isométrico Térmico/Infrarrojo (Blender EEVEE):** `N/D`
 - **Gráfico de Corte Transversal (Cross-Section):** `N/D`
 
+
+**Figura 1 — Lámina compuesta de 4 paneles** (1: Hillshade 1.5x · 2: SLRM · 3: Perfil 2D · 4: Render 3D Blender):
+
+![Lámina compuesta de 4 paneles del candidato ARQ-ANS-0004](../processed/zona_25_ansenuza_ARQ-ANS-0004_composite.png)
+
+
 ---
 
 ## 4. Anexo Reservado de Coordenadas
 
 Las coordenadas exactas de replanteo para inspección en campo por personal autorizado del **INAPL** o
 direcciones provinciales de patrimonio se encuentran en:
-- Archivo: `data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json`
+- Archivo: `ANEXO_CONFIDENCIAL_COORDENADAS.json`
 
 ---
 
