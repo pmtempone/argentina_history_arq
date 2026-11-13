@@ -23,7 +23,7 @@ La teledetección arqueológica en la República Argentina enfrenta tres desafí
 6. **Calibrador supervisado de Machine Learning** (`GradientBoostingClassifier` con 11 variables morfológicas y espectrales, validación cruzada `StratifiedGroupKFold` y *hard negatives* reales).
 7. **Vigilancia patrimonial `ALERTA_SAQUEO`**, **inventario geomorfológico secundario** y generación automatizada de **dossiers INAPL** con anexo confidencial de coordenadas.
 
-En la campaña nacional consolidada sobre **29 zonas y 2 relevamientos UAV** (**2.167 cuadrículas métricas**), el sistema aisló y auditó **121 anomalías**, logrando **0 falsas alarmas derivadas a campo** y catalogando **84 geoformas** reutilizables para hidrología y geomorfología.
+En la campaña nacional consolidada sobre **30 zonas y 2 relevamientos UAV** (**2.490 cuadrículas métricas**), el sistema aisló y auditó **126 anomalías**, logrando **0 falsas alarmas derivadas a campo** y catalogando **86 geoformas** reutilizables para hidrología y geomorfología.
 
 ---
 
@@ -170,27 +170,27 @@ Siguiendo a Guyot et al. (2018) y Berganzo-Besga et al. (2021), un `GradientBoos
 
 ## 6. Resultados de Campaña y Benchmark ML
 
-### 6.1 Balance de la Campaña Nacional (29 Zonas + 2 Vuelos UAV)
+### 6.1 Balance de la Campaña Nacional (30 Zonas + 2 Vuelos UAV)
 
 | Métrica | Resultado Consolidado |
 | :--- | :--- |
-| **Celdas métricas escaneadas** | **2.167 cuadrículas** |
-| **Anomalías inéditas aisladas y auditadas** | **121 candidatos** |
-| **Dictamen `NATURAL` (geoformas archivadas)** | **101 casos (83.5%)** |
-| **Dictamen `ARTEFACTO` (costuras/instrumentales)** | **20 casos (16.5%)** |
-| **Geoformas catalogadas (`INVENTARIO_GEOMORFOLOGICO.geojson`)** | **84 geoformas** |
+| **Celdas métricas escaneadas** | **2.490 cuadrículas** |
+| **Anomalías inéditas aisladas y auditadas** | **126 candidatos** |
+| **Dictamen `NATURAL` (geoformas archivadas)** | **103 casos (81.7%)** |
+| **Dictamen `ARTEFACTO` (costuras/instrumentales/modernos)** | **23 casos (18.3%)** |
+| **Geoformas catalogadas (`INVENTARIO_GEOMORFOLOGICO.geojson`)** | **86 geoformas** |
 | **Falsas alarmas derivadas a campo** | **0 (0.0%)** |
-| **Dossiers técnicos emitidos (Ley 25.743)** | **121 informes INAPL** |
+| **Dossiers técnicos emitidos (Ley 25.743)** | **126 informes INAPL** |
 
 ### 6.2 Métricas del Calibrador ML (`ML_BENCHMARK_METRICS.md`)
 
-Evaluación *out-of-fold* con `StratifiedGroupKFold` (5 folds) sobre **141 muestras** (121 *hard negatives* reales de `DESCARTES_VLM.json` + 20 positivos sintéticos plantados):
+Evaluación *out-of-fold* con `StratifiedGroupKFold` (5 folds) sobre **146 muestras** (126 *hard negatives* reales de `DESCARTES_VLM.json` + 20 positivos sintéticos plantados):
 
 | Clase | Precision | Recall | F1 |
 | :--- | :---: | :---: | :---: |
-| **0 — NATURAL / ARTEFACTO** | 0.927 | 0.950 | 0.939 |
-| **1 — ANTROPICA (sintética)** | 0.647 | 0.550 | 0.595 |
-| **Macro-promedio** | **0.787** | **0.750** | **0.767** |
+| **0 — NATURAL / ARTEFACTO** | 0.947 | 0.992 | 0.969 |
+| **1 — ANTROPICA (sintética)** | 0.929 | 0.650 | 0.765 |
+| **Macro-promedio** | **0.938** | **0.821** | **0.867** |
 
 > **Transparencia metodológica:** al no haber aún positivos reales confirmados en campo (`MAPA_FINAL_PROSPECCION.geojson` vacío), el calibrador opera por defecto en modo consejero (`--ml-mode advisory`), priorizando candidatos sin bloquear el análisis morfométrico ni sustituir al juez pericial.
 
@@ -226,11 +226,12 @@ python -m src.autonomous_prospector --highres-id ZENODO:3383227 --max-candidates
 
 ---
 
-## 9. Confidencialidad Geodésica y Cumplimiento de la Ley N° 25.743
+## 9. Confidencialidad Geodésica, Licencia y Escalabilidad
 
 1. Los dossiers públicos (`data/reports/DOSSIER_INAPL_*.md`) omiten deliberadamente las coordenadas geográficas exactas.
 2. Las coordenadas exactas en WGS84 y POSGAR 2007 se resguardan en `data/reports/ANEXO_CONFIDENCIAL_COORDENADAS.json` para uso exclusivo de autoridades del **INAPL** y direcciones provinciales de patrimonio.
 3. Los archivos `*MAPA_PROSPECCION_*.geojson` y `*MAPA_FINAL_PROSPECCION.geojson` están excluidos del control de versiones mediante [`.gitignore`](.gitignore).
+4. **Licencia y volumen de artefactos:** el código se distribuye bajo licencia [MIT](LICENSE). Los artefactos de campaña actuales (`data/reports/` y PNGs curados) ocupan ~14 MB en el repositorio para evidencia inmediata; al escalar a cientos de zonas se recomienda versionar solo una muestra curada y publicar los volúmenes completos mediante GitHub Releases o DVC.
 
 ---
 

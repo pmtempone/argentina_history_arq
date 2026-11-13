@@ -1,6 +1,6 @@
 # Benchmark del Calibrador ML (probabilidad calibrada vs score heurístico)
 
-*Generado (UTC):* 2026-11-12T23:30:17Z
+*Generado (UTC):* 2026-11-13T21:33:11Z
 
 ## 1. Composición del dataset
 
@@ -41,4 +41,4 @@
 - No hay positivos reales auditados aún (`MAPA_FINAL` vacío): al confirmarse hallazgos en campo,
   re-entrenar con `train_calibrator()` para incluirlos.
 
-Modelo persistido: `/Users/pablotempone/argentina_history_arq/archaeo-lidar-mcp/data/processed/ml_calibrator.joblib`
+Modelo persistido: `data/processed/ml_calibrator.joblib`

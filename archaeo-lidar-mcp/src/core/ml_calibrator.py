@@ -9,10 +9,11 @@ descriptores de forma) por un clasificador entrenado con:
   conocida (recintos, círculos, terrazas, pozos, zanjas a 0.5 y 30 m/px),
   recuperadas por `detect_anomalies` sobre el DTM plantado.
 
-Vector de features (9): área, desviación SLRM media y absoluta, rectangularidad,
+Vector de features (11): área, desviación SLRM media y absoluta, rectangularidad,
 circularidad (compactness), razón de aspecto, y — cuando hay rasters maestros
-disponibles — `dz_extreme` (|SLRM| extremo en ventana), `slope_mean` y `slrm_std`
-muestreados alrededor del centroide. Los faltantes se imputan (SimpleImputer).
+o contexto óptico disponibles — `dz_extreme_window` (|SLRM| extremo en ventana),
+`slope_mean_deg`, `slrm_std_window`, `dz_contrast_ratio` y `ndvi_anomaly_delta`.
+Los faltantes se imputan (SimpleImputer).
 
 Salida: `data/processed/ml_calibrator.joblib` + reporte de métricas
 `data/reports/ML_BENCHMARK_METRICS.md`.
@@ -36,6 +37,15 @@ from src.config import settings
 
 DEFAULT_MODEL_PATH: Path = Path("./data/processed/ml_calibrator.joblib")
 BENCHMARK_REPORT_PATH: Path = Path("./data/reports/ML_BENCHMARK_METRICS.md")
+_PROJECT_ROOT: Path = Path(__file__).resolve().parents[2]
+
+
+def _relative_project_path(path: Path) -> str:
+    """Normaliza una ruta a formato relativo al proyecto para reportes portables."""
+    try:
+        return str(path.resolve().relative_to(_PROJECT_ROOT))
+    except ValueError:
+        return str(path)
 
 # Features del vector de entrenamiento (orden fijo para persistencia y scoring)
 FEATURE_NAMES: List[str] = [
@@ -528,7 +538,7 @@ def train_calibrator(
         "- No hay positivos reales auditados aún (`MAPA_FINAL` vacío): al confirmarse hallazgos en campo,",
         "  re-entrenar con `train_calibrator()` para incluirlos.",
         "",
-        f"Modelo persistido: `{out_model}`",
+        f"Modelo persistido: `{_relative_project_path(out_model)}`",
         "",
     ]
     out_report = Path(report_path) if report_path else BENCHMARK_REPORT_PATH
