@@ -16,8 +16,6 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.config import settings
-from src.core.geoform_inventory import append_geoform_inventory
-from src.core.report_generator import generate_inapl_dossier
 
 VerdictLiteral = Literal["ANTROPICA", "NATURAL", "ARTEFACTO", "PENDIENTE_REVISION"]
 DISCARD_VERDICTS = {"NATURAL", "ARTEFACTO"}
@@ -234,80 +232,26 @@ def record_vlm_verdict(
     verdict_data: Dict[str, Any],
     reports_dir: Optional[Path] = None,
     cache_dir: Optional[Path] = None,
+    persist: bool = True,
 ) -> Dict[str, Any]:
-    """Registra un dictamen: valida, cachea, regenera el dossier y filtra NATURAL/ARTEFACTO.
-
-    Los descartes se quitan de ``MAPA_FINAL_PROSPECCION.geojson`` y se archivan en ``DESCARTES_VLM.json``.
-    """
+    """Valida y cachea un dictamen VLM; opcionalmente delega la persistencia de reportes/GeoJSON."""
     rep_dir = reports_dir or settings.reports_dir
     verdict = VLMVerdict.model_validate(verdict_data)
     _cache_path(candidate_id, cache_dir).write_text(verdict.model_dump_json(indent=2), encoding="utf-8")
+    verdict_dict = verdict.model_dump()
 
-    map_path = rep_dir / "MAPA_FINAL_PROSPECCION.geojson"
-    fc = json.loads(map_path.read_text(encoding="utf-8"))
-    feat = _find_feature(candidate_id, rep_dir)
-    props = feat["properties"]
-    props["vlm_verdict"] = verdict.model_dump()
-
-    payload: Dict[str, Any] = dict(props)
-    payload["id"] = candidate_id
-    payload["geometry_geojson"] = feat.get("geometry")
-    payload["vlm_verdict"] = verdict.model_dump()
-    dossier_path = generate_inapl_dossier(payload, out_dir=rep_dir)
-
-    discarded = verdict.verdict in DISCARD_VERDICTS
-    remaining: List[Dict[str, Any]] = []
-    for f in fc.get("features", []):
-        fid = f.get("id") or f.get("properties", {}).get("id")
-        if fid == candidate_id:
-            if not discarded:
-                remaining.append(feat)
-        else:
-            remaining.append(f)
-    fc["features"] = remaining
-    fc.setdefault("metadata", {})["confirmed_inedito_count"] = len(remaining)
-    map_path.write_text(json.dumps(fc, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    # Purga de seguridad geodésica (Ley 25.743): quitar también geometrías descartadas de MAPA_PROSPECCION_*.geojson
-    if discarded:
-        for z_map_path in sorted(rep_dir.glob("MAPA_PROSPECCION_*.geojson")):
-            try:
-                z_fc = json.loads(z_map_path.read_text(encoding="utf-8"))
-                z_feats = z_fc.get("features", [])
-                z_remaining = [
-                    zf
-                    for zf in z_feats
-                    if (zf.get("id") or zf.get("properties", {}).get("id")) != candidate_id
-                ]
-                if len(z_remaining) != len(z_feats):
-                    z_fc["features"] = z_remaining
-                    z_fc.setdefault("metadata", {})["confirmed_inedito_count"] = len(z_remaining)
-                    z_map_path.write_text(json.dumps(z_fc, indent=2, ensure_ascii=False), encoding="utf-8")
-            except Exception:
-                continue
-
-    if discarded:
-        disc_path = rep_dir / "DESCARTES_VLM.json"
-        disc: Dict[str, Any] = {"discarded": {}}
-        if disc_path.exists():
-            disc = json.loads(disc_path.read_text(encoding="utf-8"))
-        disc["updated_at_utc"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        disc.setdefault("discarded", {})[candidate_id] = {
-            "anomaly_type": props.get("anomaly_type"),
-            "area_m2": props.get("area_m2"),
-            "mean_elevation_m": props.get("mean_elevation_m"),
-            "composite_image_path": props.get("composite_image_path"),
-            "dossier_path": dossier_path,
-            "vlm_verdict": verdict.model_dump(),
+    if not persist:
+        return {
+            "candidate_id": candidate_id,
+            "verdict": verdict.verdict,
+            "discarded": verdict.verdict in DISCARD_VERDICTS,
+            "dossier_path": None,
         }
-        disc_path.write_text(json.dumps(disc, indent=2, ensure_ascii=False), encoding="utf-8")
 
-        # Los descartes NATURAL alimentan el inventario geomorfológico secundario
-        append_geoform_inventory(candidate_id, props, verdict.model_dump(), reports_dir=rep_dir)
+    from src.core.verdict_persistence import persist_verdict_artifacts
 
-    return {
-        "candidate_id": candidate_id,
-        "verdict": verdict.verdict,
-        "discarded": discarded,
-        "dossier_path": dossier_path,
-    }
+    return persist_verdict_artifacts(
+        candidate_id=candidate_id,
+        verdict_dict=verdict_dict,
+        reports_dir=rep_dir,
+    )

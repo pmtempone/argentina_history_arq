@@ -9,10 +9,11 @@ descriptores de forma) por un clasificador entrenado con:
   conocida (recintos, círculos, terrazas, pozos, zanjas a 0.5 y 30 m/px),
   recuperadas por `detect_anomalies` sobre el DTM plantado.
 
-Vector de features (9): área, desviación SLRM media y absoluta, rectangularidad,
+Vector de features (11): área, desviación SLRM media y absoluta, rectangularidad,
 circularidad (compactness), razón de aspecto, y — cuando hay rasters maestros
-disponibles — `dz_extreme` (|SLRM| extremo en ventana), `slope_mean` y `slrm_std`
-muestreados alrededor del centroide. Los faltantes se imputan (SimpleImputer).
+o contexto óptico disponibles — `dz_extreme_window` (|SLRM| extremo en ventana),
+`slope_mean_deg`, `slrm_std_window`, `dz_contrast_ratio` y `ndvi_anomaly_delta`.
+Los faltantes se imputan (SimpleImputer).
 
 Salida: `data/processed/ml_calibrator.joblib` + reporte de métricas
 `data/reports/ML_BENCHMARK_METRICS.md`.
@@ -21,6 +22,7 @@ Referencias metodológicas: Guyot et al. 2018 (Remote Sensing, Carnac);
 Berganzo-Besga & Orengo et al. 2021 (Remote Sensing 13:4181, Galicia).
 """
 
+import functools
 import json
 import math
 import tempfile
@@ -34,8 +36,17 @@ from pyproj import CRS, Transformer
 
 from src.config import settings
 
-DEFAULT_MODEL_PATH: Path = Path("./data/processed/ml_calibrator.joblib")
-BENCHMARK_REPORT_PATH: Path = Path("./data/reports/ML_BENCHMARK_METRICS.md")
+DEFAULT_MODEL_PATH: Path = settings.processed_dir / "ml_calibrator.joblib"
+BENCHMARK_REPORT_PATH: Path = settings.reports_dir / "ML_BENCHMARK_METRICS.md"
+_PROJECT_ROOT: Path = Path(__file__).resolve().parents[2]
+
+
+def _relative_project_path(path: Path) -> str:
+    """Normaliza una ruta a formato relativo al proyecto para reportes portables."""
+    try:
+        return str(path.resolve().relative_to(_PROJECT_ROOT))
+    except ValueError:
+        return str(path)
 
 # Features del vector de entrenamiento (orden fijo para persistencia y scoring)
 FEATURE_NAMES: List[str] = [
@@ -58,20 +69,28 @@ WINDOW_RADIUS_M: float = 75.0
 # Extracción de features
 # ---------------------------------------------------------------------------
 
+@functools.lru_cache(maxsize=32)
+def _get_wgs84_to_metric_transformer(dst_epsg: int) -> Transformer:
+    """Cachea el Transformer WGS84 -> EPSG métrico para evitar reconstrucción por candidato."""
+    return Transformer.from_crs(CRS.from_epsg(4326), CRS.from_epsg(dst_epsg), always_xy=True)
+
+
 def _sample_window_stats(
-    raster_path: Union[str, Path],
+    raster_path: Optional[Union[str, Path]],
     lon: float,
     lat: float,
     radius_m: float = WINDOW_RADIUS_M,
+    dataset: Optional[Any] = None,
 ) -> Optional[Dict[str, float]]:
     """Muestra estadísticas de una ventana cuadrada centrada en el candidato WGS84.
 
     Convierte (lon, lat) al CRS del raster, lee una ventana de `radius_m` metros
-    alrededor y devuelve estadísticas robustas de la banda 1 (NoData -> NaN).
+    alrededor y devuelve estadísticas robustas de la banda 1 usando `src.nodata`.
+    Permite reutilizar un dataset `rasterio` ya abierto para evitar I/O repetido.
     """
-    with rasterio.open(raster_path) as src:
+    def _read_from_ds(src: Any) -> Optional[Dict[str, float]]:
         crs_epsg = src.crs.to_epsg() or 5345
-        to_metric = Transformer.from_crs(CRS.from_epsg(4326), CRS.from_epsg(crs_epsg), always_xy=True)
+        to_metric = _get_wgs84_to_metric_transformer(int(crs_epsg))
         cx, cy = to_metric.transform(lon, lat)
         res = float(abs(src.transform.a))
         half_px = max(2, int(round(radius_m / res)))
@@ -83,15 +102,29 @@ def _sample_window_stats(
         if r1 <= r0 or c1 <= c0:
             return None
         data = src.read(1, window=rasterio.windows.Window(c0, r0, c1 - c0, r1 - r0)).astype(np.float64)
-    nodata_mask = np.isnan(data) | (data <= -9000.0) | np.isclose(data, -9999.0)
-    vals = data[~nodata_mask]
-    if vals.size < 5:
+        nodata_mask = ~np.isfinite(data) | (data <= -9000.0)
+        if src.nodata is not None:
+            try:
+                nodata_val = float(src.nodata)
+                if math.isfinite(nodata_val):
+                    nodata_mask |= np.isclose(data, nodata_val, rtol=1e-6, atol=1e-6)
+            except (TypeError, ValueError):
+                pass
+        vals = data[~nodata_mask]
+        if vals.size < 5:
+            return None
+        return {
+            "absmax": float(np.nanmax(np.abs(vals))),
+            "std": float(np.nanstd(vals)),
+            "mean": float(np.nanmean(vals)),
+        }
+
+    if dataset is not None:
+        return _read_from_ds(dataset)
+    if raster_path is None:
         return None
-    return {
-        "absmax": float(np.nanmax(np.abs(vals))),
-        "std": float(np.nanstd(vals)),
-        "mean": float(np.nanmean(vals)),
-    }
+    with rasterio.open(raster_path) as src:
+        return _read_from_ds(src)
 
 
 def extract_features(
@@ -99,6 +132,8 @@ def extract_features(
     slrm_path: Optional[Union[str, Path]] = None,
     slope_path: Optional[Union[str, Path]] = None,
     window_radius_m: float = WINDOW_RADIUS_M,
+    slrm_dataset: Optional[Any] = None,
+    slope_dataset: Optional[Any] = None,
 ) -> Dict[str, float]:
     """Extrae el vector de features geomorfológicos de un candidato.
 
@@ -147,14 +182,14 @@ def extract_features(
     centroid = props.get("centroid_wgs84")
     if centroid and len(centroid) == 2:
         lon, lat = float(centroid[0]), float(centroid[1])
-        if slrm_path and Path(slrm_path).exists():
-            stats = _sample_window_stats(slrm_path, lon, lat, window_radius_m)
+        if slrm_dataset is not None or (slrm_path and Path(slrm_path).exists()):
+            stats = _sample_window_stats(slrm_path, lon, lat, window_radius_m, dataset=slrm_dataset)
             if stats:
                 feats["dz_extreme_window"] = stats["absmax"]
                 feats["slrm_std_window"] = stats["std"]
                 feats["dz_contrast_ratio"] = round(abs(dz_mean) / max(float(stats["std"]), 0.05), 4)
-        if slope_path and Path(slope_path).exists():
-            sstats = _sample_window_stats(slope_path, lon, lat, window_radius_m)
+        if slope_dataset is not None or (slope_path and Path(slope_path).exists()):
+            sstats = _sample_window_stats(slope_path, lon, lat, window_radius_m, dataset=slope_dataset)
             if sstats:
                 feats["slope_mean_deg"] = sstats["mean"]
     return feats
@@ -528,7 +563,7 @@ def train_calibrator(
         "- No hay positivos reales auditados aún (`MAPA_FINAL` vacío): al confirmarse hallazgos en campo,",
         "  re-entrenar con `train_calibrator()` para incluirlos.",
         "",
-        f"Modelo persistido: `{out_model}`",
+        f"Modelo persistido: `{_relative_project_path(out_model)}`",
         "",
     ]
     out_report = Path(report_path) if report_path else BENCHMARK_REPORT_PATH
