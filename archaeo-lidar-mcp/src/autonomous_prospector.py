@@ -17,7 +17,10 @@ from shapely.geometry import shape
 
 from src.config import settings
 from src.core.anomaly_detector import detect_anomalies
+from src.core.baseline_manifest import map_verdict_to_lifecycle_state
+from src.core.benchmark_v1 import should_abstain_prediction
 from src.core.data_fetcher import TARGET_ZONES, fetch_elevation_tile, resolve_zone_key
+from src.core.dem_quality import audit_dem_quality
 from src.core.highres_hunter import HighResLidarHunter
 from src.core.literature_checker import check_academic_papers
 from src.core.looting_monitor import evaluate_looting_alert
@@ -295,14 +298,16 @@ async def run_autonomous_prospector(
         except TypeError:
             # Compatibilidad con monkeypatches de tests que aceptan (target_zone, cache_dir)
             tile_res = fetch_elevation_tile(target_zone=zone_key, cache_dir=raw_dir)
+        explicit_native_res: Optional[float] = None
         if isinstance(tile_res, dict):
             master_dtm_path = Path(tile_res["path"])
             dem_provider_used = str(tile_res.get("provider_used", "copernicus_aws"))
-            dem_native_res_m = float(tile_res.get("native_resolution_m", 30.0))
+            if tile_res.get("native_resolution_m") is not None:
+                explicit_native_res = float(tile_res["native_resolution_m"])
         else:
             master_dtm_path = Path(tile_res)
-            dem_provider_used = dem_provider if dem_provider != "auto" else "copernicus_aws"
-            dem_native_res_m = 30.0
+            dem_provider_used = dem_provider if dem_provider != "auto" else "local_raster"
+        dem_native_res_m = explicit_native_res if explicit_native_res is not None else 30.0
         dem_source_label = f"DEM Provider: {dem_provider_used} (nativo {dem_native_res_m:.1f} m/px)"
 
     with rasterio.open(master_dtm_path) as src:
@@ -311,8 +316,23 @@ async def run_autonomous_prospector(
         master_bounds = (float(b.left), float(b.bottom), float(b.right), float(b.top))
         res_m = float(abs(src.transform.a))
 
+    if not hunt_highres and explicit_native_res is None:
+        dem_native_res_m = res_m
+        dem_source_label = f"DEM Provider: {dem_provider_used} (nativo {dem_native_res_m:.2f} m/px)"
+
+    dem_profile = audit_dem_quality(
+        master_dtm_path,
+        provider_used=dem_provider_used,
+        native_resolution_m=dem_native_res_m,
+    )
+
     print(f"   ✔ Raster maestro validado: {master_dtm_path}")
     print(f"   ✔ Sistema Métrico: POSGAR 2007 EPSG:{crs_epsg} | Resolución: {res_m:.2f} m/px")
+    print(
+        f"   ✔ Perfil Calidad DEM: {dem_profile.confidence_tier} | "
+        f"piso={dem_profile.min_detectable_area_m2:.1f} m² | "
+        f"microtopografía={'APTO' if dem_profile.suitable_for_microtopography else 'NO APTO'}"
+    )
     print(
         f"   ✔ Extensión Métrica: E[{master_bounds[0]:.1f}, {master_bounds[2]:.1f}] "
         f"N[{master_bounds[1]:.1f}, {master_bounds[3]:.1f}]"
@@ -482,6 +502,7 @@ async def run_autonomous_prospector(
     )
 
     confirmed_features: List[Dict[str, Any]] = []
+    inconclusive_features: List[Dict[str, Any]] = []
     candidates_report_rows: List[Dict[str, Any]] = []
     vlm_discards: Dict[str, Any] = {}
 
@@ -529,6 +550,44 @@ async def run_autonomous_prospector(
         props["id"] = cand_id
         feat["id"] = cand_id
 
+        # Regla formal de abstención (Etapa 3): si el DEM no es apto o la banda es ambigua,
+        # el candidato pasa a INCONCLUSIVE preservando la anomalía original sin descartarla ni confirmarla.
+        decision_prob = (
+            float(props["ml_probability"])
+            if (ml_mode == "filter" and props.get("ml_probability") is not None)
+            else float(props["confidence"])
+        )
+        abstain, abstain_reason = should_abstain_prediction(
+            dem_profile,
+            target_area_m2=float(props.get("area_m2") or 0.0),
+            calibrated_prob=decision_prob,
+        )
+        props["dem_quality_tier"] = dem_profile.confidence_tier
+        if abstain:
+            props["lifecycle_state"] = "INCONCLUSIVE"
+            props["abstention_reason"] = abstain_reason
+            props["algorithmic_detection_preserved"] = True
+            props["classification"] = "ABSTENCION_INSUFICIENTE"
+            inconclusive_features.append(feat)
+            candidates_report_rows.append(
+                {
+                    "id": cand_id,
+                    "source_cell": props.get("source_cell", "N/A"),
+                    "anomaly_type": props["anomaly_type"],
+                    "confidence": props["confidence"],
+                    "ml_probability": props.get("ml_probability"),
+                    "area_m2": props["area_m2"],
+                    "mean_elevation_m": props["mean_elevation_m"],
+                    "rectangularity": props["rectangularity"],
+                    "circularity": props["circularity"],
+                    "lifecycle_state": "INCONCLUSIVE",
+                    "abstention_reason": abstain_reason,
+                    "algorithmic_detection_preserved": True,
+                }
+            )
+            print(f"   ⏸  {cand_id} ({props['anomaly_type']}, {props['area_m2']} m²) => INCONCLUSIVE: {abstain_reason}")
+            continue
+
         lon_w, lat_w = float(props["centroid_wgs84"][0]), float(props["centroid_wgs84"][1])
         val_res = await validate_anomaly_async(
             lat=lat_w,
@@ -538,6 +597,7 @@ async def run_autonomous_prospector(
         )
 
         props["classification"] = val_res.classification
+        props["lifecycle_state"] = map_verdict_to_lifecycle_state(None, classification=val_res.classification)
         props["distance_to_water_m"] = val_res.distance_to_water_m
         props["ign_matches_count"] = len(val_res.ign_matches)
         props["osm_matches_count"] = len(val_res.osm_matches)
@@ -659,6 +719,10 @@ async def run_autonomous_prospector(
             dossier_md_path = generate_inapl_dossier(dossier_payload, out_dir=rep_dir)
 
             props["dossier_path"] = str(dossier_md_path)
+            props["lifecycle_state"] = map_verdict_to_lifecycle_state(
+                vlm_verdict.get("verdict"),
+                classification=val_res.classification,
+            )
             if vlm_verdict["verdict"] in DISCARD_VERDICTS:
                 vlm_discards[cand_id] = {
                     "anomaly_type": props["anomaly_type"],
@@ -685,6 +749,7 @@ async def run_autonomous_prospector(
                     "composite_image_path": str(composite_png_path),
                     "dossier_path": str(dossier_md_path),
                     "vlm_verdict": vlm_verdict["verdict"],
+                    "lifecycle_state": props["lifecycle_state"],
                 }
             )
 
@@ -716,9 +781,12 @@ async def run_autonomous_prospector(
             "output_crs": "EPSG:4326",
             "windows_scanned": len(windows),
             "confirmed_inedito_count": len(confirmed_features),
+            "inconclusive_count": len(inconclusive_features),
             "academic_papers_found": len(zone_papers),
+            "dem_quality_profile": dem_profile.model_dump(),
         },
         "features": confirmed_features,
+        "inconclusive_features": inconclusive_features,
     }
     zone_geojson_path.write_text(json.dumps(zone_fc, indent=2, ensure_ascii=False), encoding="utf-8")
 
@@ -763,6 +831,11 @@ async def run_autonomous_prospector(
         "crs_epsg": crs_epsg,
         "windows_scanned": len(windows),
         "confirmed_count": len(confirmed_features),
+        "inconclusive_count": len(inconclusive_features),
+        "inconclusive_candidates": [
+            row for row in candidates_report_rows if row.get("lifecycle_state") == "INCONCLUSIVE"
+        ],
+        "dem_quality_profile": dem_profile.model_dump(),
         "candidates": candidates_report_rows,
         "final_map_geojson": str(final_geojson_path),
         "confidential_annex_json": str(annex_path),

@@ -382,3 +382,125 @@ def test_curated_benchmark_dataset_no_duplication_and_no_blind_leak(tmp_path: Pa
     for entry in payload["entries"]:
         block_splits.setdefault(entry["region_block_id"], set()).add(entry["split"])
     assert all(len(s) == 1 for s in block_splits.values())
+
+
+def test_benchmark_metrics_strict_ground_truth_guard():
+    """compute_benchmark_metrics y el calibrador rechazan usar controles IA/sintéticos como verdad arqueológica."""
+    from src.core.ml_calibrator import evaluate_calibrator_on_verified_benchmark
+
+    mixed_rows = [
+        {
+            "is_positive_site": False,
+            "detected": False,
+            "score": 0.12,
+            "biome": "prepuna",
+            "evidence_tier": "AI_REJECTED_CANDIDATE",
+        },
+        {
+            "is_positive_site": True,
+            "sensor_detectable": True,
+            "detected": True,
+            "score": 0.90,
+            "biome": "prepuna",
+            "evidence_tier": "SYNTHETIC_POSITIVE",
+        },
+    ]
+
+    non_strict = compute_benchmark_metrics(mixed_rows, scanned_area_km2=2.0, k_values=(2,))
+    assert non_strict["evaluation_validity_scope"] == "INTERNAL_SYSTEM_CONTROL_NOT_ARCHAEOLOGICAL_GROUND_TRUTH"
+
+    with pytest.raises(ValueError):
+        compute_benchmark_metrics(mixed_rows, scanned_area_km2=2.0, require_verified_ground_truth=True)
+
+    with pytest.raises(ValueError):
+        evaluate_calibrator_on_verified_benchmark(mixed_rows, scanned_area_km2=2.0)
+
+    # Al incluir filas verificadas por expertos/campo, el evaluador filtra únicamente esas
+    verified_plus_ai = mixed_rows + [
+        {
+            "is_positive_site": True,
+            "sensor_detectable": True,
+            "detected": True,
+            "score": 0.88,
+            "biome": "prepuna",
+            "evidence_tier": "FIELD_CONFIRMED",
+        },
+        {
+            "is_positive_site": False,
+            "detected": False,
+            "score": 0.10,
+            "biome": "prepuna",
+            "evidence_tier": "EXPERT_REVIEWED",
+        },
+    ]
+    res = evaluate_calibrator_on_verified_benchmark(verified_plus_ai, scanned_area_km2=2.0, k_values=(2,))
+    assert res["evaluation_validity_scope"] == "VERIFIED_ARCHAEOLOGICAL_BENCHMARK"
+    assert res["evaluable_count"] == 2
+    assert res["site_recall"] == 1.0
+
+
+@pytest.mark.asyncio
+async def test_autonomous_prospector_preserves_inconclusive_on_unsuitable_dem(
+    synthetic_posgar_dtm: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Un DEM marcado SYNTHETIC_FALLBACK envía candidatos a INCONCLUSIVE sin perderlos ni confirmarlos."""
+    import httpx
+    import rasterio
+    from src.autonomous_prospector import run_autonomous_prospector
+
+    tagged_tif = tmp_path / "tagged_fallback_posgar.tif"
+    with rasterio.open(synthetic_posgar_dtm) as src:
+        prof = src.profile.copy()
+        data = src.read(1)
+    with rasterio.open(tagged_tif, "w", **prof) as dst:
+        dst.write(data, 1)
+        dst.update_tags(SYNTHETIC_FALLBACK="TRUE")
+
+    raw_dir = tmp_path / "raw"
+    proc_dir = tmp_path / "processed"
+    rep_dir = tmp_path / "reports"
+    raw_dir.mkdir()
+
+    monkeypatch.setattr(
+        "src.autonomous_prospector.fetch_elevation_tile",
+        lambda target_zone, cache_dir, provider="auto", return_metadata=True: {
+            "path": tagged_tif,
+            "provider_used": "synthetic_fallback",
+            "native_resolution_m": 0.5,
+            "is_synthetic_fallback": True,
+        },
+    )
+
+    transport = httpx.MockTransport(lambda req: httpx.Response(200, json={"results": []}))
+    async with httpx.AsyncClient(transport=transport) as client:
+        summary = await run_autonomous_prospector(
+            target_zone="ZONA_1_TASTIL",
+            window_size_m=200.0,
+            overlap_ratio=0.15,
+            min_confidence=0.70,
+            min_elevation_m=0.20,
+            optical_provider="none",
+            cache_dir=raw_dir,
+            processed_dir=proc_dir,
+            reports_dir=rep_dir,
+            http_client=client,
+        )
+
+    assert summary["dem_quality_profile"]["has_synthetic_fallback_tag"] is True
+    assert summary["confirmed_count"] == 0
+    assert summary["inconclusive_count"] >= 1
+    assert len(summary["inconclusive_candidates"]) == summary["inconclusive_count"]
+    for row in summary["inconclusive_candidates"]:
+        assert row["lifecycle_state"] == "INCONCLUSIVE"
+        assert row["algorithmic_detection_preserved"] is True
+        assert "INSUFFICIENT_SENSOR_DATA" in row["abstention_reason"]
+
+    # MAPA_PROSPECCION conserva las anomalías inconclusas sin promoverlas a features activas
+    zone_map = json.loads((rep_dir / "MAPA_PROSPECCION_ZONA_1_TASTIL.geojson").read_text(encoding="utf-8"))
+    assert zone_map["features"] == []
+    assert zone_map["metadata"]["inconclusive_count"] == summary["inconclusive_count"]
+    assert len(zone_map["inconclusive_features"]) == summary["inconclusive_count"]
+    # Nunca debe convertirse en descarte negativo
+    assert not (rep_dir / "DESCARTES_VLM.json").exists()

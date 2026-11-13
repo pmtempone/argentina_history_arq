@@ -260,6 +260,9 @@ async def tool_run_full_pipeline(
     """
     from pyproj import CRS, Transformer
     import rasterio
+    from src.core.baseline_manifest import map_verdict_to_lifecycle_state
+    from src.core.benchmark_v1 import should_abstain_prediction
+    from src.core.dem_quality import audit_dem_quality
     from src.core.looting_monitor import evaluate_looting_alert
     from src.core.ml_calibrator import load_calibrator, score_candidate
     from src.core.optical_providers import fetch_candidate_optical_context
@@ -288,6 +291,15 @@ async def tool_run_full_pipeline(
         )
         with rasterio.open(dtm_path) as s:
             target_epsg = s.crs.to_epsg() or 5344
+            res_native_inferred = float(abs(s.transform.a))
+    if src_file.suffix.lower() in {".las", ".laz"}:
+        res_native_inferred = float(resolution)
+
+    dem_profile = audit_dem_quality(
+        dtm_path,
+        provider_used="pipeline_input",
+        native_resolution_m=res_native_inferred,
+    )
 
     # 2. Calcular modelos de relieve (SLRM y Slope)
     relief_res = compute_relief_pipeline(
@@ -352,6 +364,32 @@ async def tool_run_full_pipeline(
             osm_matches=val_res.osm_matches,
             ign_matches=val_res.ign_matches,
         )
+
+        # Evaluar abstención formal por calidad DEM / escala física / banda incierta
+        decision_prob = float(ml_prob) if ml_prob is not None else float(props.get("confidence") or 0.0)
+        abstain, abstain_reason = should_abstain_prediction(
+            dem_profile,
+            target_area_m2=float(props.get("area_m2") or 0.0),
+            calibrated_prob=decision_prob,
+        )
+        if abstain:
+            candidates_summary.append({
+                "candidate_id": cand_id,
+                "type": props.get("anomaly_type"),
+                "classification": "ABSTENCION_INSUFICIENTE",
+                "lifecycle_state": "INCONCLUSIVE",
+                "abstention_reason": abstain_reason,
+                "algorithmic_detection_preserved": True,
+                "confidence": props.get("confidence"),
+                "ml_probability": ml_prob,
+                "patrimonial_priority": looting_alert["alert"] if looting_alert else None,
+                "vlm_verdict": None,
+                "area_m2": props.get("area_m2"),
+                "distance_to_water_m": val_res.distance_to_water_m,
+                "composite_image": None,
+                "dossier_path": None,
+            })
+            continue
 
         # 6. Contexto óptico/multiespectral (solo para CANDIDATO_INEDITO) + lámina compuesta
         optical_ctx = None
@@ -433,6 +471,12 @@ async def tool_run_full_pipeline(
             "candidate_id": cand_id,
             "type": props.get("anomaly_type"),
             "classification": val_res.classification,
+            "lifecycle_state": map_verdict_to_lifecycle_state(
+                vlm_verdict.get("verdict"),
+                classification=val_res.classification,
+            ),
+            "abstention_reason": None,
+            "algorithmic_detection_preserved": True,
             "confidence": props.get("confidence"),
             "ml_probability": ml_prob,
             "patrimonial_priority": looting_alert["alert"] if looting_alert else None,
@@ -450,6 +494,10 @@ async def tool_run_full_pipeline(
         "slrm_path": relief_res.slrm_path,
         "slope_path": relief_res.slope_path,
         "crs_epsg": target_epsg,
+        "dem_quality_profile": dem_profile.model_dump(),
+        "inconclusive_count": sum(
+            1 for c in candidates_summary if c.get("lifecycle_state") == "INCONCLUSIVE"
+        ),
         "total_anomalies_detected": len(features),
         "candidates": candidates_summary,
         "confidential_annex_path": str(settings.reports_dir / "ANEXO_CONFIDENCIAL_COORDENADAS.json"),
