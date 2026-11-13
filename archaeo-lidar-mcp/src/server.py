@@ -16,7 +16,13 @@ from src.core.visual_inspector import (
     render_candidate_composite,
     render_pointcloud_cross_section,
 )
-from src.schemas import CrossSectionResult, DTMResult, ReliefResult, ValidationResult
+from src.schemas import (
+    AnomalyDetectionResult,
+    CrossSectionResult,
+    DTMResult,
+    ReliefResult,
+    ValidationResult,
+)
 
 mcp = FastMCP(
     "ArchaeoLiDAR-AR-MCP",
@@ -73,7 +79,7 @@ def tool_compute_relief_models(dtm_path: str, radius_m: float = 10.0) -> ReliefR
 
 
 @mcp.tool()
-def tool_detect_anomalies(slrm_path: str, slope_path: str) -> dict:
+def tool_detect_anomalies(slrm_path: str, slope_path: str) -> AnomalyDetectionResult:
     """Detecta anomalías microtopográficas arqueológicas sobre los modelos SLRM y Slope usando OpenCV.
 
     Aísla sobreelevaciones locales entre 0.15 m y 3.0 m en terrenos con pendiente menor o igual a 35°,
@@ -87,9 +93,10 @@ def tool_detect_anomalies(slrm_path: str, slope_path: str) -> dict:
         slope_path: Ruta al GeoTIFF de pendiente en grados.
 
     Returns:
-        Diccionario GeoJSON `FeatureCollection` con las anomalías detectadas y sus descriptores geométricos.
+        `AnomalyDetectionResult` (GeoJSON `FeatureCollection` tipado) con las anomalías detectadas.
     """
-    return detect_anomalies(slrm_path=slrm_path, slope_path=slope_path)
+    raw = detect_anomalies(slrm_path=slrm_path, slope_path=slope_path)
+    return AnomalyDetectionResult.model_validate(raw)
 
 
 @mcp.tool()

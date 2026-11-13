@@ -17,6 +17,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install Blender (headless 3D rendering)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends blender libegl1 libgl1 libxrender1
+
       - name: Set up Micromamba with geospatial stack
         uses: mamba-org/setup-micromamba@v2
         with:

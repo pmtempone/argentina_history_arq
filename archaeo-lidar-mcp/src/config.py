@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     """Configuración del servidor ArchaeoLiDAR-AR-MCP validada con Pydantic Settings."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )

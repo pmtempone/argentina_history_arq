@@ -128,3 +128,20 @@ class CrossSectionResult(BaseModel):
         le=1.0,
         description="Puntaje de integridad del perfil de suelo [0.0 - 1.0] para descartar artefactos de interpolación.",
     )
+
+
+class AnomalyDetectionResult(BaseModel):
+    """Resultado tipado (FeatureCollection GeoJSON) de la detección morfométrica de anomalías."""
+
+    model_config = ConfigDict(extra="allow")
+
+    type: Literal["FeatureCollection"] = Field(default="FeatureCollection", description="Tipo GeoJSON.")
+    crs: Dict[str, Any] = Field(..., description="Definición del sistema de referencia espacial (CRS84).")
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Metadatos cuantitativos de la corrida (resolución, área mínima efectiva, conteos).",
+    )
+    features: List[Dict[str, Any]] = Field(
+        default_factory=list,
+        description="Lista de features GeoJSON de anomalías detectadas.",
+    )
