@@ -205,6 +205,13 @@ Evaluación *out-of-fold* con `StratifiedGroupKFold` (5 folds) sobre **146 muest
 
 ## 8. Verificación y Reproducibilidad
 
+### Prerrequisito recomendado: Blender (Renderizado 3D *headless*)
+Para generar el **Panel 4** (render 3D isométrico térmico con EEVEE), instalá Blender (o pedile a tu asistente de IA que lo verifique/instale, o usá [`archaeo-lidar-mcp/Dockerfile`](archaeo-lidar-mcp/Dockerfile) que ya lo incluye):
+* **macOS:** `brew install --cask blender` (o definir `BLENDER_PATH=/Applications/Blender.app/Contents/MacOS/Blender`)
+* **Ubuntu / Debian:** `sudo apt-get update && sudo apt-get install -y blender`
+
+> Si Blender no está presente, el pipeline **no falla**: el Panel 4 conmuta automáticamente a elevación DTM 2D.
+
 ```bash
 cd archaeo-lidar-mcp
 python3 -m venv venv
