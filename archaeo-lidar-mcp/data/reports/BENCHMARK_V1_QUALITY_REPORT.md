@@ -1,6 +1,6 @@
 # Informe de Curaduría y Calidad — BENCHMARK_V1_DATASET
 
-*Generado (UTC):* `2026-11-13T23:30:31Z`
+*Generado (UTC):* `2026-11-13T23:42:42Z`
 
 > **Advertencia Epistémica:** Este benchmark piloto consolida controles negativos generados por el Juez VLM (`AI_REJECTED_CANDIDATE`) y referencias publicadas aproximadas ±100 m (`PUBLISHED_SITE_REFERENCE`). **No equivale** a ground truth arqueológico de campo ni habilita aún un `blind_test` independiente.
 

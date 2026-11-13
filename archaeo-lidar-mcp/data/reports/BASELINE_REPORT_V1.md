@@ -1,6 +1,6 @@
 # Informe de Línea de Base Reproducible — ArchaeoLiDAR-AR
 
-*Generado (UTC):* `2026-11-13T23:15:44Z` | *Commit Git:* `31593ac` | *Tag:* `untagged`
+*Generado (UTC):* `2026-11-13T23:42:49Z` | *Commit Git:* `0b0ffbd` | *Tag:* `untagged`
 
 ## 1. Resumen Único de Campaña (Fuente Única de Verdad)
 
