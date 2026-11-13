@@ -1,6 +1,7 @@
 """Tests unitarios para Etapa 0 (estados de evidencia) y Etapas 2/3 (Benchmark Nacional V1)."""
 
 from pathlib import Path
+import json
 import sys
 
 import pytest
@@ -14,6 +15,7 @@ from src.core.baseline_manifest import map_verdict_to_lifecycle_state
 from src.core.benchmark_v1 import (
     BenchmarkEntry,
     assign_spatial_block_splits,
+    build_curated_benchmark_v1_dataset,
     compute_benchmark_metrics,
     should_abstain_prediction,
 )
@@ -305,3 +307,78 @@ def test_lifecycle_state_mapping_separates_algorithm_from_archaeology():
         map_verdict_to_lifecycle_state("ANTROPICA", expert_reviewed=True, field_confirmed=True)
         == "FIELD_CONFIRMED"
     )
+
+
+def test_benchmark_entry_forces_unconfirmed_for_ai_and_published():
+    """Controles VLM y referencias publicadas no pueden quedar como verdad arqueológica ni en blind_test."""
+    ai_neg = BenchmarkEntry(
+        entry_id="CTL_AI_01",
+        region_block_id="BLK_X",
+        biome="prepuna",
+        is_positive_site=False,
+        archaeo_confirmed=True,  # intento inválido de promover un descarte IA
+        evidence_tier="AI_REJECTED_CANDIDATE",
+        negative_category="geoforma_no_especificada",
+        dem_resolution_m=30.0,
+        expected_feature_area_m2=2500.0,
+        eligible_for_blind_test=True,
+    )
+    assert ai_neg.archaeo_confirmed is False
+    assert ai_neg.eligible_for_blind_test is False
+
+    pub_ref = BenchmarkEntry(
+        entry_id="PUB_01",
+        region_block_id="BLK_Y",
+        biome="prepuna",
+        is_positive_site=True,
+        archaeo_confirmed=True,
+        evidence_tier="PUBLISHED_SITE_REFERENCE",
+        coordinate_precision_m=100.0,
+        dem_resolution_m=30.0,
+        expected_feature_area_m2=10000.0,
+        eligible_for_blind_test=True,
+    )
+    assert pub_ref.archaeo_confirmed is False
+    assert pub_ref.eligible_for_blind_test is False
+
+
+def test_curated_benchmark_dataset_no_duplication_and_no_blind_leak(tmp_path: Path):
+    """Curaduría real: no duplica 86 geoformas, excluye sintéticos y deja blind_test=0."""
+    out_json = tmp_path / "BENCHMARK_V1_DATASET.json"
+    out_md = tmp_path / "BENCHMARK_V1_QUALITY_REPORT.md"
+    res = build_curated_benchmark_v1_dataset(
+        out_json_path=out_json,
+        out_report_path=out_md,
+    )
+    assert out_json.exists()
+    assert out_md.exists()
+
+    audit = res["curation_audit"]
+    assert audit["raw_descartes_count"] == 126
+    assert audit["inventory_features_count"] == 86
+    assert audit["inventory_strict_subset_of_descartes"] is True
+    assert audit["linked_geoforms_merged_without_duplication"] == 86
+    assert len(audit["excluded_synthetic_records"]) == 2
+    assert audit["published_references_count"] == 9
+    # 126 - 2 sintéticos = 124 controles + 9 referencias = 133 entradas (nunca 126 + 86 = 212)
+    assert audit["active_curated_entries_count"] == 133
+    assert audit["counts_by_split"]["blind_test"] == 0
+    assert audit["counts_by_evidence_tier"] == {
+        "AI_REJECTED_CANDIDATE": 124,
+        "PUBLISHED_SITE_REFERENCE": 9,
+    }
+
+    payload = json.loads(out_json.read_text(encoding="utf-8"))
+    assert "descartes_vlm" in payload["source_provenance"]
+    assert "inventario_geomorfologico" in payload["source_provenance"]
+    assert "known_sites_published" in payload["source_provenance"]
+    for entry in payload["entries"]:
+        assert entry["archaeo_confirmed"] is False
+        assert entry["eligible_for_blind_test"] is False
+        assert entry["split"] in {"development", "validation"}
+
+    # La partición por bloques espaciales no debe mezclar un mismo region_block_id entre splits
+    block_splits = {}
+    for entry in payload["entries"]:
+        block_splits.setdefault(entry["region_block_id"], set()).add(entry["split"])
+    assert all(len(s) == 1 for s in block_splits.values())
