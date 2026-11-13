@@ -13,10 +13,10 @@
 | :--- | :---: | :--- | :---: | :--- |
 | **0** | 1 | Congelar línea base, fuente única de verdad y esquema de estados | **Implementado** | Reconstrucción determinista de campaña a partir de config + datos + commit/tag Git (`CAMPAIGN_MANIFEST.json`) |
 | **1** | 2–4 | Auditoría científica del motor (calidad DEM, SVF/Openness, evidencia observable, 8 tests) | **Implementado** | **8/8 tests** de auditoría física/geoespacial aprobados sin artefactos en bordes, NoData ni degradación multi-resolución |
-| **2** | 5–8 | Diseño del Benchmark Nacional V1 (positivos + 10 clases de negativos difíciles + bloques espaciales) | **Esquema y lógica listos** | Dataset curado multi-bioma particionado en bloques espaciales (`development` / `validation` / `blind_test`) con cero fuga |
-| **3** | 9–12 | Calibración probabilística, regla de abstención y métricas de campaña | **Base implementada** | Recall computable con IC 95 % Wilson, FP/km², Brier score y abstención validada en bloques de validación |
-| **4** | 13–16 | Evaluación sobre DEM/LiDAR/UAV de alta resolución reales (< 1–5 m/px) | Planificado | Contraste cuantificado 30 m vs. 5 m / < 1 m en ≥ 2 biomas piloto bajo convenio |
-| **5** | 17–20 | Evaluación ciega multi-especialista sobre láminas periciales | Planificado | Protocolo ciego completado con concordancia inter-evaluador reportada y catálogo de errores sistemáticos |
+| **2** | 5–8 | Diseño del Benchmark Nacional V1 (positivos + 10 clases de negativos difíciles + bloques espaciales) | **Implementado (`133` registros curados, `blind_test: 0`)** | Dataset curado multi-bioma particionado en bloques espaciales (`development` / `validation` / `blind_test`) con cero fuga ([`BENCHMARK_V1_DATASET.json`](../archaeo-lidar-mcp/data/reports/BENCHMARK_V1_DATASET.json)) |
+| **3** | 9–12 | Calibración probabilística, regla de abstención (`INCONCLUSIVE`), métricas ML separadas y módulo de paquete ciego | **Implementado** | Abstención integrada en pipeline autónomo y MCP (`tool_run_full_pipeline`), paquete de láminas ciegas sin metadatos y cálculo de $\kappa$ operativos ([`src/core/blind_review.py`](../archaeo-lidar-mcp/src/core/blind_review.py)) |
+| **4** | 13–16 | Evaluación comparativa sobre DEM/LiDAR/UAV de alta resolución reales (< 1–5 m/px vs. 30 m) en 2–3 biomas | Protocolo cerrado ([`PROTOCOLO_ETAPAS_4_Y_5.md`](PROTOCOLO_ETAPAS_4_Y_5.md)) | Contraste cuantificado apareado (30 m vs. 5 m / < 1 m) en ≥ 2–3 biomas con persistencia, recall estratificado e IoU |
+| **5** | 17–20 | Evaluación ciega multi-especialista sobre láminas periciales anonimizadas | Protocolo cerrado ([`PROTOCOLO_ETAPAS_4_Y_5.md`](PROTOCOLO_ETAPAS_4_Y_5.md)) | Cumplimiento de condiciones pre-registradas de validez ($\kappa \ge 0.40$, $\kappa_{\text{cuad}} \ge 0.60$), concordancia reportada y auditoría de desacuerdos |
 | **6** | 21–22 | Verificación en terreno autorizada (Ley N° 25.743, arts. 23–24) | Planificado | Inspección de campo dirigida por investigadores habilitados con transición formal a `FIELD_CONFIRMED` |
 | **7** | 23–24 | Cierre reproducible V2.0 y publicación técnica | Planificado | Liberación de código y métricas agregadas con resguardo estricto de coordenadas sensibles |
 
@@ -103,8 +103,8 @@ Implementado estructuralmente en [`src/core/benchmark_v1.py`](../archaeo-lidar-m
 ### Etapas 4 a 7 — Validación empírica, evaluación ciega y terreno (Semanas 13–24)
 
 Las **Etapas 4 a 7** dependen de insumos externos e institucionales descritos en detalle en el [Paquete de Colaboración Científica](PAQUETE_COLABORACION_CIENTIFICA.md):
-- **Etapa 4:** Pruebas piloto con rasters reales de alta resolución (< 1 m UAV/LiDAR y 5 m IGN) contrastados frente a GLO-30 / MDE-Ar v2.1.
-- **Etapa 5:** Estudio ciego multi-especialista inspirado en **Casana (2021)** sobre láminas de 6 paneles sin exposición de scores previos de IA.
+- **Etapa 4:** Pruebas piloto apareadas con rasters reales de alta resolución (< 1 m UAV/LiDAR y 5 m IGN) contrastados frente a GLO-30 / MDE-Ar v2.1 en 2–3 biomas según criterios de inclusión/exclusión del [Protocolo Pre-registrado Etapas 4 y 5](PROTOCOLO_ETAPAS_4_Y_5.md).
+- **Etapa 5:** Estudio ciego multi-especialista inspirado en **Casana (2021)** y regido íntegramente por el [Protocolo Pre-registrado Etapas 4 y 5](PROTOCOLO_ETAPAS_4_Y_5.md) (distinguiendo el piloto exploratorio de `12` láminas del lote confirmatorio sobre `blind_test`, con planilla `evaluator_sheet_template.csv` y umbrales explícitos de validez).
 - **Etapa 6:** Contrastación en terreno exclusivamente bajo permisos vigentes (Ley N° 25.743, arts. 23–24) y dirección arqueológica acreditada.
 - **Etapa 7:** Publicación de informe técnico v2.0 con resultados por bioma, curva costo-beneficio para priorización de campaña y preservación estricta de la confidencialidad espacial.
 

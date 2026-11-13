@@ -17,7 +17,7 @@
 - **SÍ es:** Un motor reproducible de procesamiento geodésico y morfométrico (SLRM NaN-safe, Pendiente, SVF, Openness positivo/negativo, clustering espacial, contexto espectral Sentinel-2 NDVI/NDWI y láminas periciales multi-panel) con trazabilidad completa de descartes.
 - **NO es (ni afirma ser sin validación externa):** Un descubridor automático autónomo de sitios arqueológicos, un sustituto del criterio arqueológico especialista ni un sistema habilitado para realizar campañas o difundir localizaciones precisas al margen de la normativa patrimonial vigente.
 
-Actualmente el proyecto completó la **Etapa 0** (manifiesto único reproducible y 7 estados formales de evidencia) y la **Etapa 1** (auditoría geoespacial, perfil de calidad de sensores y suite de 8 pruebas deterministas), y ofrece el **esquema del Benchmark Nacional V1** para construir su evaluación empírica junto a equipos académicos y organismos públicos.
+Actualmente el proyecto completó las **Etapas 0 a 3 en su fase de ingeniería local reproducible** (manifiesto único, auditoría de 8 pruebas deterministas, curaduría inicial de `133` registros en `BENCHMARK_V1_DATASET.json` con `blind_test: 0`, regla de abstención `INCONCLUSIVE` integrada al pipeline y módulo completo de anonimización/concordancia en [`src/core/blind_review.py`](../archaeo-lidar-mcp/src/core/blind_review.py)), y dispone del [Protocolo Pre-registrado para Etapas 4 y 5](PROTOCOLO_ETAPAS_4_Y_5.md) listo para iniciar la validación externa interinstitucional.
 
 ---
 
@@ -34,17 +34,19 @@ Actualmente el proyecto completó la **Etapa 0** (manifiesto único reproducible
 
 ## 3. Protocolo de Evaluación Ciega con Especialistas (Etapa 5)
 
-Inspirado en las recomendaciones de **Casana (2021)** y **Vinci et al. (2024)**, ningún especialista evaluador recibirá inicialmente el score ni la etiqueta sugerida por el módulo ML/VLM, evitando el sesgo de confirmación:
+El diseño muestral completo, los criterios de inclusión/exclusión multi-resolución (Etapa 4), el formulario estándar (`evaluator_sheet_template.csv`) y las condiciones formales de validez experimental se encuentran detallados y pre-registrados en el [Protocolo Científico Etapas 4 y 5](PROTOCOLO_ETAPAS_4_Y_5.md).
+
+Inspirado en las recomendaciones de **Casana (2021)** y **Vinci et al. (2024)**, ningún especialista evaluador recibirá el score, coordenadas ni la etiqueta sugerida por el módulo ML/VLM, evitando el sesgo de confirmación:
 
 1. **Muestra mixta anonimizada:** Se prepara un lote balanceado por bioma con:
    - Anomalías provenientes de sitios arqueológicos reales conocidos (a escala compatible con el sensor: `sensor_detectable=True`).
    - **Negativos difíciles** seleccionados (5 tipos naturales: `cauce_seco`, `carcava`, `terraza_fluvial`, `cono_deyeccion`, `afloramiento_rocoso`; 5 tipos modernos: `cantera`, `terraplen_moderno`, `camino_rural`, `obra_hidraulica`, `terraza_agricola_reciente`).
    - Candidatos inéditos preseleccionados en bloques de test ciego (`blind_test`).
 2. **Material entregado por ítem (ID opaco `BLIND-XXXX`):**
-   - Lámina visual multi-panel (Hillshade multi-direccional, SLRM, Perfil topográfico 2D, Vista 3D/Pendiente, Chip RGB satelital y Mapa NDVI/NDWI) **sin coordenadas geográficas visibles en la imagen** ni scores de IA.
-   - Metadatos físicos neutros: resolución nativa real (`DEMQualityProfile`), dimensiones métricas estimadas, relieve relativo (Δz) y bioma general.
-3. **Dictamen individual independiente (≥ 2–3 especialistas por lote):** Cada evaluador clasifica el ítem en una de las categorías formales (`EXPERT_REVIEWED` compatible con rasgo antrópico antiguo / `REJECTED_NATURAL` / `REJECTED_MODERN` / `INCONCLUSIVE`) indicando rasgos diagnósticos y confianza (1–5).
-4. **Cierre estadístico:** Se computa concordancia inter-evaluador ($\kappa$ de Fleiss/Cohen), recall operable sobre sitios detectables con IC 95 % de Wilson, falsos positivos por $\text{km}^2$ y matriz de confusión por tipo de negativo difícil.
+   - Lámina visual de 3 paneles (Hillshade multidireccional 1.5x, SLRM y perfil transversal E–O en relieve relativo Δz) con ejes métricos locales (`0..W m`, `0..H m`), **sin coordenadas geográficas, metadatos PNG/EXIF ni scores de IA** (verificada mediante `strip_png_metadata_and_verify()`).
+   - Metadatos físicos neutros: resolución nativa real (`DEMQualityProfile`), área estimada (`anomaly_area_m2`), relieve relativo (`relative_relief_m` / `relief_sign`) y bioma general.
+3. **Dictamen individual independiente (≥ 2–3 especialistas por lote):** Cada evaluador clasifica el ítem en la planilla `evaluator_sheet_template.csv` usando la taxonomía cerrada (`ARCHAEOLOGICAL_PLAUSIBLE` / `NATURAL_GEOFORM` / `MODERN_INFRASTRUCTURE` / `INCONCLUSIVE`), escala ordinal de plausibilidad (`1–4`), confianza (`1–5`) y rasgos diagnósticos.
+4. **Cierre estadístico:** Se computa concordancia inter-evaluador ($\kappa$ de Fleiss/Cohen y $\kappa$ ponderado lineal/cuadrático), recall operable sobre sitios detectables con IC 95 % de Wilson, falsos positivos por $\text{km}^2$ y matriz de confusión por tipo de negativo difícil.
 5. **Auditoría de desacuerdos:** Análisis cualitativo conjunto de casos donde el algoritmo falló o superó la inspección inicial, retroalimentando la Etapa 6 (terreno) y la Etapa 7 (versión V2.0).
 
 ---
@@ -53,7 +55,7 @@ Inspirado en las recomendaciones de **Casana (2021)** y **Vinci et al. (2024)**,
 
 El software incorpora salvaguardas técnicas alineadas con la **Ley Nacional N° 25.743** (especialmente **artículos 23 y 24**, relativos a la autorización de prospecciones, registro obligatorio ante la autoridad de aplicación y prevención de destrucción o tráfico ilícito):
 
-- **Aislamiento de coordenadas precisas:** Ningún archivo con polígonos exactos (`*ANEXO_CONFIDENCIAL_COORDENADAS.json`, `*MAPA_PROSPECCION_*.geojson`, `*MAPA_FINAL_PROSPECCION.geojson`) se versiona en el repositorio público (bloqueo explícito en `.gitignore`).
+- **Aislamiento de coordenadas precisas y claves ciegas:** Ningún archivo con polígonos exactos o correspondencia ciega (`*ANEXO_CONFIDENCIAL_COORDENADAS.json`, `*MAPA_PROSPECCION_*.geojson`, `*MAPA_FINAL_PROSPECCION.geojson`, `*CONFIDENTIAL_BLIND_KEY.json`) se versiona en el repositorio público (bloqueo explícito en `.gitignore`).
 - **Purga automática de descartes:** Al marcarse una anomalía como `NATURAL` o `ARTEFACTO`, `record_vlm_verdict()` elimina sus geometrías precisas de los mapas activos, conservando únicamente trazabilidad de auditoría y metadatos agregados.
 - **Separación estricta de estados:** Todo reporte o visualización de una anomalía detectada por software lleva el rótulo explícito `ALGORITHMIC_DETECTION` o `AI_PREASSESSMENT`, prohibiendo presentarla como hallazgo arqueológico confirmado.
 - **Regla de acceso diferenciado:**
