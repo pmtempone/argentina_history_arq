@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ArchaeoLiDAR-AR National Benchmark Schema v1.0",
+  "description": "Esquema oficial del Benchmark Nacional V1 (Etapa 2). Separa explícitamente sitios positivos confirmados de negativos difíciles geomorfológicos/modernos y exige bloqueo espacial tipo Roberts et al. (2017).",
+  "version": "1.0.0",
+  "governance_rules": {
+    "spatial_blocking": "Todos los registros con igual region_block_id deben residir en un único split (development | validation | blind_test) para evitar fuga por autocorrelación espacial.",
+    "sensor_detectability_floor": "Un sitio positivo solo es computable para recall del algoritmo cuando expected_feature_area_m2 >= 2 * dem_resolution_m^2 (sensor_detectable=true). En caso contrario se excluye del cálculo de recall y se reporta en excluded_undetectable_sites.",
+    "ley_25743_protection": "Este esquema NO almacena coordenadas geográficas precisas públicas; las geometrías exactas permanecen cifradas o bajo acceso restringido para investigadores acreditados (INAPL / CONICET)."
+  },
+  "hard_negative_taxonomy": {
+    "natural_geomorphic": [
+      "cauce_seco",
+      "carcava",
+      "terraza_fluvial",
+      "cono_deyeccion",
+      "afloramiento_rocoso"
+    ],
+    "modern_anthropic": [
+      "cantera",
+      "terraplen_moderno",
+      "camino_rural",
+      "obra_hidraulica",
+      "terraza_agricola_reciente"
+    ]
+  },
+  "type": "object",
+  "required": [
+    "entry_id",
+    "region_block_id",
+    "biome",
+    "is_positive_site",
+    "dem_resolution_m",
+    "expected_feature_area_m2"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "entry_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "region_block_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unidad geográfica contigua de partición espacial."
+    },
+    "biome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "is_positive_site": {
+      "type": "boolean"
+    },
+    "archaeo_confirmed": {
+      "type": "boolean",
+      "default": false
+    },
+    "sensor_detectable": {
+      "type": ["boolean", "null"],
+      "description": "Calculado automáticamente si se omite: expected_feature_area_m2 >= 2 * dem_resolution_m^2."
+    },
+    "negative_category": {
+      "type": ["string", "null"],
+      "enum": [
+        "cauce_seco",
+        "carcava",
+        "terraza_fluvial",
+        "cono_deyeccion",
+        "afloramiento_rocoso",
+        "cantera",
+        "terraplen_moderno",
+        "camino_rural",
+        "obra_hidraulica",
+        "terraza_agricola_reciente",
+        null
+      ]
+    },
+    "dem_resolution_m": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "expected_feature_area_m2": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "split": {
+      "type": ["string", "null"],
+      "enum": ["development", "validation", "blind_test", null]
+    },
+    "notes": {
+      "type": ["string", "null"]
+    }
+  }
+}

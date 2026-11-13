@@ -1,0 +1,307 @@
+"""Tests unitarios para Etapa 0 (estados de evidencia) y Etapas 2/3 (Benchmark Nacional V1)."""
+
+from pathlib import Path
+import sys
+
+import pytest
+from pydantic import ValidationError
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from src.core.baseline_manifest import map_verdict_to_lifecycle_state
+from src.core.benchmark_v1 import (
+    BenchmarkEntry,
+    assign_spatial_block_splits,
+    compute_benchmark_metrics,
+    should_abstain_prediction,
+)
+from src.core.dem_quality import DEMQualityProfile
+
+
+def _make_profile(
+    native_resolution_m: float = 1.0,
+    has_synthetic_fallback_tag: bool = False,
+    void_fraction: float = 0.0,
+) -> DEMQualityProfile:
+    tier = (
+        "SYNTHETIC_UNSUITABLE"
+        if has_synthetic_fallback_tag
+        else ("HIGH_SUBMETRIC" if native_resolution_m <= 1.0 else "LOW_REGIONAL_30M")
+    )
+    return DEMQualityProfile(
+        raster_path="/tmp/dummy.tif",
+        provider_used="test_provider",
+        model_type="DTM",
+        crs_epsg=5345,
+        grid_resolution_m=native_resolution_m,
+        native_resolution_m=native_resolution_m,
+        estimated_vertical_precision_m=0.10 if native_resolution_m <= 1.0 else 2.0,
+        width_px=256,
+        height_px=256,
+        coverage_pct=round((1.0 - void_fraction) * 100.0, 2),
+        void_fraction=void_fraction,
+        border_nodata_fraction=0.0,
+        has_synthetic_fallback_tag=has_synthetic_fallback_tag,
+        min_detectable_area_m2=round(2.0 * (native_resolution_m ** 2), 2),
+        suitable_for_microtopography=bool(not has_synthetic_fallback_tag and native_resolution_m <= 5.0),
+        confidence_tier=tier,
+        limitations_note="Perfil sintético de prueba.",
+    )
+
+
+def test_benchmark_entry_validation_and_sensor_detectable():
+    """Valida reglas físicas de detectabilidad y obligatoriedad de categoría en negativos."""
+    # Sitio de 100 m² en DEM global 30 m (piso = 1800 m²) -> no detectable por el sensor
+    low_res_site = BenchmarkEntry(
+        entry_id="POS_WALL_30M",
+        region_block_id="BLK_TASTIL_N",
+        biome="prepuna",
+        is_positive_site=True,
+        archaeo_confirmed=True,
+        dem_resolution_m=30.0,
+        expected_feature_area_m2=100.0,
+    )
+    assert low_res_site.sensor_detectable is False
+
+    # Misma estructura de 100 m² en DEM UAV 1 m (piso = 2 m²) -> sí detectable
+    uav_site = BenchmarkEntry(
+        entry_id="POS_WALL_1M",
+        region_block_id="BLK_TASTIL_N",
+        biome="prepuna",
+        is_positive_site=True,
+        archaeo_confirmed=True,
+        dem_resolution_m=1.0,
+        expected_feature_area_m2=100.0,
+    )
+    assert uav_site.sensor_detectable is True
+
+    # Negativo difícil válido
+    hard_neg = BenchmarkEntry(
+        entry_id="NEG_CAUCE_01",
+        region_block_id="BLK_TASTIL_S",
+        biome="prepuna",
+        is_positive_site=False,
+        negative_category="cauce_seco",
+        dem_resolution_m=1.0,
+        expected_feature_area_m2=240.0,
+    )
+    assert hard_neg.negative_category == "cauce_seco"
+
+    # Negativo sin categoría debe fallar
+    with pytest.raises(ValidationError):
+        BenchmarkEntry(
+            entry_id="NEG_SIN_CAT",
+            region_block_id="BLK_X",
+            biome="puna",
+            is_positive_site=False,
+            dem_resolution_m=1.0,
+            expected_feature_area_m2=50.0,
+        )
+
+    # Positivo con negative_category debe fallar
+    with pytest.raises(ValidationError):
+        BenchmarkEntry(
+            entry_id="POS_INVALID_CAT",
+            region_block_id="BLK_X",
+            biome="puna",
+            is_positive_site=True,
+            negative_category="cantera",
+            dem_resolution_m=1.0,
+            expected_feature_area_m2=50.0,
+        )
+
+
+def test_spatial_block_splits_no_leakage():
+    """Roberts et al. (2017): ninguna unidad region_block_id puede dividirse entre splits."""
+    entries = []
+    block_defs = [
+        ("BLK_QUEBRADA_A", "prepuna", 6),
+        ("BLK_QUEBRADA_B", "prepuna", 4),
+        ("BLK_YUNGAS_A", "yungas", 5),
+        ("BLK_PATAGONIA_A", "estepa", 3),
+        ("BLK_PATAGONIA_B", "estepa", 3),
+        ("BLK_LITORAL_A", "humedal", 4),
+    ]
+    idx = 0
+    for blk_id, biome, n_items in block_defs:
+        for k in range(n_items):
+            idx += 1
+            is_pos = k % 2 == 0
+            entries.append(
+                BenchmarkEntry(
+                    entry_id=f"ENT_{idx:03d}",
+                    region_block_id=blk_id,
+                    biome=biome,
+                    is_positive_site=is_pos,
+                    archaeo_confirmed=is_pos,
+                    negative_category=None if is_pos else "carcava",
+                    dem_resolution_m=1.0,
+                    expected_feature_area_m2=80.0,
+                )
+            )
+
+    split_run_1 = assign_spatial_block_splits(entries)
+    split_run_2 = assign_spatial_block_splits(entries)
+
+    # Determinismo exacto entre corridas
+    assert [e.split for e in split_run_1] == [e.split for e in split_run_2]
+
+    # Cobertura de los 3 splits
+    all_splits = {e.split for e in split_run_1}
+    assert all_splits == {"development", "validation", "blind_test"}
+
+    # Cero fuga por bloque espacial: cada region_block_id pertenece a un único split
+    block_splits = {}
+    for e in split_run_1:
+        block_splits.setdefault(e.region_block_id, set()).add(e.split)
+    assert all(len(s) == 1 for s in block_splits.values())
+
+
+def test_abstention_rules():
+    """Verifica las reglas formales de abstención por escala, fallback sintético, vacíos y banda incierta."""
+    # 1. DEM sintético -> abstención obligatoria
+    abstain_syn, reason_syn = should_abstain_prediction(
+        _make_profile(native_resolution_m=1.0, has_synthetic_fallback_tag=True),
+        target_area_m2=150.0,
+        calibrated_prob=0.95,
+    )
+    assert abstain_syn is True
+    assert "INSUFFICIENT_SENSOR_DATA" in reason_syn
+
+    # 2. DEM 30 m con estructura de 200 m² (< piso 1800 m²) -> abstención por escala
+    abstain_scale, reason_scale = should_abstain_prediction(
+        _make_profile(native_resolution_m=30.0),
+        target_area_m2=200.0,
+        calibrated_prob=0.90,
+    )
+    assert abstain_scale is True
+    assert "BELOW_SENSOR_SCALE" in reason_scale
+
+    # 3. Exceso de vacíos NoData > 25% -> abstención
+    abstain_void, reason_void = should_abstain_prediction(
+        _make_profile(native_resolution_m=1.0, void_fraction=0.35),
+        target_area_m2=100.0,
+        calibrated_prob=0.92,
+    )
+    assert abstain_void is True
+    assert "EXCESSIVE_VOIDS" in reason_void
+
+    # 4. Probabilidad dentro de banda ambigua [0.35, 0.65] -> abstención
+    abstain_band, reason_band = should_abstain_prediction(
+        _make_profile(native_resolution_m=1.0),
+        target_area_m2=100.0,
+        calibrated_prob=0.52,
+    )
+    assert abstain_band is True
+    assert "UNCERTAIN_CALIBRATION_BAND" in reason_band
+
+    # 5. Sensor adecuado y probabilidad alta -> decisión firme permitida
+    abstain_ok, reason_ok = should_abstain_prediction(
+        _make_profile(native_resolution_m=1.0),
+        target_area_m2=100.0,
+        calibrated_prob=0.92,
+    )
+    assert abstain_ok is False
+    assert reason_ok == "CONFIDENT_DECISION"
+
+
+def test_benchmark_metrics_excludes_undetectable_sites_and_computes_field_metrics():
+    """Excluye sitios no detectables del denominador de recall y computa métricas de campaña."""
+    evaluations = [
+        # 2 TP detectados en prepuna
+        {
+            "is_positive_site": True,
+            "sensor_detectable": True,
+            "detected": True,
+            "score": 0.92,
+            "biome": "prepuna",
+            "centroid_distance_m": 2.5,
+            "spatial_iou": 0.75,
+        },
+        {
+            "is_positive_site": True,
+            "sensor_detectable": True,
+            "detected": True,
+            "score": 0.85,
+            "biome": "estepa",
+            "centroid_distance_m": 4.5,
+            "spatial_iou": 0.65,
+        },
+        # 1 FN detectable perdido en prepuna
+        {
+            "is_positive_site": True,
+            "sensor_detectable": True,
+            "detected": False,
+            "score": 0.25,
+            "biome": "prepuna",
+        },
+        # 1 sitio sub-píxel (no detectable por el sensor) -> NO debe bajar el recall computable
+        {
+            "is_positive_site": True,
+            "sensor_detectable": False,
+            "detected": False,
+            "score": 0.05,
+            "biome": "yungas",
+        },
+        # 1 FP difícil (cantera) y 2 TN correctos
+        {
+            "is_positive_site": False,
+            "detected": True,
+            "score": 0.80,
+            "biome": "estepa",
+        },
+        {
+            "is_positive_site": False,
+            "detected": False,
+            "score": 0.15,
+            "biome": "prepuna",
+        },
+        {
+            "is_positive_site": False,
+            "detected": False,
+            "score": 0.10,
+            "biome": "estepa",
+        },
+    ]
+
+    metrics = compute_benchmark_metrics(evaluations, scanned_area_km2=4.0, k_values=(2, 5))
+
+    assert metrics["excluded_undetectable_sites"] == 1
+    assert metrics["tp"] == 2
+    assert metrics["fn"] == 1
+    assert metrics["fp"] == 1
+    assert metrics["tn"] == 2
+    assert metrics["site_recall"] == pytest.approx(2 / 3, abs=1e-4)
+    lo, hi = metrics["site_recall_ci95"]
+    assert 0.0 <= lo < metrics["site_recall"] < hi <= 1.0
+    assert metrics["false_positives_per_km2"] == pytest.approx(0.25, abs=1e-4)
+    # Top 2 ordenados por score: 0.92 (Pos), 0.85 (Pos) -> Precision@2 = 1.0
+    assert metrics["precision_at_k"][2] == 1.0
+    # Top 5: 2 Pos + 1 Neg (0.80) + 1 Pos (0.25) + 1 Neg (0.15) -> 3/5 = 0.6
+    assert metrics["precision_at_k"][5] == pytest.approx(0.6, abs=1e-4)
+    assert metrics["mean_centroid_distance_m"] == pytest.approx(3.5, abs=1e-4)
+    assert metrics["mean_spatial_iou"] == pytest.approx(0.70, abs=1e-4)
+    assert metrics["pr_auc"] is not None
+    assert 0.0 <= metrics["brier_score"] <= 1.0
+    assert "prepuna" in metrics["by_biome"]
+    assert "estepa" in metrics["by_biome"]
+    assert "yungas" not in metrics["by_biome"]  # único sitio en yungas era no detectable
+
+
+def test_lifecycle_state_mapping_separates_algorithm_from_archaeology():
+    """Un veredicto de IA nunca se promueve automáticamente a EXPERT_REVIEWED ni FIELD_CONFIRMED."""
+    assert map_verdict_to_lifecycle_state(None) == "ALGORITHMIC_DETECTION"
+    assert map_verdict_to_lifecycle_state("ANTROPICA") == "AI_PREASSESSMENT"
+    assert map_verdict_to_lifecycle_state("PENDIENTE_REVISION") == "AI_PREASSESSMENT"
+    assert map_verdict_to_lifecycle_state("NATURAL") == "REJECTED_NATURAL"
+    assert map_verdict_to_lifecycle_state("ARTEFACTO") == "REJECTED_MODERN"
+    assert map_verdict_to_lifecycle_state("DUDOSO") == "INCONCLUSIVE"
+    # Revisión experta explícita requerida para EXPERT_REVIEWED
+    assert map_verdict_to_lifecycle_state("ANTROPICA", expert_reviewed=True) == "EXPERT_REVIEWED"
+    # Confirmación de campo explícita requerida para FIELD_CONFIRMED
+    assert (
+        map_verdict_to_lifecycle_state("ANTROPICA", expert_reviewed=True, field_confirmed=True)
+        == "FIELD_CONFIRMED"
+    )
