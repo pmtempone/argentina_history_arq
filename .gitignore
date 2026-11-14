@@ -68,3 +68,6 @@ scratch/
 tmp/
 *.tmp
 *.log
+
+# Local MCP client configs (contain machine-specific paths)
+opencode.json
