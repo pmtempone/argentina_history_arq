@@ -435,96 +435,6 @@
         "backend": "mcp_host:ArchaeoSeniorCONICET"
       }
     },
-    "ARQ-HR-0001": {
-      "anomaly_type": "recinto_ortogonal",
-      "area_m2": 11.28,
-      "mean_elevation_m": 1.808,
-      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0001_composite.png",
-      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0001.md",
-      "vlm_verdict": {
-        "verdict": "NATURAL",
-        "certainty_pct": 94,
-        "functional_interpretation": "Bloque errático / promontorio rocoso aislado (tor) en afloramiento sub-métrico",
-        "geomorphological_justification": "En la resolución nativa de 0.50 m/px (UAV DTM), la anomalía de 11.28 m² exhibe en el perfil 2D y en el modelo 3D de Blender un domo convexo único de +3.2 m de altura sin cavidad central ni mampostería perimetral (perfil en U invertida aguda, no en M). Corresponde a un bloque o mogote rocoso natural del afloramiento.",
-        "field_inspection_recommended": false,
-        "backend": "mcp-host-agent"
-      }
-    },
-    "ARQ-HR-0002": {
-      "anomaly_type": "recinto_ortogonal",
-      "area_m2": 6.1,
-      "mean_elevation_m": 1.456,
-      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0002_composite.png",
-      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0002.md",
-      "vlm_verdict": {
-        "verdict": "NATURAL",
-        "certainty_pct": 93,
-        "functional_interpretation": "Rugosidad natural de lecho rocoso fracturado (diaclasado sub-métrico)",
-        "geomorphological_justification": "El SLRM a 0.50 m/px y el render 3D volumétrico muestran micro-ondulaciones estocásticas de baja amplitud (0.20 a 0.40 m) propias de la meteorización diferencial y diaclasado del sustrato rocoso, sin alineación rectilínea ni cierre arquitectónico.",
-        "field_inspection_recommended": false,
-        "backend": "mcp-host-agent"
-      }
-    },
-    "ARQ-HR-0003": {
-      "anomaly_type": "estructura_circular",
-      "area_m2": 7.12,
-      "mean_elevation_m": 1.419,
-      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0003_composite.png",
-      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0003.md",
-      "vlm_verdict": {
-        "verdict": "NATURAL",
-        "certainty_pct": 89,
-        "functional_interpretation": "Afloramiento sub-anular / cresta de erosión diferencial en roca madre",
-        "geomorphological_justification": "Aunque el perfil 2D presenta una leve depresión interna entre los metros 9 y 13 y el render 3D muestra una morfología sub-circular, el espesor de los flancos (3-4 m) y su continuidad directa con los bancos diaclasados adyacentes indican una geoforma de erosión diferencial en el afloramiento rocoso más que un muro pircado exento.",
-        "field_inspection_recommended": false,
-        "backend": "mcp-host-agent"
-      }
-    },
-    "ARQ-HR-0004": {
-      "anomaly_type": "estructura_circular",
-      "area_m2": 27.62,
-      "mean_elevation_m": 1.051,
-      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0004_composite.png",
-      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0004.md",
-      "vlm_verdict": {
-        "verdict": "NATURAL",
-        "certainty_pct": 91,
-        "functional_interpretation": "Lomada rocosa con micro-fracturación superficial en abanico/afloramiento",
-        "geomorphological_justification": "El perfil 2D exhibe un dorso elevado de ~8 m de ancho con micro-crestas irregulares (+0.7 a +0.98 m) y el modelo 3D térmico confirma un relieve rugoso continuo de roca expuesta sin muros de pirca delimitados.",
-        "field_inspection_recommended": false,
-        "backend": "mcp-host-agent"
-      }
-    },
-    "ARQ-HR-0005": {
-      "anomaly_type": "terraza_lineal",
-      "area_m2": 49.19,
-      "mean_elevation_m": 1.18,
-      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0005_composite.png",
-      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0005.md",
-      "vlm_verdict": {
-        "verdict": "NATURAL",
-        "certainty_pct": 96,
-        "functional_interpretation": "Escarpa de falla / banco estratigráfico sub-vertical expuesto (rumbo NE-SW)",
-        "geomorphological_justification": "Tanto el Hillshade 1.5x como el modelo 3D térmico de Blender revelan con nitidez sub-métrica un escalón estructural y escarpa de falla natural con rumbo NE-SW y caída abrupta de > 2 m hacia el SE, coincidente con el objetivo geológico del relevamiento UAV de rupturas superficiales.",
-        "field_inspection_recommended": false,
-        "backend": "mcp-host-agent"
-      }
-    },
-    "ARQ-HR-0006": {
-      "anomaly_type": "terraza_lineal",
-      "area_m2": 531.13,
-      "mean_elevation_m": 1.017,
-      "composite_image_path": "data/processed/highres_san_juan_uav_ARQ-HR-0006_composite.png",
-      "dossier_path": "data/reports/DOSSIER_INAPL_ARQ-HR-0006.md",
-      "vlm_verdict": {
-        "verdict": "NATURAL",
-        "certainty_pct": 95,
-        "functional_interpretation": "Traza principal de ruptura superficial / dique o cresta estructural rectilínea con trinchera paralela",
-        "geomorphological_justification": "El modelo 3D isométrico a 0.50 m/px captura una cresta rectilínea continua de > 90 m de longitud acompañada por un surco profundo en su flanco NW. Si bien su geometría es altamente lineal (531 m²), su escala y continuidad a través del drenaje corresponden a una estructura tectónica/litológica (escarpa de falla o filón resistente) o traza vial/trinchera geológica.",
-        "field_inspection_recommended": false,
-        "backend": "mcp-host-agent"
-      }
-    },
     "ARQ-TOL-0001": {
       "anomaly_type": "recinto_ortogonal",
       "area_m2": 977.94,
@@ -1891,5 +1801,6 @@
       }
     }
   },
-  "updated_at_utc": "2026-11-12T23:30:06Z"
+  "updated_at_utc": "2026-11-12T23:30:06Z",
+  "cleaned_note": "Entradas ARQ-HR-0001..0006 purgadas: datos de ZENODO:18023344 corresponden a la falla San Juan, Cascadia (Canadá), no a Argentina. Limpieza 2026-11-14."
 }
