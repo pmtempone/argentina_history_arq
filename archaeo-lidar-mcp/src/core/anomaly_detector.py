@@ -427,6 +427,22 @@ def detect_anomalies(
         in_complex = i in cluster_assignments
         neighbors_ids = [raw_candidates[n]["id"] for n in cluster_assignments.get(i, []) if n != i]
 
+        # Evidencia observable estructurada (Etapa 1.3: separar saliencia geométrica de probabilidad arqueológica)
+        observable_evidence: Dict[str, Any] = {
+            "geometry_descriptors": {
+                "rectangularity": round(float(cand["rectangularity"]), 3),
+                "circularity": round(float(cand["circularity"]), 3),
+                "aspect_ratio": round(float(cand["aspect_ratio"]), 3),
+            },
+            "dimensions_m2": round(float(cand["area_m2"]), 2),
+            "relative_relief_m": round(float(cand["mean_elevation_m"]), 3),
+            "relief_sign": "positive" if cand["relief_sign"] == "positivo" else "negative",
+            "min_area_effective_m2": round(float(min_area_effective), 2),
+            "physical_floor_applied": bool(min_area_effective > min_area),
+            "pixel_area_m2": round(float(pixel_area_m2), 4),
+            "score_interpretation": "geometric_topographic_salience_not_archaeological_probability",
+        }
+
         # Validar mediante el esquema Pydantic AnomalyFeature
         validated_feat = AnomalyFeature(
             id=cand["id"],
@@ -438,6 +454,9 @@ def detect_anomalies(
             mean_elevation_m=cand["mean_elevation_m"],
             centroid_wgs84=cand["centroid_wgs84"],
             geometry_geojson=cand["geometry_geojson"],
+            anomaly_family="POTENTIAL_ANTHROPOGENIC",
+            lifecycle_state="ALGORITHMIC_DETECTION",
+            observable_evidence=observable_evidence,
         )
 
         feature_dict: Dict[str, Any] = {
@@ -447,6 +466,8 @@ def detect_anomalies(
             "properties": {
                 "id": validated_feat.id,
                 "anomaly_type": validated_feat.anomaly_type,
+                "anomaly_family": validated_feat.anomaly_family,
+                "lifecycle_state": validated_feat.lifecycle_state,
                 "relief_sign": cand["relief_sign"],
                 "confidence": validated_feat.confidence,
                 "area_m2": validated_feat.area_m2,
@@ -458,6 +479,7 @@ def detect_anomalies(
                 "is_architectural_complex": in_complex,
                 "complex_group_type": "complejo_agrupado" if in_complex else validated_feat.anomaly_type,
                 "cluster_neighbors": neighbors_ids,
+                "observable_evidence": validated_feat.observable_evidence,
             },
         }
         features.append(feature_dict)

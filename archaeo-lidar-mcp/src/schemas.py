@@ -19,6 +19,22 @@ ClassificationLiteral = Literal[
     "FALSO_POSITIVO_MODERNO",
 ]
 
+CandidateLifecycleState = Literal[
+    "ALGORITHMIC_DETECTION",
+    "AI_PREASSESSMENT",
+    "EXPERT_REVIEWED",
+    "FIELD_CONFIRMED",
+    "REJECTED_NATURAL",
+    "REJECTED_MODERN",
+    "INCONCLUSIVE",
+]
+
+AnomalyFamilyLiteral = Literal[
+    "POTENTIAL_ANTHROPOGENIC",
+    "GEOMORPHOLOGICAL",
+    "MODERN",
+]
+
 
 class DTMResult(BaseModel):
     """Resultado de la generación del Modelo Digital del Terreno (DTM) a partir de LiDAR."""
@@ -46,6 +62,22 @@ class ReliefResult(BaseModel):
     stats_dict: Dict[str, float] = Field(
         ...,
         description="Estadísticas descriptivas de los modelos generados (min, max, mean, std).",
+    )
+    svf_path: Optional[str] = Field(
+        default=None,
+        description="Ruta opcional al GeoTIFF Float32 de Sky-View Factor (SVF).",
+    )
+    pos_openness_path: Optional[str] = Field(
+        default=None,
+        description="Ruta opcional al GeoTIFF Float32 de Positive Openness (grados).",
+    )
+    neg_openness_path: Optional[str] = Field(
+        default=None,
+        description="Ruta opcional al GeoTIFF Float32 de Negative Openness (grados).",
+    )
+    params_json_path: Optional[str] = Field(
+        default=None,
+        description="Ruta opcional al sidecar JSON con parámetros exactos de procesamiento.",
     )
 
 
@@ -78,6 +110,18 @@ class AnomalyFeature(BaseModel):
     )
     geometry_geojson: Dict[str, Any] = Field(
         ..., description="Geometría GeoJSON del polígono reproyectada a EPSG:4326."
+    )
+    anomaly_family: AnomalyFamilyLiteral = Field(
+        default="POTENTIAL_ANTHROPOGENIC",
+        description="Familia morfológica de origen: POTENTIAL_ANTHROPOGENIC, GEOMORPHOLOGICAL o MODERN.",
+    )
+    lifecycle_state: CandidateLifecycleState = Field(
+        default="ALGORITHMIC_DETECTION",
+        description="Estado formal del candidato en el ciclo de validación científica.",
+    )
+    observable_evidence: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Evidencia observable estructurada (geometría, dimensiones, relieve relativo, pendiente, piso físico).",
     )
 
 

@@ -1,0 +1,603 @@
+{
+  "schema_version": "baseline-v1.0",
+  "generated_at_utc": "2026-11-13T23:42:49Z",
+  "code_provenance": {
+    "git_commit": "0b0ffbd",
+    "git_tag": "untagged"
+  },
+  "runtime_config": {
+    "dem_provider": "auto",
+    "dem_fallback_chain": [
+      "ign_wcs",
+      "fabdem",
+      "copernicus_aws",
+      "planetary_stac"
+    ],
+    "optical_provider": "sentinel2_stac",
+    "max_master_side_px": 4096,
+    "max_optical_chip_px": 512,
+    "optical_buffer_m": 150.0
+  },
+  "summary": {
+    "catalog_zones_count": 30,
+    "discarded_total": 126,
+    "active_final_map_count": 0,
+    "geoforms_inventory_count": 86,
+    "lifecycle_state_counts": {
+      "ALGORITHMIC_DETECTION": 0,
+      "AI_PREASSESSMENT": 0,
+      "EXPERT_REVIEWED": 0,
+      "FIELD_CONFIRMED": 0,
+      "REJECTED_NATURAL": 103,
+      "REJECTED_MODERN": 23,
+      "INCONCLUSIVE": 0
+    }
+  },
+  "claims_registry": {
+    "supported_claims": [
+      "Ingesta geodésica reproducible por bloques HTTP Range Request y reproyección automática a POSGAR 2007 (EPSG:5343–5349).",
+      "Detección algorítmica de anomalías microtopográficas positivas y negativas mediante SLRM NaN-safe, Pendiente, SVF/Openness y segmentación morfométrica con piso físico de 2 píxeles nativos.",
+      "Filtrado multifuente contra catastro público (IGN WFS, OpenStreetMap Overpass) y catálogo de sitios publicados (±100 m).",
+      "Inspección visual multimodal de hasta 6 paneles (DTM/SLRM/Perfil/Blender 3D + Sentinel-2 RGB/NDVI) y trazabilidad forense de descartes e inventario geomorfológico.",
+      "Resguardo estricto de coordenadas sensibles conforme a la Ley Nacional N° 25.743 (ANEXO confidencial y exclusión GeoJSON en Git)."
+    ],
+    "unsupported_claims": [
+      "Descubrimiento automático o confirmación de sitios arqueológicos sin inspección de campo autorizada y dictamen de especialista.",
+      "Detección de muros finos, casas-pozo o micro-estructuras (< ~1800 m²) sobre DEM satelitales globales de 30 m/px.",
+      "Interpretación directa del score morfológico o ML como probabilidad arqueológica calibrada sin benchmark real independiente ni evaluación en terreno.",
+      "Detección automática de saqueo (huaqueo) como acusación legal autónoma sin verificación técnica e institucional competente."
+    ]
+  },
+  "zones": [
+    {
+      "zone_key": "ZONA_1_TASTIL",
+      "name": "Santa Rosa de Tastil / Quebrada del Toro (Salta)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_2_YOCAVIL",
+      "name": "Valle de Yocavil / Santa María / Quilmes (Catamarca - Tucumán)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_3_TINOGASTA",
+      "name": "Región de Tinogasta / Fiambalá / Watungasta (Catamarca)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_4_TOLOMBON",
+      "name": "Ruinas de Tolombón / Valle Calchaquí Sur (Salta)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_5_LAPAYA",
+      "name": "La Paya / Cachi Adentro (Salta)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_6_TILCARA",
+      "name": "Pucará de Tilcara y Quebrada de Juella (Jujuy)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_7_ACONQUIJA",
+      "name": "Pucará de Aconquija / Las Pircas (Catamarca - Tucumán)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_8_SHINCAL",
+      "name": "El Shincal de Quimivil (Londres - Catamarca)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_9_ALUMBRERA",
+      "name": "Pucará de La Alumbrera / Antofagasta de la Sierra (Catamarca)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_10_RINCONADA",
+      "name": "Pucará de Rinconada (Puna de Jujuy)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_11_LACUEVA",
+      "name": "Pueblo Viejo de La Cueva (Humahuaca - Jujuy)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_12_USPALLATA",
+      "name": "Tambo de Ranchillos y Tambillo (Uspallata - Mendoza)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_13_SOMUNCURA",
+      "name": "Meseta de Somuncurá / Chenques y Parapetos (Río Negro)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_14_LLULLAILLACO",
+      "name": "Santuario de Altura Volcán Llullaillaco (6.739 m s.n.m. - Salta)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_15_VOLCAN_GALAN",
+      "name": "Caldera del Volcán Galán y Laguna Diamante (4.600 m s.n.m. - Catamarca)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_16_LAGO_BUENOS_AIRES",
+      "name": "Meseta del Lago Buenos Aires / Parapetos de Caza y Chenques (Santa Cruz)",
+      "biome": null,
+      "bbox_wgs84": [],
+      "epsg_posgar2007": null,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": null,
+        "min_area_m2": null,
+        "max_area_m2": null,
+        "min_dz_m": null,
+        "max_slope_deg": null
+      }
+    },
+    {
+      "zone_key": "ZONA_17_CHANI",
+      "name": "Santuario de Altura del Nevado de Chañi (Jujuy / Salta - 5.896 m)",
+      "biome": "alta_montana",
+      "bbox_wgs84": [
+        -65.78,
+        -24.08,
+        -65.72,
+        -24.02
+      ],
+      "epsg_posgar2007": 5345,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 12.0,
+        "min_area_m2": 15.0,
+        "max_area_m2": 1500.0,
+        "min_dz_m": 0.3,
+        "max_slope_deg": 32.0
+      }
+    },
+    {
+      "zone_key": "ZONA_18_FAMATINA",
+      "name": "Cerro Famatina / La Mejicana (La Rioja)",
+      "biome": "alta_montana",
+      "bbox_wgs84": [
+        -67.85,
+        -29.05,
+        -67.78,
+        -28.98
+      ],
+      "epsg_posgar2007": 5344,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 12.0,
+        "min_area_m2": 15.0,
+        "max_area_m2": 2000.0,
+        "min_dz_m": 0.3,
+        "max_slope_deg": 32.0
+      }
+    },
+    {
+      "zone_key": "ZONA_19_ACHALA",
+      "name": "Pampa de Achala / Comechingones (Córdoba)",
+      "biome": "sierras_centrales",
+      "bbox_wgs84": [
+        -64.96,
+        -31.98,
+        -64.9,
+        -31.92
+      ],
+      "epsg_posgar2007": 5345,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 10.0,
+        "min_area_m2": 12.0,
+        "max_area_m2": 800.0,
+        "min_dz_m": 0.2,
+        "max_slope_deg": 25.0
+      }
+    },
+    {
+      "zone_key": "ZONA_29_SIERRA_DE_MANCHAO",
+      "name": "Sierra de Manchao / Pocho (Córdoba)",
+      "biome": "sierras_centrales",
+      "bbox_wgs84": [
+        -66.435,
+        -28.335,
+        -66.365,
+        -28.265
+      ],
+      "epsg_posgar2007": 5345,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 10.0,
+        "min_area_m2": 12.0,
+        "max_area_m2": 800.0,
+        "min_dz_m": 0.2,
+        "max_slope_deg": 25.0
+      }
+    },
+    {
+      "zone_key": "ZONA_32_TAFI_DEL_VALLE",
+      "name": "Tafí del Valle / El Mollar (Tucumán)",
+      "biome": "sierras_centrales",
+      "bbox_wgs84": [
+        -65.745,
+        -26.895,
+        -65.675,
+        -26.825
+      ],
+      "epsg_posgar2007": 5345,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 15.0,
+        "min_area_m2": 20.0,
+        "max_area_m2": 4000.0,
+        "min_dz_m": 0.25,
+        "max_slope_deg": 25.0
+      }
+    },
+    {
+      "zone_key": "ZONA_20_VALLE_GRANDE",
+      "name": "Yungas de Valle Grande / Santa Ana (Jujuy)",
+      "biome": "yungas_selva",
+      "bbox_wgs84": [
+        -65.02,
+        -23.42,
+        -64.95,
+        -23.35
+      ],
+      "epsg_posgar2007": 5345,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "fabdem",
+      "algorithm_params": {
+        "slrm_radius_m": 15.0,
+        "min_area_m2": 40.0,
+        "max_area_m2": 4000.0,
+        "min_dz_m": 0.4,
+        "max_slope_deg": 35.0
+      }
+    },
+    {
+      "zone_key": "ZONA_21_CIUDACITA",
+      "name": "Faldeo Oriental del Aconquija / Pueblo Viejo (Tucumán)",
+      "biome": "yungas_montana",
+      "bbox_wgs84": [
+        -65.98,
+        -27.25,
+        -65.91,
+        -27.18
+      ],
+      "epsg_posgar2007": 5345,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "fabdem",
+      "algorithm_params": {
+        "slrm_radius_m": 15.0,
+        "min_area_m2": 30.0,
+        "max_area_m2": 5000.0,
+        "min_dz_m": 0.35,
+        "max_slope_deg": 35.0
+      }
+    },
+    {
+      "zone_key": "ZONA_22_TEYU_CUARE",
+      "name": "Peñón del Teyú Cuaré / San Ignacio (Misiones)",
+      "biome": "selva_paranaense",
+      "bbox_wgs84": [
+        -55.6,
+        -27.3,
+        -55.53,
+        -27.24
+      ],
+      "epsg_posgar2007": 5347,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "fabdem",
+      "algorithm_params": {
+        "slrm_radius_m": 20.0,
+        "min_area_m2": 50.0,
+        "max_area_m2": 6000.0,
+        "min_dz_m": 0.3,
+        "max_slope_deg": 25.0
+      }
+    },
+    {
+      "zone_key": "ZONA_23_DELTA_PARANA",
+      "name": "Delta Superior del Paraná / Victoria (Entre Ríos)",
+      "biome": "humedal_llanura",
+      "bbox_wgs84": [
+        -60.25,
+        -32.75,
+        -60.18,
+        -32.68
+      ],
+      "epsg_posgar2007": 5346,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "fabdem",
+      "algorithm_params": {
+        "slrm_radius_m": 40.0,
+        "min_area_m2": 200.0,
+        "max_area_m2": 9000.0,
+        "min_dz_m": 0.35,
+        "max_slope_deg": 8.0
+      }
+    },
+    {
+      "zone_key": "ZONA_24_IBERA",
+      "name": "Esteros del Iberá / Lomadas Fluviales (Corrientes)",
+      "biome": "humedal_llanura",
+      "bbox_wgs84": [
+        -57.25,
+        -28.55,
+        -57.18,
+        -28.48
+      ],
+      "epsg_posgar2007": 5346,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "fabdem",
+      "algorithm_params": {
+        "slrm_radius_m": 40.0,
+        "min_area_m2": 200.0,
+        "max_area_m2": 8000.0,
+        "min_dz_m": 0.3,
+        "max_slope_deg": 8.0
+      }
+    },
+    {
+      "zone_key": "ZONA_25_ANSENUZA",
+      "name": "Laguna Mar Chiquita / Desembocadura Río Dulce (Córdoba)",
+      "biome": "humedal_llanura",
+      "bbox_wgs84": [
+        -62.75,
+        -30.95,
+        -62.68,
+        -30.88
+      ],
+      "epsg_posgar2007": 5345,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "fabdem",
+      "algorithm_params": {
+        "slrm_radius_m": 35.0,
+        "min_area_m2": 150.0,
+        "max_area_m2": 6000.0,
+        "min_dz_m": 0.25,
+        "max_slope_deg": 10.0
+      }
+    },
+    {
+      "zone_key": "ZONA_26_STROBEL",
+      "name": "Meseta del Lago Strobel / Cardiel (Santa Cruz)",
+      "biome": "meseta_patagonica",
+      "bbox_wgs84": [
+        -71.25,
+        -48.48,
+        -71.15,
+        -48.4
+      ],
+      "epsg_posgar2007": 5343,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 8.0,
+        "min_area_m2": 6.0,
+        "max_area_m2": 400.0,
+        "min_dz_m": 0.25,
+        "max_slope_deg": 20.0
+      }
+    },
+    {
+      "zone_key": "ZONA_27_PIEDRA_PARADA",
+      "name": "Valle del Río Chubut Medio / Piedra Parada (Chubut)",
+      "biome": "meseta_patagonica",
+      "bbox_wgs84": [
+        -70.15,
+        -42.7,
+        -70.07,
+        -42.63
+      ],
+      "epsg_posgar2007": 5343,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 8.0,
+        "min_area_m2": 8.0,
+        "max_area_m2": 500.0,
+        "min_dz_m": 0.25,
+        "max_slope_deg": 22.0
+      }
+    },
+    {
+      "zone_key": "ZONA_28_PAYUNIA",
+      "name": "Campo Volcánico La Payunia / Malargüe (Mendoza)",
+      "biome": "meseta_volcanica",
+      "bbox_wgs84": [
+        -69.05,
+        -36.35,
+        -68.97,
+        -36.28
+      ],
+      "epsg_posgar2007": 5344,
+      "datum": "POSGAR 2007",
+      "preferred_dem": "copernicus_aws",
+      "algorithm_params": {
+        "slrm_radius_m": 10.0,
+        "min_area_m2": 10.0,
+        "max_area_m2": 600.0,
+        "min_dz_m": 0.25,
+        "max_slope_deg": 25.0
+      }
+    }
+  ]
+}

@@ -526,19 +526,24 @@ def train_calibrator(
     n_neg = int((y == 0).sum())
     n_pos = int((y == 1).sum())
     report_lines = [
-        "# Benchmark del Calibrador ML (probabilidad calibrada vs score heurístico)",
+        "# Consistencia Interna del Calibrador ML (Controles VLM + Sintéticos — NO Validez Arqueológica)",
         "",
         f"*Generado (UTC):* {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}",
         "",
-        "## 1. Composición del dataset",
+        "> **Separación Metodológica:** Este reporte evalúa únicamente la separabilidad de features",
+        "> sobre controles negativos VLM (`AI_REJECTED_CANDIDATE`) y estructuras sintéticas plantadas",
+        "> (`SYNTHETIC_POSITIVE`). **No mide** recall arqueológico real ni calibración de campo",
+        "> (para eso usar `evaluate_calibrator_on_verified_benchmark()` sobre casos `EXPERT_REVIEWED` / `FIELD_CONFIRMED`).",
         "",
-        f"- **Clase 0 (hard negatives reales):** {n_neg} candidatos descartados por el Juez Pericial VLM",
-        "  (`DESCARTES_VLM.json`, NATURAL/ARTEFACTO) con features completas de los mapas por zona.",
-        f"- **Clase 1 (positivos sintéticos plantados):** {n_pos} detecciones sobre estructuras con",
-        "  verdad de campo conocida (recintos, círculos, terrazas, pozos, zanjas; 0.5 m/px y 30 m/px).",
+        "## 1. Composición del dataset interno de entrenamiento",
+        "",
+        f"- **Clase 0 (`AI_REJECTED_CANDIDATE`):** {n_neg} candidatos descartados por el Juez Pericial VLM",
+        "  (`DESCARTES_VLM.json`, NATURAL/ARTEFACTO) con features de los mapas por zona.",
+        f"- **Clase 1 (`SYNTHETIC_POSITIVE`):** {n_pos} detecciones sintéticas plantadas con geometría",
+        "  conocida (recintos, círculos, terrazas, pozos, zanjas; 0.5 m/px y 30 m/px).",
         f"- **Vector de features ({len(FEATURE_NAMES)}):** " + ", ".join(f"`{f}`" for f in FEATURE_NAMES),
         "",
-        f"## 2. Métricas ({cv_label}, predicción out-of-fold)",
+        f"## 2. Métricas internas ({cv_label}, predicción out-of-fold)",
         "",
         "| Clase | Precision | Recall | F1 |",
         "| :--- | :---: | :---: | :---: |",
@@ -613,3 +618,32 @@ def score_candidate(
     X = np.array([_features_to_vector(feats, expected_names)], dtype=np.float64)
     prob = float(bundle["pipeline"].predict_proba(X)[0, 1])
     return round(prob, 4)
+
+
+def evaluate_calibrator_on_verified_benchmark(
+    evaluations: List[Dict[str, Any]],
+    scanned_area_km2: float,
+    k_values: Tuple[int, ...] = (5, 10),
+) -> Dict[str, Any]:
+    """Evalúa validez arqueológica exclusivamente sobre casos `EXPERT_REVIEWED` o `FIELD_CONFIRMED`.
+
+    Separa formalmente la evaluación científica externa del entrenamiento interno con
+    descartes VLM (`AI_REJECTED_CANDIDATE`) y positivos sintéticos.
+    """
+    from src.core.benchmark_v1 import compute_benchmark_metrics
+
+    verified_tiers = {"EXPERT_REVIEWED", "FIELD_CONFIRMED"}
+    verified_rows = [
+        ev for ev in evaluations if str(ev.get("evidence_tier") or "") in verified_tiers
+    ]
+    if not verified_rows:
+        raise ValueError(
+            "No hay registros con evidence_tier en {'EXPERT_REVIEWED', 'FIELD_CONFIRMED'} "
+            "para calcular métricas de validez arqueológica independiente."
+        )
+    return compute_benchmark_metrics(
+        verified_rows,
+        scanned_area_km2=scanned_area_km2,
+        k_values=k_values,
+        require_verified_ground_truth=True,
+    )

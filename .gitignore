@@ -61,6 +61,7 @@ archaeo-lidar-mcp/data/processed/*
 *ANEXO_CONFIDENCIAL_COORDENADAS.json
 *MAPA_PROSPECCION_*.geojson
 *MAPA_FINAL_PROSPECCION.geojson
+*CONFIDENTIAL_BLIND_KEY.json
 
 # Temporary / scratch files
 scratch/
