@@ -1920,10 +1920,34 @@
         "recorded_at_utc": "2026-11-12T23:30:06Z",
         "note": "Inventario geomorfológico derivado de descartes del Juez Pericial VLM (geoformas naturales, no patrimoniales)."
       }
+    },
+    {
+      "type": "Feature",
+      "id": "ARQ-TEY-0005",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -55.594187,
+          -27.241102
+        ]
+      },
+      "properties": {
+        "id": "ARQ-TEY-0005",
+        "geomorph_subtype": "paleocauce",
+        "anomaly_type": "zanja_lineal",
+        "area_m2": 2763.48,
+        "mean_elevation_m": -1.49,
+        "verdict": "NATURAL",
+        "certainty_pct": 89,
+        "functional_interpretation": "Vaguada de escorrentía / cauce tributario natural en matriz de selva paranaense. La concavidad de ~200 m de ancho y ~2.4 m de profundidad relativa con perfil en V suave corresponde a drenaje natural, no a una zanja constructiva (una zanja jesuítica-guaraní sería de pocos metros de ancho con paredes definidas y fondo plano).",
+        "backend": "Agente anfitrión (OpenCode / GLM) — Juez Pericial sobre lámina compuesta 6 paneles",
+        "recorded_at_utc": "2026-11-14T15:14:57Z",
+        "note": "Inventario geomorfológico derivado de descartes del Juez Pericial VLM (geoformas naturales, no patrimoniales)."
+      }
     }
   ],
   "metadata": {
-    "last_updated_utc": "2026-11-12T23:30:06Z",
-    "feature_count": 86
+    "last_updated_utc": "2026-11-14T15:14:57Z",
+    "feature_count": 81
   }
 }

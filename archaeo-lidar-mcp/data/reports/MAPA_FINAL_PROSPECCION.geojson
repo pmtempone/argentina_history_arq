@@ -2,9 +2,9 @@
   "type": "FeatureCollection",
   "metadata": {
     "project": "ArchaeoLiDAR-AR-MCP Autonomous Prospector",
-    "last_scanned_zone": "HIGHRES_ZENODO_18023344",
-    "region_name": "High-Resolution Drone DTM of Surface Ruptures & Alluvial Terraces (San Juan / Pre-Andes, Argentina) (Precordillera de San Juan / Andes Centrales (Argentina))",
-    "generated_at_utc": "2026-11-14T13:43:36Z",
+    "last_scanned_zone": "ZONA_22_TEYU_CUARE",
+    "region_name": "Peñón del Teyú Cuaré / San Ignacio (Misiones)",
+    "generated_at_utc": "2026-11-14T15:14:03Z",
     "output_crs": "EPSG:4326",
     "confirmed_inedito_count": 0
   },
